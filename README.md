@@ -10,6 +10,8 @@ Qianqian Wan, Jinyu Chen, Tianyi Tong, Qi Xuan Cui
 
 - Project documentations can be found under **Wiki** in GitLab (Meeting Minutes, Project Plan, User Interview)
 
-- Requirement gathering documentations are under **Requirement** folder. 
+- Requirement gathering documentations are uploaded under folders. 
+
+- Design Review Presentation uploaded under the main repo
 
 
