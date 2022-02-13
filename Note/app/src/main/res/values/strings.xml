@@ -1,0 +1,11 @@
+<resources>
+        <string name="app_name">Notes</string>
+        <string name="notes">Notes</string>
+        <string name="searchHint">Search</string>
+        <string name="search_icon_description">Search icon</string>
+        <string name="add_note_button_description">Add note button</string>
+        <string name="note_title">Note Title</string>
+        <string name="back_button_description">Back button</string>
+        <string name="save_button_description">Save button</string>
+        <string name="type_note_here">Type note here...</string>
+</resources>
