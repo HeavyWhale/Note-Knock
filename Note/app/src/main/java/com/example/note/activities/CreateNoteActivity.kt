@@ -12,12 +12,12 @@ import com.example.note.database.Note
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CreateNoteActivity() : AppCompatActivity() {
+class CreateNoteActivity : AppCompatActivity() {
 
-    private lateinit var inputNoteTitle: EditText;
-    private lateinit var inputNoteBody: EditText;
+    private lateinit var inputNoteTitle: EditText
+    private lateinit var inputNoteBody: EditText
 
-    private lateinit var textDateTime: TextView;
+    private lateinit var textDateTime: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,11 +26,11 @@ class CreateNoteActivity() : AppCompatActivity() {
         val imageBack = findViewById<ImageView>(R.id.imageBack)
         imageBack.setOnClickListener { onBackPressed(); }
 
-        inputNoteTitle = findViewById(R.id.inputNoteTitle);
-        inputNoteBody = findViewById(R.id.inputNote);
-        textDateTime = findViewById(R.id.TextDateTime);
+        inputNoteTitle = findViewById(R.id.inputNoteTitle)
+        inputNoteBody = findViewById(R.id.inputNote)
+        textDateTime = findViewById(R.id.TextDateTime)
 
-        textDateTime.text = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date());
+        textDateTime.text = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
 
         val imageSave = findViewById<ImageView>(R.id.imageSave)
         imageSave.setOnClickListener { saveNote(); }
@@ -43,10 +43,16 @@ class CreateNoteActivity() : AppCompatActivity() {
             inputNoteBody.text.toString(),
             textDateTime.text.toString()
         )
-        val modelWrapper = ModelWrapper();
-        val model = modelWrapper.Model();
-        model.addNote(note);
+//        val modelWrapper = ModelWrapper();
+//        val model = modelWrapper.Model();
+//        model.addNote(note);
 
-        onBackPressed();
+        print("BEFORE ADDNOTE")
+
+        (Model::addNote)(note);
+
+        print("AFTER ADDNOTE")
+
+        onBackPressed()
     }
 }

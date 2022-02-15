@@ -21,6 +21,6 @@
 
 ## Misc
   - How to resolve warning: *"SDK location not found. Define location with sdk.dir in the local.properties file or with an ANDROID_HOME environment variable"* in `IntelliJ`?
-  - Under `Tools - Android - SDK Manager`, press the `Edit` button located after `Android SDK Location`, then press `Next`. The `SDK location` will be automatically fixed by `IntelliJ`.
+    - Under `Tools - Android - SDK Manager`, press the `Edit` button located after `Android SDK Location`, then press `Next`. The `SDK location` will be automatically fixed by `IntelliJ`.
   - Why the app didn't show when I pressed the run button (green triangle)?
-  - Press it twice. The first starts the virtual machine and the second installs & start the app.
+    - Press it twice. The first starts the virtual machine and the second installs & start the app.
