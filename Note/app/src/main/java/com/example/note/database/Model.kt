@@ -1,6 +1,7 @@
 package com.example.note.database
 
 import android.util.Log
+import com.example.note.adapters.NotesAdapter
 
 object Model {
     private val allNotes = mutableListOf<Note>()
@@ -11,11 +12,17 @@ object Model {
     }
 
     fun addNote(newNote: Note) {
-        allNotes.add(newNote.copy(id = genID()));
+        allNotes.add(0, newNote.copy(id = genID()));
         Log.d("Model log", "Added note ID=$_counter");
+        // update NotesAdapter
+        (NotesAdapter::notifyItemInserted)(0)
     }
 
     fun getNotes(): MutableList<Note> {
         return allNotes;
+    }
+
+    fun getSize(): Int {
+        return allNotes.size;
     }
 }

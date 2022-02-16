@@ -6,9 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note.R
+import com.example.note.database.Model
 import com.example.note.database.Note
 
-class NotesAdapter(private val notes: List<Note>) : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
+object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
     // create new views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,12 +23,13 @@ class NotesAdapter(private val notes: List<Note>) : RecyclerView.Adapter<NotesAd
 
     // binds the list items to a view
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val notes = (Model::getNotes)()
         holder.setNote(notes[position])
     }
 
     // return the number of the items in the list
     override fun getItemCount(): Int {
-        return notes.size
+        return (Model::getSize)()
     }
 
     override fun getItemViewType(position: Int): Int {

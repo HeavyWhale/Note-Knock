@@ -3,7 +3,6 @@ package com.example.note.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.R
 import com.example.note.adapters.NotesAdapter
+import com.example.note.database.Model
 import com.example.note.database.Note
 import java.util.concurrent.Executors
 
@@ -20,10 +20,6 @@ import java.util.concurrent.Executors
 //}
 
 class MainActivity : AppCompatActivity() {
-
-    private val noteListRecyclerView = findViewById<RecyclerView>(R.id.noteListRecyclerView)
-    private val noteList = mutableListOf<Note>()
-    private val notesAdapter = NotesAdapter(noteList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,34 +31,36 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val noteListRecyclerView = findViewById<RecyclerView>(R.id.noteListRecyclerView)
+
         noteListRecyclerView.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        noteListRecyclerView.adapter = notesAdapter
+        noteListRecyclerView.adapter = NotesAdapter
 
-        listNotes()
+//        listNotes()
     }
 
-    private fun listNotes() {
-
-        val myExecutor = Executors.newSingleThreadExecutor()
-        val myHandler = Handler(Looper.getMainLooper())
-
-        myExecutor.execute {
-            // Do something in background (back-end process)
-        }
-
-        myHandler.post {
-            // Do something in UI (front-end process)
-            // TODO: 14:00min tutorial 4
-            if (noteList.size == 0) {
-                noteList.addAll(notes)
-                notesAdapter.notifyDataSetChanged()
-            } else {
-                noteList.add(0, notes[0])
-                notesAdapter.notifyItemInserted(0)
-            }
-            noteListRecyclerView.smoothScrollToPosition(0)
-        }
-
-    }
+//    private fun listNotes() {
+//
+//        val myExecutor = Executors.newSingleThreadExecutor()
+//        val myHandler = Handler(Looper.getMainLooper())
+//
+//        myExecutor.execute {
+//            // Do something in background (back-end process)
+//        }
+//
+//        myHandler.post {
+//            // Do something in UI (front-end process)
+//            // TODO: 14:00min tutorial 4
+//            if ((Model::getSize)() == 0) {
+//                noteList.addAll(notes)
+//                notesAdapter.notifyDataSetChanged()
+//            } else {
+//                noteList.add(0, notes[0])
+//                notesAdapter.notifyItemInserted(0)
+//            }
+//            noteListRecyclerView.smoothScrollToPosition(0)
+//        }
+//
+//    }
 }
