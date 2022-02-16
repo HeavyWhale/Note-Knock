@@ -3,6 +3,7 @@ package com.example.note.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.media.Image
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
@@ -28,6 +29,12 @@ class MainActivity : AppCompatActivity() {
         val imageAddNoteMain = findViewById<ImageView>(R.id.imageAddNoteMain)
         imageAddNoteMain.setOnClickListener {
             val intent = Intent(applicationContext, CreateNoteActivity::class.java)
+            startActivity(intent)
+        }
+
+        val imageViewFolders = findViewById<ImageView>(R.id.imageViewFolders)
+        imageViewFolders.setOnClickListener {
+            val intent = Intent(applicationContext, FolderStructure::class.java)
             startActivity(intent)
         }
 

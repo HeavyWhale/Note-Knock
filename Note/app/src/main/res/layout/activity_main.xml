@@ -22,6 +22,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
+                        android:id="@+id/imageViewFolders"
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:layout_alignParentStart="true"
@@ -137,7 +138,8 @@
                 app:layout_constraintBottom_toTopOf="@id/layoutQuickActions"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/layoutQuickActions"
-                android:onClick="createNote" app:tint="?colorPrimary"/>
+                android:onClick="createNote"
+                app:tint="?colorPrimary"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
