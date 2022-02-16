@@ -43,31 +43,6 @@ class MainActivity : AppCompatActivity() {
         noteListRecyclerView.layoutManager =
             StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         noteListRecyclerView.adapter = NotesAdapter
-
-//        listNotes()
     }
 
-//    private fun listNotes() {
-//
-//        val myExecutor = Executors.newSingleThreadExecutor()
-//        val myHandler = Handler(Looper.getMainLooper())
-//
-//        myExecutor.execute {
-//            // Do something in background (back-end process)
-//        }
-//
-//        myHandler.post {
-//            // Do something in UI (front-end process)
-//            // TODO: 14:00min tutorial 4
-//            if ((Model::getSize)() == 0) {
-//                noteList.addAll(notes)
-//                notesAdapter.notifyDataSetChanged()
-//            } else {
-//                noteList.add(0, notes[0])
-//                notesAdapter.notifyItemInserted(0)
-//            }
-//            noteListRecyclerView.smoothScrollToPosition(0)
-//        }
-//
-//    }
 }

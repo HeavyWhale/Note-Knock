@@ -128,6 +128,6 @@
             app:layout_constraintBottom_toTopOf="@id/layoutQuickActions"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/layoutQuickActions"
-            android:onClick="createNote" app:tint="?colorPrimary"/>
+            app:tint="?colorPrimary"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,9 +29,9 @@
                                 android:layout_marginEnd="@dimen/_12sdp"
                                 android:contentDescription="@string/back_button_description"
                                 android:src="@drawable/ic_back"
-                                android:tint="@color/colorIcons"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/colorIcons"/>
 
                         <ImageView
                                 android:id="@+id/imageSave"
