@@ -134,11 +134,10 @@
                 android:contentDescription="@string/add_note_button_description"
                 android:padding="@dimen/_5sdp"
                 android:src="@drawable/ic_add"
-                android:tint="?colorPrimary"
                 app:layout_constraintBottom_toTopOf="@id/layoutQuickActions"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/layoutQuickActions"
-                android:onClick="createNote"/>
+                android:onClick="createNote" app:tint="?colorPrimary"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
