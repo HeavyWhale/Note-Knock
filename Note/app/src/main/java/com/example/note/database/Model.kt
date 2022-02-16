@@ -12,7 +12,7 @@ object Model {
 
     fun addNote(newNote: Note) {
         allNotes.add(newNote.copy(id = genID()));
-        Log.d("NOTE_1234", "Added note ID=$_counter");
+        Log.d("Model log", "Added note ID=$_counter");
     }
 
     fun getNotes(): MutableList<Note> {

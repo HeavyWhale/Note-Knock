@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.note.R
 import com.example.note.database.Model
-import com.example.note.database.ModelWrapper
 import com.example.note.database.Note
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,26 +31,22 @@ class CreateNoteActivity : AppCompatActivity() {
 
         textDateTime.text = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
 
-        val imageSave = findViewById<ImageView>(R.id.imageSave)
-        imageSave.setOnClickListener { saveNote(); }
+        val saveNoteButton = findViewById<ImageView>(R.id.imageSave)
+        saveNoteButton.setOnClickListener { saveNote(); }
     }
 
     private fun saveNote() {
+        // Set note title to "No Title" if user input for title is empty (no chars & whitespaces)
+        val noteTitle = if (inputNoteTitle.text.toString().isEmpty()) inputNoteTitle.text.toString() else "No Title"
+
         val note = Note(
             null,
-            inputNoteTitle.text.toString(),
+            noteTitle,
             inputNoteBody.text.toString(),
             textDateTime.text.toString()
         )
-//        val modelWrapper = ModelWrapper();
-//        val model = modelWrapper.Model();
-//        model.addNote(note);
 
-        print("BEFORE ADDNOTE")
-
-        (Model::addNote)(note);
-
-        print("AFTER ADDNOTE")
+        (Model::addNote)(note)
 
         onBackPressed()
     }
