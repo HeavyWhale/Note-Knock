@@ -8,20 +8,47 @@
         android:background="@color/gray"
         tools:context=".activities.MainActivity">
 
-        <TextView
-                android:id="@+id/textNotes"
+        <RelativeLayout
+                android:id="@+id/topTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginStart="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_15sdp"
                 android:layout_marginEnd="@dimen/_12sdp"
-                android:fontFamily="@font/ubuntu_bold"
-                android:includeFontPadding="false"
-                android:text="@string/notes"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_20ssp"
-                app:layout_constraintTop_toTopOf="parent"
-        />
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:layout_alignParentStart="true"
+                        android:background="@drawable/background_search"
+                        android:src="@drawable/ic_folders"
+                        app:tint="@color/colorSearchIcons"/>
+
+                <TextView
+                        android:id="@+id/textNotes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35.00dp"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/ubuntu_bold"
+                        android:includeFontPadding="false"
+                        android:text="@string/notes"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_20ssp"
+                        android:layout_centerInParent="true"/>
+
+                <ImageView
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:background="@drawable/background_search"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_edit"
+                        app:tint="@color/colorSearchIcons"/>
+        </RelativeLayout>
 
         <!--
                  android:gravity:
@@ -43,14 +70,14 @@
                 android:gravity="center_vertical"
                 android:paddingStart="@dimen/_10sdp"
                 android:paddingEnd="@dimen/_10sdp"
-                app:layout_constraintTop_toBottomOf="@+id/textNotes">
+                app:layout_constraintTop_toBottomOf="@+id/topTitle">
 
                 <ImageView
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:contentDescription="@string/search_icon_description"
                         android:src="@drawable/ic_search"
-                        android:tint="@color/colorSearchIcons" />
+                        app:tint="@color/colorSearchIcons"/>
 
                 <!--
                         android:background="@null": toggle underline off when inputting text
@@ -112,10 +139,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/layoutQuickActions"
                 android:onClick="createNote"/>
-
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
