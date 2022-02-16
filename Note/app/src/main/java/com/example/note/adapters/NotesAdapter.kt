@@ -27,6 +27,7 @@ object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
         holder.setNote(notes[position])
     }
 
+
     // return the number of the items in the list
     override fun getItemCount(): Int {
         return (Model::getSize)()
