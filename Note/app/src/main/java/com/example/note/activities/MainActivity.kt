@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         val noteListRecyclerView = findViewById<RecyclerView>(R.id.noteListRecyclerView)
 
         noteListRecyclerView.layoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         noteListRecyclerView.adapter = NotesAdapter
 
 //        listNotes()
