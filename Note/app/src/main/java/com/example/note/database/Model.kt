@@ -2,7 +2,7 @@ package com.example.note.database
 
 import android.util.Log
 
-class Model {
+object Model {
     private val allNotes = mutableListOf<Note>()
 
     private var _counter: Long = 0;

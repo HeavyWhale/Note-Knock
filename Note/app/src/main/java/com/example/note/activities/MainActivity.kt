@@ -13,8 +13,6 @@ import com.example.note.database.Model
 
 class MainActivity : AppCompatActivity() {
 
-    val model = Model();
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
