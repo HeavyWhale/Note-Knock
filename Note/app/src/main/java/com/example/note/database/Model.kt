@@ -46,8 +46,8 @@ object Model {
     }
 
     fun addFolder(name: String) {
-        var newFolder = Folder(id=genFolderID(), name=name);
+        val newFolder = Folder(id=genFolderID(), name=name);
         folders.add(newFolder)
-        Log.d("Model log", "Added folder ID=$_folderCounter");
+        Log.d("Model log", "Added folder ID=$_folderCounter name=$name");
     }
 }

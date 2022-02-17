@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Window
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import com.example.note.R
+import com.example.note.database.Model
 
 class FolderStructure : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +30,16 @@ class FolderStructure : AppCompatActivity() {
         dialog.setContentView(R.layout.create_folder_dialog)
         val createBtn = dialog.findViewById<Button>(R.id.createBtn)
         val cancelBtn = dialog.findViewById<Button>(R.id.cancelBtn)
-        createBtn.setOnClickListener { dialog.dismiss() }
+        createBtn.setOnClickListener {
+            val folderName = dialog.findViewById<EditText>(R.id.folder_name).text.toString()
+            if (folderName.isEmpty()) {
+                Toast.makeText(baseContext, "Please name your folder!", Toast.LENGTH_SHORT).show()
+            } else {
+                // Add the new folder
+                (Model::addFolder)(folderName)
+                dialog.dismiss()
+            }
+        }
         cancelBtn.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
