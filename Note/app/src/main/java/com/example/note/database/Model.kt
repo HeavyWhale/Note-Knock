@@ -37,11 +37,11 @@ object Model {
         return currentFolder.getNotes();
     }
 
-    fun getSize(): Int {
+    fun getNoteSize(): Int {
         return currentFolder.getSize();
     }
 
-    fun getFolderName(): String? {
+    fun getFolderName(): String {
         return currentFolder.getName();
     }
 
@@ -49,5 +49,13 @@ object Model {
         val newFolder = Folder(id=genFolderID(), name=name);
         folders.add(newFolder)
         Log.d("Model log", "Added folder ID=$_folderCounter name=$name");
+    }
+
+    fun getFolders(): MutableList<Folder> {
+        return folders;
+    }
+
+    fun getFolderSize(): Int {
+        return folders.size;
     }
 }

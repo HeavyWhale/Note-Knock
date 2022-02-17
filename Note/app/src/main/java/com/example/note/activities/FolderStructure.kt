@@ -9,7 +9,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.R
+import com.example.note.adapters.FolderAdapter
 import com.example.note.database.Model
 
 class FolderStructure : AppCompatActivity() {
@@ -21,6 +24,12 @@ class FolderStructure : AppCompatActivity() {
         imageAddFolder.setOnClickListener {
             showCreateFolderDialog()
         }
+
+        val folderListRecyclerView = findViewById<RecyclerView>(R.id.folderListRecyclerView)
+
+        folderListRecyclerView.layoutManager =
+            StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+        folderListRecyclerView.adapter = FolderAdapter
     }
 
     private fun showCreateFolderDialog() {
