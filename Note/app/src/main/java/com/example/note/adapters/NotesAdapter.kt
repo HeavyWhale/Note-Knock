@@ -29,7 +29,8 @@ object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
     // return the number of the items in the list
     override fun getItemCount(): Int {
-        return (Model::getSize)()
+//        return (Model::getSize)()
+        return Model.noteSize
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -44,7 +45,12 @@ object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
         fun setNote(note: Note) {
             textTitle.text = note.title
-            textDatetime.text = note.date
+            textDatetime.text = note.modifyDate
         }
     }
+
+//    fun updateView() {
+//        notifyItemRangeRemoved(0, )
+//        notifyItemRangeInserted(0, itemCount)
+//    }
 }
