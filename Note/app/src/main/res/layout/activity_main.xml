@@ -44,7 +44,6 @@
                 <ImageView
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
-                        android:background="@drawable/background_search"
                         android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_ellipsis"
                         app:tint="@color/colorSearchIcons"/>
