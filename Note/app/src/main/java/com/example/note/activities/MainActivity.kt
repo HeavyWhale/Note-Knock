@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.R
 import com.example.note.adapters.NotesAdapter
+import com.example.note.database.Folder
 import com.example.note.database.Model
 import com.example.note.database.Note
 import java.util.concurrent.Executors
@@ -43,6 +44,15 @@ class MainActivity : AppCompatActivity() {
         noteListRecyclerView.layoutManager =
             StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         noteListRecyclerView.adapter = NotesAdapter
+
+        if (intent.getBooleanExtra("switchFolder", false)) {
+            val folderClickedPosition = intent.getIntExtra("folderClickedPosition", 0)
+            switchFolder(folderClickedPosition)
+        }
+    }
+
+    private fun switchFolder(folderClickedPosition: Int) {
+        (Model::switchCurrFolder)(folderClickedPosition)
     }
 
 }

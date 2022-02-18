@@ -71,4 +71,10 @@ object Model {
     fun getFolderSize(): Int {
         return folders.size;
     }
+
+    fun switchCurrFolder(folderClickedPosition: Int) {
+        currentFolder = folders[folderClickedPosition]
+        val currentFolderName = currentFolder.getName()
+        Log.d("Model log", "Switched to folder $currentFolderName at position $folderClickedPosition")
+    }
 }
