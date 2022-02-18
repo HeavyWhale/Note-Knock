@@ -25,12 +25,12 @@
                         android:id="@+id/imageViewFolders"
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
-                        android:background="@drawable/background_search"
+                        android:layout_gravity="center"
                         android:src="@drawable/ic_folders"
                         app:tint="@color/colorSearchIcons"/>
 
                 <TextView
-                        android:id="@+id/textNotes"
+                        android:id="@+id/currentFolder"
                         android:layout_width="wrap_content"
                         android:layout_height="35.00dp"
                         android:layout_gravity="center"
@@ -38,7 +38,7 @@
                         android:includeFontPadding="false"
                         android:text="@string/notes"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_20ssp"
+                        android:textSize="@dimen/_18ssp"
                         android:layout_centerInParent="true"/>
 
                 <ImageView
@@ -46,7 +46,7 @@
                         android:layout_height="@dimen/_20sdp"
                         android:background="@drawable/background_search"
                         android:layout_alignParentEnd="true"
-                        android:src="@drawable/ic_edit"
+                        android:src="@drawable/ic_ellipsis"
                         app:tint="@color/colorSearchIcons"/>
         </RelativeLayout>
 
