@@ -1,7 +1,6 @@
 package com.example.note.database
 
 import android.util.Log
-import com.example.note.adapters.NotesAdapter
 
 object Model {
     /* Initialize folders:
@@ -38,8 +37,16 @@ object Model {
             currentFolder.addNote(newNote)
         }
         Log.d("Model log", "Added note ID=$_counter")
-        // update NotesAdapter
-        (NotesAdapter::notifyItemInserted)(0)
+    }
+
+    fun deleteNote(id: Long) {
+        currentFolder.deleteNote(id)
+        folders[0].deleteNote(id)
+    }
+
+    fun updateNote(updatedNote: Note) {
+        currentFolder.updateNote(updatedNote)
+        folders[0].updateNote(updatedNote)
     }
 
     fun getNotes(): MutableList<Note> {
@@ -77,5 +84,10 @@ object Model {
         val currentFolderName = currentFolder.getName()
         Log.d("Model log", "Switched to folder $currentFolderName at position $folderClickedPosition")
         return currentFolderName
+    }
+
+    // for debugging
+    fun printNotes(firstN: Int = -1) {
+        currentFolder.printNotes(firstN)
     }
 }

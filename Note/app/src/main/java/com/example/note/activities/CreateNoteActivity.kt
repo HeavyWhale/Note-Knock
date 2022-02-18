@@ -43,6 +43,7 @@ class CreateNoteActivity : AppCompatActivity() {
             null,
             noteTitle,
             inputNoteBody.text.toString(),
+            textDateTime.text.toString(),
             textDateTime.text.toString()
         )
 

@@ -45,7 +45,12 @@ object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
         fun setNote(note: Note) {
             textTitle.text = note.title
-            textDatetime.text = note.date
+            textDatetime.text = note.modifyDate
         }
     }
+
+//    fun updateView() {
+//        notifyItemRangeRemoved(0, )
+//        notifyItemRangeInserted(0, itemCount)
+//    }
 }
