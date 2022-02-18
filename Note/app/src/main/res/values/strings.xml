@@ -1,11 +1,15 @@
 <resources>
-        <string name="app_name">Notes</string>
-        <string name="notes">Notes</string>
-        <string name="searchHint">Search</string>
-        <string name="search_icon_description">Search icon</string>
-        <string name="add_note_button_description">Add note button</string>
-        <string name="note_title">Note Title</string>
-        <string name="back_button_description">Back button</string>
-        <string name="save_button_description">Save button</string>
-        <string name="type_note_here">Type note here...</string>
+    <string name="app_name">Notes</string>
+    <string name="folders">Folders</string>
+    <string name="searchHint">Search</string>
+    <string name="search_icon_description">Search icon</string>
+    <string name="add_note_button_description">Add note button</string>
+    <string name="note_title">Note Title</string>
+    <string name="back_button_description">Back button</string>
+    <string name="save_button_description">Save button</string>
+    <string name="type_note_here">Type note here...</string>
+    <string name="create_folder_dialog_title">Create New Folder</string>
+    <string name="enter_folder_name">Folder name</string>
+    <string name="create_for_button">Create</string>
+    <string name="cancel_for_button">Cancel</string>
 </resources>
