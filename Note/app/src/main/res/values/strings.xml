@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Notes</string>
-    <string name="notes">Notes</string>
     <string name="folders">Folders</string>
     <string name="searchHint">Search</string>
     <string name="search_icon_description">Search icon</string>

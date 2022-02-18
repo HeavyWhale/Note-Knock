@@ -7,6 +7,7 @@ import android.media.Image
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.loader.content.AsyncTaskLoader
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -16,10 +17,6 @@ import com.example.note.database.Folder
 import com.example.note.database.Model
 import com.example.note.database.Note
 import java.util.concurrent.Executors
-
-//public class MainActivity extends AppCompatActivity {
-//    public static final int RE
-//}
 
 class MainActivity : AppCompatActivity() {
 
@@ -52,7 +49,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchFolder(folderClickedPosition: Int) {
-        (Model::switchCurrFolder)(folderClickedPosition)
+        val currFolderName = (Model::switchCurrFolder)(folderClickedPosition)
+
+        // Change title to be current folder's name
+        val textView = findViewById<TextView>(R.id.currentFolder)
+        textView.text = currFolderName
     }
 
 }

@@ -36,7 +36,7 @@
                         android:layout_gravity="center"
                         android:fontFamily="@font/ubuntu_bold"
                         android:includeFontPadding="false"
-                        android:text="@string/notes"
+                        android:text="All Notes"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_18ssp"
                         android:layout_centerInParent="true"/>
