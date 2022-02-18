@@ -2,7 +2,7 @@ package com.example.note.database
 
 import android.util.Log
 
-class Folder(private val id: Long, private var name: String) {
+data class Folder(private val id: Long, private var name: String) : java.io.Serializable {
     private var notes = mutableListOf<Note>()
 
     fun getName(): String {

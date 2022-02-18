@@ -13,9 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.R
 import com.example.note.adapters.FolderAdapter
+import com.example.note.database.Folder
 import com.example.note.database.Model
 
-class FolderStructure : AppCompatActivity() {
+class FolderStructure : AppCompatActivity(), FolderAdapter.OnFolderClickListener {
+
+    private val adapter = FolderAdapter(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_folder_structure)
@@ -27,9 +31,17 @@ class FolderStructure : AppCompatActivity() {
 
         val folderListRecyclerView = findViewById<RecyclerView>(R.id.folderListRecyclerView)
 
+        folderListRecyclerView.adapter = adapter
         folderListRecyclerView.layoutManager =
             StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        folderListRecyclerView.adapter = FolderAdapter
+    }
+
+    override fun onFolderClick(folder: Folder, position: Int) {
+        // Change to folder's main activity page
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        intent.putExtra("switchFolder", true)
+        intent.putExtra("folderClickedPosition", position)
+        startActivity(intent)
     }
 
     private fun showCreateFolderDialog() {
