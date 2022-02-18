@@ -4,9 +4,19 @@ import android.util.Log
 import com.example.note.adapters.NotesAdapter
 
 object Model {
-    private val folders = mutableListOf<Folder>(Folder(1, "Orphaned Notes"))
-    private val allNotes = Folder(0, "All Notes")
-    private var currentFolder = allNotes
+    /* Initialize folders:
+        0: All Notes
+        1: Snippets
+        2: Shopping List
+        3: Reminders
+     */
+    private val folders = mutableListOf<Folder>(
+        Folder(0, "All Notes"),
+        Folder(1, "Snippets"),
+        Folder(2, "Shopping List"),
+        Folder(3, "Reminders"))
+
+    private var currentFolder = folders[0]
 
     private var _counter: Long = 0
     private fun genID(): Long {
@@ -20,10 +30,10 @@ object Model {
 
     fun addNote(note: Note) {
         val newNote = note.copy(id = genID())
-        allNotes.addNote(newNote)
+        folders[0].addNote(newNote)
         // add note to current folder
-        if (currentFolder == allNotes) {
-            folders[0].addNote(newNote)
+        if (currentFolder == folders[0]) {
+            folders[1].addNote(newNote)
         } else {
             currentFolder.addNote(newNote)
         }
