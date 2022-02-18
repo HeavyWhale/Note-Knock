@@ -1,7 +1,6 @@
 package com.example.note.database
 
 import android.util.Log
-import com.example.note.adapters.NotesAdapter
 
 class Folder(private val id: Long, private var name: String) {
     private var notes = mutableListOf<Note>()
@@ -19,7 +18,7 @@ class Folder(private val id: Long, private var name: String) {
         return notes;
     }
 
-    fun getSize(): Int {
+    fun getNotesSize(): Int {
         return notes.size;
     }
 }
