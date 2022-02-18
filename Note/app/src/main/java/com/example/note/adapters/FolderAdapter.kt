@@ -33,9 +33,11 @@ object FolderAdapter : RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
 
         val folderName: TextView = itemView.findViewById(R.id.folderName)
+        val folderSize: TextView = itemView.findViewById(R.id.folderSize)
 
         fun setFolder(folder: Folder) {
             folderName.text = folder.getName()
+            folderSize.text = folder.getNotesSize().toString()
         }
     }
 }
