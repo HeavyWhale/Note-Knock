@@ -23,8 +23,13 @@
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.315625" />
         <entry key="app/src/main/res/drawable/ic_back.xml" value="0.315625" />
         <entry key="app/src/main/res/drawable/ic_done.xml" value="0.315625" />
+        <entry key="app/src/main/res/drawable/ic_folders.xml" value="0.1527777777777778" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1527777777777778" />
         <entry key="app/src/main/res/layout/activity_create_note.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_folder_structure.xml" value="0.22644927536231885" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.22871376811594202" />
+        <entry key="app/src/main/res/layout/create_folder_dialog.xml" value="0.22644927536231885" />
+        <entry key="app/src/main/res/layout/list_item_container.xml" value="0.2105978260869565" />
       </map>
     </option>
   </component>

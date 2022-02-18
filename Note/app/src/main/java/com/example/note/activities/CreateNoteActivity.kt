@@ -37,7 +37,7 @@ class CreateNoteActivity : AppCompatActivity() {
 
     private fun saveNote() {
         // Set note title to "No Title" if user input for title is empty (no chars & whitespaces)
-        val noteTitle = if (inputNoteTitle.text.toString().isEmpty()) "No Title" else inputNoteTitle.text.toString()
+        val noteTitle = inputNoteTitle.text.toString().ifEmpty { "No Title" }
 
         val note = Note(
             null,

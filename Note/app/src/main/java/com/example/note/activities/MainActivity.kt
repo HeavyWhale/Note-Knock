@@ -3,21 +3,20 @@ package com.example.note.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.media.Image
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.loader.content.AsyncTaskLoader
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.R
 import com.example.note.adapters.NotesAdapter
+import com.example.note.database.Folder
 import com.example.note.database.Model
 import com.example.note.database.Note
 import java.util.concurrent.Executors
-
-//public class MainActivity extends AppCompatActivity {
-//    public static final int RE
-//}
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,36 +30,30 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val imageViewFolders = findViewById<ImageView>(R.id.imageViewFolders)
+        imageViewFolders.setOnClickListener {
+            val intent = Intent(applicationContext, FolderStructure::class.java)
+            startActivity(intent)
+        }
+
         val noteListRecyclerView = findViewById<RecyclerView>(R.id.noteListRecyclerView)
 
         noteListRecyclerView.layoutManager =
             StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         noteListRecyclerView.adapter = NotesAdapter
 
-//        listNotes()
+        if (intent.getBooleanExtra("switchFolder", false)) {
+            val folderClickedPosition = intent.getIntExtra("folderClickedPosition", 0)
+            switchFolder(folderClickedPosition)
+        }
     }
 
-//    private fun listNotes() {
-//
-//        val myExecutor = Executors.newSingleThreadExecutor()
-//        val myHandler = Handler(Looper.getMainLooper())
-//
-//        myExecutor.execute {
-//            // Do something in background (back-end process)
-//        }
-//
-//        myHandler.post {
-//            // Do something in UI (front-end process)
-//            // TODO: 14:00min tutorial 4
-//            if ((Model::getSize)() == 0) {
-//                noteList.addAll(notes)
-//                notesAdapter.notifyDataSetChanged()
-//            } else {
-//                noteList.add(0, notes[0])
-//                notesAdapter.notifyItemInserted(0)
-//            }
-//            noteListRecyclerView.smoothScrollToPosition(0)
-//        }
-//
-//    }
+    private fun switchFolder(folderClickedPosition: Int) {
+        val currFolderName = (Model::switchCurrFolder)(folderClickedPosition)
+
+        // Change title to be current folder's name
+        val textView = findViewById<TextView>(R.id.currentFolder)
+        textView.text = currFolderName
+    }
+
 }
