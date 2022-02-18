@@ -15,9 +15,10 @@ internal class FolderTest {
 
     @Test
     fun folderNameIsCorrect() {
+        val folderID = (Model::getFolderCounter)()
         (Model::addFolder)("testGetName Folder")
         val folders = (Model::getFolders)()
-        assertEquals("testGetName Folder", folders[1].getName())
+        assertEquals("testGetName Folder", folders[folderID.toInt()].getName())
     }
 
     @Test

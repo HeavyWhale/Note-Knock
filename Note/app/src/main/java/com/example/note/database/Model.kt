@@ -1,6 +1,7 @@
 package com.example.note.database
 
 import android.util.Log
+import com.example.note.adapters.NotesAdapter
 
 object Model {
     /* Initialize folders:
@@ -22,7 +23,7 @@ object Model {
         return _counter++
     }
 
-    private var _folderCounter: Long = 1;
+    private var _folderCounter: Long = 4
     private fun genFolderID(): Long {
         return _folderCounter++
     }
@@ -37,6 +38,7 @@ object Model {
             currentFolder.addNote(newNote)
         }
         Log.d("Model log", "Added note ID=$_counter")
+        (NotesAdapter::notifyItemInserted)(0)
     }
 
     fun deleteNote(id: Long) {
@@ -84,6 +86,10 @@ object Model {
         val currentFolderName = currentFolder.getName()
         Log.d("Model log", "Switched to folder $currentFolderName at position $folderClickedPosition")
         return currentFolderName
+    }
+
+    fun getFolderCounter(): Long {
+        return _folderCounter
     }
 
     // for debugging
