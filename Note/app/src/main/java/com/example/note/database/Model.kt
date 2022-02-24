@@ -1,6 +1,7 @@
 package com.example.note.database
 
 import android.util.Log
+import com.example.note.adapters.NotesAdapter
 
 object Model {
 
@@ -9,7 +10,7 @@ object Model {
      ****************************************************************************/
     // Usage:
     //      val folder = DefaultFolders.SHOPPING_LIST
-    //      println("The folder \"${folder.printableName}\" has id ${folder.ordinal}" )
+    //      println("The folder \"${folder.printableName}\" has id ${folder.id}" )
     // https://blog.logrocket.com/kotlin-enum-classes-complete-guide/
     enum class DF(val printableName: String) { // DF == "Default Folders"
         ALL_NOTES       ("All Notes"),
@@ -39,7 +40,7 @@ object Model {
 
     /**************** Aliases ****************/
     val curFolder get() = folders[curFolderID]
-    // Mimic class Folder's properties
+    // Mimic class Folder's properties, pointed by curFolder
     val notes get() = curFolder.notes
     val id    get() = curFolder.id
     val name  get() = curFolder.name
@@ -70,7 +71,7 @@ object Model {
 
         folders[targetID].addNote(newNote)
         Log.d("Model log", "Added note ID=${newNote.id}")
-//        (NotesAdapter::notifyItemInserted)(0)
+        NotesAdapter.notifyItemInserted(0)
     }
 
     // If the id does not exist, do nothing
@@ -95,7 +96,6 @@ object Model {
     }
 
     fun getNoteCounter():   Int = --noteIDCounter
-
     fun getFolderCounter(): Int = --folderIDCounter
 
     fun reset() {
