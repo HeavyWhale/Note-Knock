@@ -46,7 +46,7 @@ class CreateNoteActivity : AppCompatActivity() {
             textDateTime.text.toString()
         )
 
-        (Model::addNote)(note)
+        Model.addNote(note)
 
         onBackPressed()
     }

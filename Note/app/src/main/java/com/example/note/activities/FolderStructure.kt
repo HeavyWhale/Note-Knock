@@ -57,7 +57,7 @@ class FolderStructure : AppCompatActivity(), FolderAdapter.OnFolderClickListener
                 Toast.makeText(baseContext, "Please name your folder!", Toast.LENGTH_SHORT).show()
             } else {
                 // Add the new folder
-                (Model::addFolder)(folderName)
+                Model.addFolder(folderName)
                 dialog.dismiss()
             }
         }

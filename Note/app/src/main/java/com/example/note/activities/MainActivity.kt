@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchFolder(folderClickedPosition: Int) {
-//        val currFolderName = (Model::switchCurrFolder)(folderClickedPosition)
         Model.curFolderID = folderClickedPosition
         val currFolderName = Model.name
 
