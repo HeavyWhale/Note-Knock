@@ -1,7 +1,6 @@
 package com.example.note.database
 
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.note.getCurrentTime
 import kotlin.test.*
 
 internal class FolderTest {
@@ -10,33 +9,34 @@ internal class FolderTest {
         1,
         "Test note title",
         "Test note content",
-        SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
+        getCurrentTime()
     )
 
     @Test
     fun folderNameIsCorrect() {
         val folderID = (Model::getFolderCounter)()
         (Model::addFolder)("testGetName Folder")
-        val folders = (Model::getFolders)()
-        assertEquals("testGetName Folder", folders[folderID.toInt()].getName())
+        val folders = Model.folders
+        assertEquals("testGetName Folder", folders[folderID].name)
     }
 
     @Test
     fun addNoteToFolder() {
-        val allNotesFolder = (Model::getCurrFolder)()
-        val oldSize = allNotesFolder.getNotesSize()
+        val allNotesFolder = Model.curFolder
+        val oldSize = Model.notes.size
         allNotesFolder.addNote(testNote)
-        assertEquals(testNote, allNotesFolder.getNotes()[0])  // test getNotes()
-        assertEquals(oldSize+1, allNotesFolder.getNotesSize())  // test getNotesSize()
+        assertEquals(testNote, Model.notes[0])  // test getNotes()
+        assertEquals(testNote, Model.notes[0])  // test getNotes()
+        assertEquals(oldSize+1, Model.notes.size)  // test getNotesSize()
     }
 
     @Test
     fun addMassiveNotesToFolder() {
-        val allNotesFolder = (Model::getCurrFolder)()
-        val oldSize = allNotesFolder.getNotesSize()
+        val allNotesFolder = Model.folders[Model.DF.ALL_NOTES.id]
+        val oldSize = allNotesFolder.notes.size
         for (i in (1..100)) {
-            allNotesFolder.addNote(testNote.copy(id=i.toLong()))
+            allNotesFolder.addNote( testNote.copy( id = i ) )
         }
-        assertEquals(oldSize+100, allNotesFolder.getNotesSize())
+        assertEquals(oldSize+100, allNotesFolder.notes.size)
     }
 }

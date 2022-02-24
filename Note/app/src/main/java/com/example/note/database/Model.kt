@@ -1,99 +1,113 @@
 package com.example.note.database
 
 import android.util.Log
-import com.example.note.adapters.NotesAdapter
 
 object Model {
-    /* Initialize folders:
-        0: All Notes
-        1: Snippets
-        2: Shopping List
-        3: Reminders
-     */
-    private val folders = mutableListOf<Folder>(
-        Folder(0, "All Notes"),
-        Folder(1, "Snippets"),
-        Folder(2, "Shopping List"),
-        Folder(3, "Reminders"))
 
-    private var currentFolder = folders[0]
+    /*****************************************************************************
+     * Enum subclass for setting up default folders
+     ****************************************************************************/
+    // Usage:
+    //      val folder = DefaultFolders.SHOPPING_LIST
+    //      println("The folder \"${folder.printableName}\" has id ${folder.ordinal}" )
+    // https://blog.logrocket.com/kotlin-enum-classes-complete-guide/
+    enum class DF(val printableName: String) { // DF == "Default Folders"
+        ALL_NOTES       ("All Notes"),
+        SNIPPETS        ("Snippets"),
+        SHOPPING_LIST   ("Shopping List"),
+        REMINDERS       ("Reminders");
 
-    private var _counter: Long = 0
-    private fun genID(): Long {
-        return _counter++
+        val id: Int = ordinal
     }
 
-    private var _folderCounter: Long = 4
-    private fun genFolderID(): Long {
-        return _folderCounter++
-    }
+    /*****************************************************************************
+     * Properties
+     ****************************************************************************/
+
+    // Container for all folders
+    val folders: MutableList<Folder> = DF
+        .values()
+        .map { Folder( it.id, it.printableName ) }
+        .toMutableList()
+
+    // pointer to current folder
+    var curFolderID = 0
+        set(value) {
+            field = value
+            Log.d("INFO: Model::curFolderID", "Switched to folder $curFolder at position $value")
+        }
+
+    /**************** Aliases ****************/
+    val curFolder get() = folders[curFolderID]
+    // Mimic class Folder's properties
+    val notes get() = curFolder.notes
+    val id    get() = curFolder.id
+    val name  get() = curFolder.name
+
+    /****************** Private Counters ******************/
+    private var noteIDCounter = 0
+        get() = field++     // auto-increment on reference
+
+    private var folderIDCounter = folders.size
+        get() = field++
+
+    /*****************************************************************************
+     * Public Functions
+     ****************************************************************************/
 
     fun addNote(note: Note) {
-        val newNote = note.copy(id = genID())
-        folders[0].addNote(newNote)
-        // add note to current folder
-        if (currentFolder == folders[0]) {
-            folders[1].addNote(newNote)
-        } else {
-            currentFolder.addNote(newNote)
-        }
-        Log.d("Model log", "Added note ID=$_counter")
-        (NotesAdapter::notifyItemInserted)(0)
+        val newNote = note.copy(id = noteIDCounter)
+
+        // Save a copy to all notes
+        folders[DF.ALL_NOTES.id].addNote(newNote)
+
+        // Set target id to "Snippet" folder id if currently in "All Notes" folder
+        val targetID =
+            if (curFolderID == DF.ALL_NOTES.id)
+                DF.SNIPPETS.id
+            else
+                curFolderID
+
+        folders[targetID].addNote(newNote)
+        Log.d("Model log", "Added note ID=${newNote.id}")
+//        (NotesAdapter::notifyItemInserted)(0)
     }
 
-    fun deleteNote(id: Long) {
-        currentFolder.deleteNote(id)
-        folders[0].deleteNote(id)
+    // If the id does not exist, do nothing
+    fun deleteNote(id: Int) {
+        curFolder.deleteNote(id)
+        folders[DF.ALL_NOTES.ordinal].deleteNote(id)
     }
 
     fun updateNote(updatedNote: Note) {
-        currentFolder.updateNote(updatedNote)
-        folders[0].updateNote(updatedNote)
-    }
-
-    fun getNotes(): MutableList<Note> {
-        return currentFolder.getNotes()
-    }
-
-    fun getNoteSize(): Int {
-        return currentFolder.getNotesSize();
-    }
-
-    fun getFolderName(): String {
-        return currentFolder.getName();
+        curFolder.updateNote(updatedNote)
+        folders[DF.ALL_NOTES.ordinal].updateNote(updatedNote)
     }
 
     fun addFolder(name: String) {
-        val newFolder = Folder(id=genFolderID(), name=name);
-        folders.add(newFolder)
-        Log.d("Model log", "Added folder ID=$_folderCounter name=$name")
+        folders.add( Folder( folderIDCounter, name ) )
+        Log.d("Model log", "Added folder ID=${folders.last().id} name=$name")
     }
 
-    fun getCurrFolder(): Folder {
-        return currentFolder
+    // For debugging
+    fun printNotes(firstN: Int = curFolder.notes.size) {
+        curFolder.printNotes(firstN)
     }
 
-    fun getFolders(): MutableList<Folder> {
-        return folders
-    }
+    fun getNoteCounter():   Int = --noteIDCounter
 
-    fun getFolderSize(): Int {
-        return folders.size;
-    }
+    fun getFolderCounter(): Int = --folderIDCounter
 
-    fun switchCurrFolder(folderClickedPosition: Int): String {
-        currentFolder = folders[folderClickedPosition]
-        val currentFolderName = currentFolder.getName()
-        Log.d("Model log", "Switched to folder $currentFolderName at position $folderClickedPosition")
-        return currentFolderName
-    }
+    fun reset() {
+        folders.clear()
+        folders.addAll( DF
+            .values()
+            .map { Folder( it.id, it.printableName ) }
+            .toMutableList()
+        )
 
-    fun getFolderCounter(): Long {
-        return _folderCounter
-    }
-
-    // for debugging
-    fun printNotes(firstN: Int = -1) {
-        currentFolder.printNotes(firstN)
+        curFolderID = 0
+        noteIDCounter = 0
+        curFolderID = 0
     }
 }

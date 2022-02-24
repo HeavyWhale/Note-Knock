@@ -3,20 +3,13 @@ package com.example.note.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
-import android.media.Image
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.loader.content.AsyncTaskLoader
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.R
 import com.example.note.adapters.NotesAdapter
-import com.example.note.database.Folder
 import com.example.note.database.Model
-import com.example.note.database.Note
-import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,7 +42,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchFolder(folderClickedPosition: Int) {
-        val currFolderName = (Model::switchCurrFolder)(folderClickedPosition)
+//        val currFolderName = (Model::switchCurrFolder)(folderClickedPosition)
+        Model.curFolderID = folderClickedPosition
+        val currFolderName = Model.name
 
         // Change title to be current folder's name
         val textView = findViewById<TextView>(R.id.currentFolder)

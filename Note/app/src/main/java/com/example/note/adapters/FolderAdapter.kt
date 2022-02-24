@@ -22,7 +22,7 @@ class FolderAdapter(private val listener: OnFolderClickListener) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val folders = (Model::getFolders)()
+        val folders = Model.folders
         holder.setFolder(folders[position])
 //        holder.layoutFolder.setOnClickListener(object : View.OnClickListener {
 //            override fun onClick(view: View?) {
@@ -32,7 +32,7 @@ class FolderAdapter(private val listener: OnFolderClickListener) :
     }
 
     override fun getItemCount(): Int {
-        return (Model::getFolderSize)()
+        return Model.folders.size
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -49,7 +49,7 @@ class FolderAdapter(private val listener: OnFolderClickListener) :
         }
 
         override fun onClick(v: View?) {
-            val folders = (Model::getFolders)()
+            val folders = Model.folders
             val position = bindingAdapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 listener.onFolderClick(folders[position], position)
@@ -57,8 +57,8 @@ class FolderAdapter(private val listener: OnFolderClickListener) :
         }
 
         fun setFolder(folder: Folder) {
-            folderName.text = folder.getName()
-            folderSize.text = folder.getNotesSize().toString()
+            folderName.text = folder.name
+            folderSize.text = folder.notes.size.toString()
         }
     }
 

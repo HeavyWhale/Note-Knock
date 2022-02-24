@@ -1,81 +1,75 @@
 package com.example.note.database
 
 import android.util.Log
-import java.text.SimpleDateFormat
-import java.util.*
 
-data class Folder(private val id: Long, private var name: String) : java.io.Serializable {
-    private var notes = mutableListOf<Note>()
+class Folder(val id: Int, var name: String) : java.io.Serializable {
 
-    fun getName(): String {
-        return name;
-    }
+    /*****************************************************************************
+     * Properties
+     ****************************************************************************/
 
-    fun addNote(note: Note) {
-        notes.add(0, note);
-        Log.d("Folder log", "Added note to folder: $name");
-    }
+    // Container for all notes
+    var notes = mutableListOf<Note>()
+        private set
 
-    fun deleteNote(id: Long) {
-        val targetNote = notes.find { x -> x.id == id }
-        if ( targetNote == null ) {
-            Log.d("ERROR: Model::deleteNote", "Id $id not found in allNotes")
-            return
+    /*****************************************************************************
+     * Private Functions
+     ****************************************************************************/
+
+    private fun findNotePosByID(id: Int?) : Int {
+        // https://discuss.kotlinlang.org/t/returning-an-index-of-a-collection-based-on-criteria/9691
+        return notes.indexOfFirst { it.id == id }.also {
+            if (it == -1) Log.d("ERROR: Folder::findNotePosByID", "Note with ID = $id not found in folder: $this")
         }
-        notes.remove(targetNote)
-        with (targetNote) {
-            Log.d("LOG: Model::deleteNote",
-                "Deleted note ID=$id, Title=$title, Body=$body, createDate=$createDate, modifyDate=$modifyDate")
+    }
+
+    /*****************************************************************************
+     * Public Functions
+     ****************************************************************************/
+
+    fun addNote(newNote: Note) {
+        notes.add(0, newNote)
+        Log.d("INFO: Folder::addNote", "Added note: $newNote to folder: $name")
+    }
+
+    fun deleteNote(id: Int) {
+        findNotePosByID(id).let { pos ->
+            if (pos != -1) {
+                val removed = notes.removeAt(pos)
+                Log.d("INFO: Folder::deleteNote", "Deleted note: $removed")
+            }
         }
         // TODO: rearrange displayed notes in main view after deletion
     }
 
     fun updateNote(updatedNote: Note) {
-        val targetNote = notes.find { x -> x.id == updatedNote.id }
-        if ( targetNote == null ) {
-            Log.d("ERROR: Model::updateNote", "Id ${updatedNote.id} not found in allNotes")
-            return
-        }
-        with (targetNote) {
-            Log.d("LOG: Model::updateNote",
-                "Update note ID=$id, Title=$title, Body=$body, createDate=$createDate, modifyDate=$modifyDate")
-        }
-        targetNote.apply {
+        // OMG writing tests really helped
+        // val pos = findNotePosByID(id)
+        val pos = findNotePosByID(updatedNote.id)
+
+        if (pos == -1) return
+
+        notes[pos].run {
+            Log.d("INFO: Model::updateNote", "Updated previous note $this to ...")
             title = updatedNote.title
             body = updatedNote.body
-            modifyDate = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
+            modifyDate = updatedNote.modifyDate
+            Log.d("INFO: Model::updateNote", "... current note $this")
         }
         // TODO: update the displayed note in UI
     }
 
-    fun getNotes(): MutableList<Note> {
-        return notes;
-    }
-
-    fun getNotesSize(): Int {
-        return notes.size;
-    }
-
-    fun printNotes(firstN: Int = -1) {
-        val noteSize = getNotesSize()
-        val N = if (firstN == -1) {
-            noteSize
+    // For debugging
+    fun printNotes(firstN: Int) {
+        print("List size: ${notes.size} notes")
+        if (firstN == notes.size) {
+            println(" (printing all notes)")
         } else {
-            firstN
+            println(" (printing first $firstN notes)")
         }
-        println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-        println("List size: $noteSize notes")
-        for (i in 0 until N) {
-            val note = notes[i]
-            with (note) {
-                println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Note $id")
-                println("Title: $title")
-                println("Body: $body")
-                println("Create Date: $createDate")
-                println("Modify Date: $modifyDate")
-            }
+        for ( note in notes.take( firstN ) ) {
+            println("    $note")
         }
-        println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         println()
     }
 }

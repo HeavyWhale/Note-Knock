@@ -8,8 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.note.R
 import com.example.note.database.Model
 import com.example.note.database.Note
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.note.getCurrentTime
 
 class CreateNoteActivity : AppCompatActivity() {
 
@@ -29,7 +28,7 @@ class CreateNoteActivity : AppCompatActivity() {
         inputNoteBody = findViewById(R.id.inputNote)
         textDateTime = findViewById(R.id.TextDateTime)
 
-        textDateTime.text = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
+        textDateTime.text = getCurrentTime()
 
         val saveNoteButton = findViewById<ImageView>(R.id.imageSave)
         saveNoteButton.setOnClickListener { saveNote(); }

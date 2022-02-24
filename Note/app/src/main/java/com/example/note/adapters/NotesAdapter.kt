@@ -23,14 +23,14 @@ object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
     // binds the list items to a view
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val notes = (Model::getNotes)()
+        val notes = Model.notes
         holder.setNote(notes[position])
     }
 
 
     // return the number of the items in the list
     override fun getItemCount(): Int {
-        return (Model::getNoteSize)()
+        return Model.notes.size
     }
 
     override fun getItemViewType(position: Int): Int {
