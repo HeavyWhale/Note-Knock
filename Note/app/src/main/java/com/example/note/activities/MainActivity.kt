@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.R
 import com.example.note.adapters.NotesAdapter
 import com.example.note.database.Model
+import com.example.note.database.Note
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NotesAdapter.OnNoteClickListener {
+
+    private val adapter = NotesAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +36,22 @@ class MainActivity : AppCompatActivity() {
 
         noteListRecyclerView.layoutManager =
             StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        noteListRecyclerView.adapter = NotesAdapter
+        noteListRecyclerView.adapter = adapter
+
+        Model.notesAdapter = adapter
 
         if (intent.getBooleanExtra("switchFolder", false)) {
             val folderClickedPosition = intent.getIntExtra("folderClickedPosition", 0)
             switchFolder(folderClickedPosition)
         }
+    }
+
+    override fun onNoteClick(note: Note, position: Int) {
+        // Change to note's page
+        val intent = Intent(applicationContext, CreateNoteActivity::class.java)
+        intent.putExtra("clickNote", true)
+        intent.putExtra("noteClickedPosition", position)
+        startActivity(intent)
     }
 
     private fun switchFolder(folderClickedPosition: Int) {
@@ -49,5 +62,4 @@ class MainActivity : AppCompatActivity() {
         val textView = findViewById<TextView>(R.id.currentFolder)
         textView.text = currFolderName
     }
-
 }

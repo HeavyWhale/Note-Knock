@@ -54,15 +54,18 @@ internal class ModelTest {
         assertEquals(notesSizeCounter, Model.notes.size)            // size changed
     }
 
-    private fun updateNoteAndTest(updatedNote: Note, exists: Boolean) {
+    private fun updateNoteAndTest(notePosition: Int, exists: Boolean) {
         val before = Model.notes.hashCode()
-        Model.updateNote(updatedNote)
+        Model.curNotePosition = notePosition
+        val title = getRandomString(15)
+        val body = getRandomString(100)
+        Model.updateNote(title, body)
         if (exists) {
             assertNotEquals(before, Model.notes.hashCode())
-            val target = Model.notes.find { it.id == updatedNote.id }   // actually updated
-            assertEquals(updatedNote.title, target?.title)              // only compare title ...
-            assertEquals(updatedNote.body, target?.body)                // ... and body
-            assertEquals(updatedNote.modifyDate, target?.modifyDate)    // ... and modifyDate (updateNote should not change createDate)
+            val target = Model.notes[notePosition]   // actually updated
+            assertEquals(title, target.title)              // only compare title ...
+            assertEquals(body, target.body)                // ... and body
+            assertEquals(getCurrentTime(), target.modifyDate)    // ... and modifyDate (updateNote should not change createDate)
         }
 
         assertEquals(noteIDCounter, Model.getNoteCounter())         // counter does not change
@@ -134,16 +137,31 @@ internal class ModelTest {
     fun updateNoteTest() {
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @updateNoteTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         // Basic test
-        addNoteAndTest(genNote(null, "My Title1", "My Body1", "Created now", "Modified later"))
-        updateNoteAndTest(genNote(id = noteIDCounter), true)
-        updateNoteAndTest(genNote(-1), false)
-        updateNoteAndTest(genNote(id = noteIDCounter), true)
+        val note = genNote(null, "My Title1", "My Body1", "Created now", "Modified later")
+        addNoteAndTest(note)
+        updateNoteAndTest(0, true)
+        updateNoteAndTest(-1, false)
+
+        addNoteAndTest(genNote(id = noteIDCounter))
+        addNoteAndTest(genNote(id = noteIDCounter))
+        addNoteAndTest(genNote(id = noteIDCounter))
+        addNoteAndTest(genNote(id = noteIDCounter))
+        addNoteAndTest(genNote(id = noteIDCounter))  // should have 6 notes by now
+
+        updateNoteAndTest(2, true)
+        updateNoteAndTest(5, true)
+        updateNoteAndTest(1, true)
         deleteNoteAndTest(0, true)
+        deleteNoteAndTest(1, true)
+        deleteNoteAndTest(2, true)
+        deleteNoteAndTest(3, true)
+        deleteNoteAndTest(4, true)
+        deleteNoteAndTest(5, true)
         assertEquals(0, Model.notes.size)
 
         // DNE indices
-        updateNoteAndTest(genNote(764123), false)
-        updateNoteAndTest(genNote(-1038), false)
+        updateNoteAndTest(764123, false)
+        updateNoteAndTest(-1038, false)
 
         // Massive
         for (i in 1..1000) {
@@ -151,8 +169,7 @@ internal class ModelTest {
         }
         val updateSequence = (1..noteIDCounter).toList().shuffled()
         for (i in updateSequence) {
-            val updatedNote = genNote(id = i)
-            updateNoteAndTest(updatedNote, true)
+            updateNoteAndTest(i, true)
         }
         for (i in updateSequence.shuffled()) {
             deleteNoteAndTest(i, true)

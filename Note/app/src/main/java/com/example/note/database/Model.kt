@@ -2,6 +2,7 @@ package com.example.note.database
 
 import android.util.Log
 import com.example.note.adapters.NotesAdapter
+import com.example.note.getCurrentTime
 
 object Model {
 
@@ -45,6 +46,10 @@ object Model {
     val id    get() = curFolder.id
     val name  get() = curFolder.name
 
+    var curNotePosition : Int = -1
+
+    var notesAdapter : NotesAdapter? = null
+
     /****************** Private Counters ******************/
     private var noteIDCounter = 0
         get() = field++     // auto-increment on reference
@@ -71,7 +76,7 @@ object Model {
 
         folders[targetID].addNote(newNote)
         Log.d("Model log", "Added note ID=${newNote.id}")
-        NotesAdapter.notifyItemInserted(0)
+        notesAdapter?.notifyItemInserted(0)
     }
 
     // If the id does not exist, do nothing
@@ -80,9 +85,18 @@ object Model {
         folders[DF.ALL_NOTES.ordinal].deleteNote(id)
     }
 
-    fun updateNote(updatedNote: Note) {
-        curFolder.updateNote(updatedNote)
-        folders[DF.ALL_NOTES.ordinal].updateNote(updatedNote)
+    fun updateNote(title: String, body: String) {
+//        curFolder.updateNote(updatedNote)
+//        folders[DF.ALL_NOTES.ordinal].updateNote(updatedNote)
+        if (curNotePosition == -1 || curNotePosition > notes.size) {
+            Log.d("Model log", "ERROR: updating invalid curNotePosition: $curNotePosition")
+            return
+        }
+        val curNote = notes[curNotePosition]
+        curNote.title = title
+        curNote.body = body
+        curNote.modifyDate = getCurrentTime()
+        notesAdapter?.notifyItemChanged(curNotePosition)
     }
 
     fun addFolder(name: String) {
