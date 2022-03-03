@@ -1,6 +1,8 @@
 package com.example.note.activities
 
+import android.app.Activity
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,6 +26,7 @@ class CreateNoteActivity : AppCompatActivity() {
         val imageBack = findViewById<ImageView>(R.id.imageBack)
         imageBack.setOnClickListener {
             Model.curNotePosition = -1
+            hideKeyboard()
             onBackPressed()
         }
 
@@ -35,6 +38,9 @@ class CreateNoteActivity : AppCompatActivity() {
 
         val saveNoteButton = findViewById<ImageView>(R.id.imageSave)
         saveNoteButton.setOnClickListener { saveNote(); }
+
+        val deleteNoteButton = findViewById<ImageView>(R.id.imageDelete)
+        deleteNoteButton.setOnClickListener { deleteNote(); }
 
         if (intent.getBooleanExtra("clickNote", false)) {
             val noteClickedPosition = intent.getIntExtra("noteClickedPosition", 0)
@@ -63,6 +69,15 @@ class CreateNoteActivity : AppCompatActivity() {
             Model.curNotePosition = -1
         }
 
+        hideKeyboard()
+        onBackPressed()
+    }
+
+    private fun deleteNote() {
+        Model.deleteNote()
+        Model.curNotePosition = -1
+
+        hideKeyboard()
         onBackPressed()
     }
 
@@ -74,5 +89,11 @@ class CreateNoteActivity : AppCompatActivity() {
         textDateTime.text = note.modifyDate
 
         Model.curNotePosition = noteClickedPosition
+    }
+
+    private fun hideKeyboard() {
+        if (currentFocus == null) return
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
     }
 }

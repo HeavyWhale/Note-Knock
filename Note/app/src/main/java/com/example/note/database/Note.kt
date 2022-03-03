@@ -5,7 +5,8 @@ data class Note (
     var title: String = "",
     var body: String = "",
     var createDate: String = "",
-    var modifyDate: String = ""
+    var modifyDate: String = "",
+    var parentFolder: Int = -1
 ) {
     // Stolen from: https://stackoverflow.com/a/37524561/9438200
     override fun equals(other: Any?): Boolean {
