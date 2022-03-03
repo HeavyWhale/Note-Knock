@@ -34,6 +34,18 @@
                                 app:tint="@color/colorIcons"/>
 
                         <ImageView
+                                android:id="@+id/imageDelete"
+                                android:layout_width="@dimen/_23sdp"
+                                android:layout_height="@dimen/_23sdp"
+                                android:layout_marginEnd="@dimen/_35sdp"
+                                android:contentDescription="@string/save_button_description"
+                                android:src="@drawable/ic_delete"
+                                android:tint="@color/pyellow"
+                                app:layout_constraintBottom_toBottomOf="@id/imageBack"
+                                app:layout_constraintEnd_toEndOf="@id/imageSave"
+                                app:layout_constraintTop_toTopOf="@id/imageBack"/>
+
+                        <ImageView
                                 android:id="@+id/imageSave"
                                 android:layout_width="@dimen/_20sdp"
                                 android:layout_height="@dimen/_20sdp"

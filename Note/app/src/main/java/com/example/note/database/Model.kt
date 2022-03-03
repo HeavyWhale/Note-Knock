@@ -75,15 +75,28 @@ object Model {
             else
                 curFolderID
 
-        folders[targetID].addNote(newNote)
+        folders[targetID].addNote(
+            newNote.apply { parentFolder = targetID }
+        )
+
         Log.d("Model log", "Added note ID=${newNote.id}")
         notesAdapter?.notifyItemInserted(0)
     }
 
     // If the id does not exist, do nothing
-    fun deleteNote(id: Int) {
-        curFolder.deleteNote(id)
-        folders[DF.ALL_NOTES.ordinal].deleteNote(id)
+    fun deleteNote() {
+//        curFolder.deleteNote(id)
+//        folders[DF.ALL_NOTES.ordinal].deleteNote(id)
+        if (curNotePosition != -1) {
+            val note = notes[curNotePosition]
+            if (curFolderID != DF.ALL_NOTES.id) {
+                folders[DF.ALL_NOTES.id].deleteNote(note.id!!)
+            } else {
+                folders[note.parentFolder].deleteNote(note.id!!)
+            }
+            notes.removeAt(curNotePosition)
+            notesAdapter?.notifyItemRemoved(curNotePosition)
+        }
     }
 
     fun updateNote(title: String, body: String) {
@@ -99,6 +112,7 @@ object Model {
         curNote.modifyDate = getCurrentTime()
         notesAdapter?.notifyItemChanged(curNotePosition)
     }
+
     fun addFolder(name: String) {
         folders.add( Folder( folderIDCounter, name ) )
         Log.d("Model log", "Added folder ID=${folders.last().id} name=$name")

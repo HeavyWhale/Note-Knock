@@ -41,6 +41,7 @@ class FolderStructure : AppCompatActivity(), FolderAdapter.OnFolderClickListener
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.putExtra("switchFolder", true)
         intent.putExtra("folderClickedPosition", position)
+        // https://stackoverflow.com/a/11461016/9438200
         startActivity(intent)
     }
 
