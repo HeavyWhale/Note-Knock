@@ -8,6 +8,7 @@ object Model {
     /*****************************************************************************
      * Enum subclass for setting up default folders
      ****************************************************************************/
+
     // Usage:
     //      val folder = DefaultFolders.SHOPPING_LIST
     //      println("The folder \"${folder.printableName}\" has id ${folder.id}" )
@@ -84,13 +85,14 @@ object Model {
         curFolder.updateNote(updatedNote)
         folders[DF.ALL_NOTES.ordinal].updateNote(updatedNote)
     }
-
     fun addFolder(name: String) {
         folders.add( Folder( folderIDCounter, name ) )
         Log.d("Model log", "Added folder ID=${folders.last().id} name=$name")
     }
 
-    // For debugging
+    /*****************************************************************************
+     * FUNCTIONS FOR DEBUGGING PURPOSE ONLY
+     ****************************************************************************/
     fun printNotes(firstN: Int = curFolder.notes.size) {
         curFolder.printNotes(firstN)
     }
