@@ -6,15 +6,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note.R
+import com.example.note.database.Folder
 import com.example.note.database.Model
 import com.example.note.database.Note
 
-object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
+class NotesAdapter(private val listener: OnNoteClickListener) :
+    RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
     // create new views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // inflates the card_view_design view
-        // that is used to hold list item
+        // inflates the card_view_design view that is used to hold list item
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item_container, parent, false)
 
@@ -27,7 +28,6 @@ object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
         holder.setNote(notes[position])
     }
 
-
     // return the number of the items in the list
     override fun getItemCount(): Int {
         return Model.notes.size
@@ -38,10 +38,22 @@ object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
     }
 
     // Holds the views for adding it to image and text
-    class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
+    inner class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView), View.OnClickListener {
 
         val textTitle: TextView = itemView.findViewById(R.id.textTitle)
         val textDatetime: TextView = itemView.findViewById(R.id.textDatetime)
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            val notes = Model.notes
+            val position = bindingAdapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                listener.onNoteClick(notes[position], position)
+            }
+        }
 
         fun setNote(note: Note) {
             textTitle.text = note.title
@@ -49,8 +61,7 @@ object NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
         }
     }
 
-//    fun updateView() {
-//        notifyItemRangeRemoved(0, )
-//        notifyItemRangeInserted(0, itemCount)
-//    }
+    interface OnNoteClickListener {
+        fun onNoteClick(note: Note, position: Int)
+    }
 }

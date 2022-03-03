@@ -12,8 +12,6 @@ import com.example.note.database.Model
 class FolderAdapter(private val listener: OnFolderClickListener) :
     RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
 
-//    private lateinit var folderListener: FolderListener
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item_container_folder, parent, false)
@@ -24,11 +22,6 @@ class FolderAdapter(private val listener: OnFolderClickListener) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val folders = Model.folders
         holder.setFolder(folders[position])
-//        holder.layoutFolder.setOnClickListener(object : View.OnClickListener {
-//            override fun onClick(view: View?) {
-//                folderListener.onFolderClicked(folders[position], position)
-//            }
-//        })
     }
 
     override fun getItemCount(): Int {
