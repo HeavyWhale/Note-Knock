@@ -42,4 +42,8 @@ object DbManager {
 
         return conn
     }
+
+    private fun addNote() {
+
+    }
 }
