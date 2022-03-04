@@ -59,4 +59,7 @@ dependencies {
     // Scalable Size Unit
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
+
+    // SQLite database
+    implementation 'org.xerial:sqlite-jdbc:3.30.1'
 }

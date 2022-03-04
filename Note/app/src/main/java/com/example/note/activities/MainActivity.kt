@@ -3,6 +3,7 @@ package com.example.note.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -11,10 +12,14 @@ import com.example.note.R
 import com.example.note.adapters.NotesAdapter
 import com.example.note.database.Model
 import com.example.note.database.Note
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.SQLException
 
 class MainActivity : AppCompatActivity(), NotesAdapter.OnNoteClickListener {
 
     private val adapter = NotesAdapter(this)
+//    private var firstTimeLaunch = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
