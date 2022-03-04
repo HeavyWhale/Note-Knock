@@ -1,5 +1,6 @@
 package com.example.note.database
 
+import com.example.note.entities.Note
 import com.example.note.getCurrentTime
 import kotlin.random.Random
 import kotlin.test.*

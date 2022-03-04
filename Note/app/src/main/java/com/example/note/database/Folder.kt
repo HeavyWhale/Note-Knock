@@ -1,6 +1,7 @@
 package com.example.note.database
 
 import android.util.Log
+import com.example.note.entities.Note
 
 class Folder(val id: Int, var name: String) : java.io.Serializable {
 

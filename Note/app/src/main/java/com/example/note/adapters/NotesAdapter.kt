@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note.R
-import com.example.note.database.Folder
 import com.example.note.database.Model
-import com.example.note.database.Note
+import com.example.note.entities.Note
 
 class NotesAdapter(private val listener: OnNoteClickListener) :
     RecyclerView.Adapter<NotesAdapter.ViewHolder>() {

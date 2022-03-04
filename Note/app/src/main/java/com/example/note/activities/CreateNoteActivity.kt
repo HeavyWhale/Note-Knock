@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.note.R
 import com.example.note.database.Model
-import com.example.note.database.Note
+import com.example.note.entities.Note
 import com.example.note.getCurrentTime
 
 class CreateNoteActivity : AppCompatActivity() {
@@ -55,11 +55,12 @@ class CreateNoteActivity : AppCompatActivity() {
         if (Model.curNotePosition == -1) {
             // Create a new note
             val note = Note(
-                null,
+                0,
                 noteTitle,
                 inputNoteBody.text.toString(),
                 textDateTime.text.toString(),
-                getCurrentTime()
+                getCurrentTime(),
+                Model.id
             )
             Model.addNote(note)
 

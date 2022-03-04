@@ -1,16 +1,15 @@
 package com.example.note.database
 
-import android.provider.BaseColumns
 import android.util.Log
 import com.example.note.adapters.NotesAdapter
+import com.example.note.entities.Note
 import com.example.note.getCurrentTime
-import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
 
 object Model {
 
-    private val dbConn = initDB()
+//    private val dbConn = initDB()
 
     /*****************************************************************************
      * Enum subclass for setting up default folders
@@ -29,46 +28,51 @@ object Model {
         val id: Int = ordinal
     }
 
-    private fun initDB(): Connection? {
-        var conn: Connection? = null
-        try {
-            val url = "jdbc:sqlite:allnotes.db"
-            conn = DriverManager.getConnection(url)
-            Log.d("Database", "INFO: Connection to SQLite has been established.")
-        } catch (e: SQLException) {
-            Log.d("Database", "ERROR: ${e.message}")
-        }
-
-        // Add tables to db
-        val createNotesTableQuery =
-            "CREATE TABLE Notes (" +
-                    "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                    "Title TEXT," +
-                    "Body TEXT," +
-                    "CreateDate TEXT," +
-                    "ModifyDate TEXT," +
-                    "ParentFolder INTEGER PRIMARY KEY)"
-        val createFoldersTableQuery =
-            "CREATE TABLE Folders (" +
-                    "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                    "Name TEXT)"
-
-        if (conn != null) {
-            with (conn) {
-                createStatement().execute(createNotesTableQuery)
-                createStatement().execute(createFoldersTableQuery)
-            }
-        }
-
-        for (folder in DF.values()) {
-            val insertDefaultFolder =
-                "INSERT INTO Folders(name)" +
-                        "VALUES (${folder.printableName}) "
-            conn!!.createStatement().execute(insertDefaultFolder)
-        }
-
-        return conn
-    }
+//    private fun initDB(): Connection? {
+//        var conn: Connection? = null
+//        try {
+//            val url = "jdbc:sqlite:allnotes.db"
+//            conn = DriverManager.getConnection(url)
+//            Log.d("Database", "INFO: Connection to SQLite has been established.")
+//        } catch (e: SQLException) {
+//            Log.d("Database", "ERROR: ${e.message}")
+//        }
+//
+//        // Add tables to db
+//        val createNotesTableQuery =
+//            "CREATE TABLE Notes (" +
+//                    "${BaseColumns._ID} INTEGER PRIMARY KEY," +
+//                    "Title TEXT," +
+//                    "Body TEXT," +
+//                    "CreateDate TEXT," +
+//                    "ModifyDate TEXT," +
+//                    "ParentFolder INTEGER PRIMARY KEY)"
+//        val createFoldersTableQuery =
+//            "CREATE TABLE Folders (" +
+//                    "${BaseColumns._ID} INTEGER PRIMARY KEY," +
+//                    "Name TEXT)"
+//
+//        if (conn != null) {
+//            with (conn) {
+//                createStatement().execute(createNotesTableQuery)
+//                createStatement().execute(createFoldersTableQuery)
+//            }
+//        }
+//
+//        // Add default folders to Folders table
+//        for (folder in DF.values()) {
+//            val cv = ContentValues().put("Name", folder.printableName)
+//
+//            val result = db.insert(TABLE_NAME,null,cv)
+//
+//            val insertDefaultFolder =
+//                "INSERT INTO Folders(name)" +
+//                        "VALUES (${folder.printableName}) "
+//            conn!!.createStatement().execute(insertDefaultFolder)
+//        }
+//
+//        return conn
+//    }
 
     /*****************************************************************************
      * Properties
@@ -110,24 +114,25 @@ object Model {
      ****************************************************************************/
 
     fun addNote(note: Note) {
-        val newNote = note.copy(id = noteIDCounter)
-
-        // Save a copy to all notes
-        folders[DF.ALL_NOTES.id].addNote(newNote)
-
-        // Set target id to "Snippet" folder id if currently in "All Notes" folder
-        val targetID =
-            if (curFolderID == DF.ALL_NOTES.id)
-                DF.SNIPPETS.id
-            else
-                curFolderID
-
-        folders[targetID].addNote(
-            newNote.apply { parentFolder = targetID }
-        )
-
-        Log.d("Model log", "Added note ID=${newNote.id}")
-        notesAdapter?.notifyItemInserted(0)
+//        val newNote = note.copy(id = noteIDCounter)
+//
+//        // Save a copy to all notes
+//        folders[DF.ALL_NOTES.id].addNote(newNote)
+//
+//        // Set target id to "Snippet" folder id if currently in "All Notes" folder
+//        val targetID =
+//            if (curFolderID == DF.ALL_NOTES.id)
+//                DF.SNIPPETS.id
+//            else
+//                curFolderID
+//
+//        folders[targetID].addNote(
+//            newNote.apply { parentFolder = targetID }
+//        )
+//
+//        Log.d("Model log", "Added note ID=${newNote.id}")
+//        notesAdapter?.notifyItemInserted(0)
+        NotesDb.getInstance(this).notesDao().insertNote(note))
     }
 
     // If the id does not exist, do nothing

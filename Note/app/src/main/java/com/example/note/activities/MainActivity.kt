@@ -3,7 +3,6 @@ package com.example.note.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -11,10 +10,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.R
 import com.example.note.adapters.NotesAdapter
 import com.example.note.database.Model
-import com.example.note.database.Note
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.SQLException
+import com.example.note.entities.Note
 
 class MainActivity : AppCompatActivity(), NotesAdapter.OnNoteClickListener {
 
