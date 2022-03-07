@@ -6,7 +6,9 @@ data class Note (
     var body: String = "",
     var createDate: String = "",
     var modifyDate: String = "",
-    var parentFolder: Int = -1
+    var parentFolder: Int = -1,
+    var reminders: MutableList<Reminder> = mutableListOf<Reminder>()
+
 ) {
     // Stolen from: https://stackoverflow.com/a/37524561/9438200
     override fun equals(other: Any?): Boolean {
