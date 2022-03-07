@@ -1,5 +1,7 @@
 package com.example.note
 
+import android.app.Activity
+import android.view.inputmethod.InputMethodManager
 import java.text.SimpleDateFormat
 import java.util.*
 

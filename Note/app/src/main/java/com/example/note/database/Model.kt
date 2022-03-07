@@ -1,5 +1,6 @@
 package com.example.note.database
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.note.database.entities.Folder
 import com.example.note.database.entities.Note
@@ -61,6 +62,7 @@ object Model {
      ****************************************************************************/
 
     fun insertNote(noteID: Int = 0, title: String, body: String, folderID: Int) {
+        Log.d("Model", "Insert/update note ID $noteID to folder $folderID")
         Note(noteID, title, body, getCurrentTime(), getCurrentTime(), folderID).let {
             noteDao.insert(it)
         }
@@ -81,15 +83,14 @@ object Model {
         ).let { noteDao.update(it) }
     }
 
-    fun getAllNotes(): LiveData<List<Note>> {
-        return noteDao.getAll()
-    }
-
     fun getNoteByID(noteID: Int): Note {
         return noteDao.getNoteByID(noteID)
     }
 
     fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> {
+        if (folderID == 1) {  // All Notes folder
+            return noteDao.getAllNotes()
+        }
         return noteDao.getNotesByFolderID(folderID)
     }
 

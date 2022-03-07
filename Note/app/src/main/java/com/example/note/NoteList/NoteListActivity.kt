@@ -93,8 +93,6 @@ class NoteListActivity : AppCompatActivity() {
 //        }
 //    }
 
-
-
 //    private fun switchFolder(folderClickedPosition: Int) {
 //        Model.curFolderID = folderClickedPosition
 //        val currFolderName = Model.name
@@ -104,8 +102,8 @@ class NoteListActivity : AppCompatActivity() {
 //        textView.text = currFolderName
 //    }
 
-    companion object {
-        const val REQUEST_CODE_ADD_NOTE = 1
-        const val REQUEST_CODE_UPDATE_NOTE = 2
-    }
+//    companion object {
+//        const val REQUEST_CODE_ADD_NOTE = 1
+//        const val REQUEST_CODE_UPDATE_NOTE = 2
+//    }
 }

@@ -30,6 +30,7 @@ class FolderAdapter(private val onClick: (Folder) -> Unit) :
                 currentFolder = this
                 folderName.text = name
                 folderSize.text = Model.getNotesCountByFolderID(id).toString()
+//                Log.d("FolderAdapter", "Binding folder $name with size ${folderSize.text}")
             }
         }
     }
@@ -43,7 +44,6 @@ class FolderAdapter(private val onClick: (Folder) -> Unit) :
     override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-
 }
 
 object FoldersDiffCallback : DiffUtil.ItemCallback<Folder>() {

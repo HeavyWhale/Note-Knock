@@ -2,11 +2,13 @@
 
 package com.example.note.FolderList
 
+import android.app.Activity
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -64,9 +66,13 @@ class FolderListActivity : AppCompatActivity() {
                 // Add the new folder
                 Model.addFolder(folderName)
                 dialog.dismiss()
+                hideKeyboard()
             }
         }
-        cancelButton.setOnClickListener { dialog.dismiss() }
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+            hideKeyboard()
+        }
         dialog.show()
     }
 
@@ -76,5 +82,11 @@ class FolderListActivity : AppCompatActivity() {
             putExtra(EXTRA_FOLDER_ID, folder.id)
         }
         startActivity(intent)
+    }
+
+    private fun hideKeyboard() {
+        if (currentFocus == null) return
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
     }
 }

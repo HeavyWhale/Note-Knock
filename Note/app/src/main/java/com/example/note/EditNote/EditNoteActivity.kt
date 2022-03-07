@@ -61,14 +61,20 @@ class EditNoteActivity : AppCompatActivity() {
     }
 
     private fun saveNote() {
-        // save to model only if title or body has text
+        // Save to model only if title or body has text
         if (inputNoteBody.text.isNotEmpty() || inputNoteTitle.text.isNotEmpty()) {
+            // Change folderID to Snippets if we are in All Notes folder
+            val folderID = if (currentFolderID == 1) 2 else currentFolderID
             Model.insertNote(
                 noteID = currentNoteID,
                 title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
                 body = inputNoteBody.text.toString(),
-                folderID = currentFolderID
+                folderID = folderID
             )
+        } else {
+            // Since both title and body of the note are empty, we simply delete or
+            // discard the current note
+            if (currentNoteID != 0) { Model.deleteNote(currentNoteID) }
         }
         hideKeyboard()
         finish()
