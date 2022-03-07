@@ -30,7 +30,6 @@ class FolderAdapter(private val onClick: (Folder) -> Unit) :
                 currentFolder = this
                 folderName.text = name
                 folderSize.text = Model.getNotesCountByFolderID(id).toString()
-//                Log.d("FolderAdapter", "Binding folder $name with size ${folderSize.text}")
             }
         }
     }

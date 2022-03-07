@@ -48,6 +48,9 @@ interface NoteDao {
     @Query("SELECT * FROM notes ORDER BY modifyTime DESC")
     fun getNotesOrderedByModifyTime(): List<Note>
 
+    @Query("SELECT count(*) FROM notes")
+    fun getAllNotesCount(): Int
+
     @Query("SELECT count(*) FROM notes WHERE folderID = :folderID")
     fun getNotesCountByFolderID(folderID: Int): Int
 }

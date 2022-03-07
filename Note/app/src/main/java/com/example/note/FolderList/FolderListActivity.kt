@@ -2,11 +2,13 @@
 
 package com.example.note.FolderList
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.util.Log
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -24,6 +26,8 @@ import com.example.note.database.entities.Folder
 
 class FolderListActivity : AppCompatActivity() {
 
+    lateinit var folderAdapter: FolderAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppDatabase.destroyInstance()
@@ -31,7 +35,7 @@ class FolderListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_folder_structure)
 
         // Generate folderAdapter for recycler view to apply to each note
-        val folderAdapter = FolderAdapter { folder -> selectFolderOnClick(folder) }
+        folderAdapter = FolderAdapter { folder -> selectFolderOnClick(folder) }
 
         // Find all views
         val addFolderButton = findViewById<ImageView>(R.id.imageAddFolder)
@@ -48,6 +52,12 @@ class FolderListActivity : AppCompatActivity() {
         folderListRecyclerView.adapter = folderAdapter
         folderListRecyclerView.layoutManager =
             StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onResume() {
+        super.onResume()
+        folderAdapter.notifyDataSetChanged()
     }
 
     private fun showCreateFolderDialog() {

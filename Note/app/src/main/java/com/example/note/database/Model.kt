@@ -95,6 +95,9 @@ object Model {
     }
 
     fun getNotesCountByFolderID(folderID: Int): Int {
+        if (folderID == 1) {  // All Notes folder
+            return noteDao.getAllNotesCount()
+        }
         return noteDao.getNotesCountByFolderID(folderID)
     }
 
