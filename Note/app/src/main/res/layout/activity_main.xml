@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/gray"
-        tools:context=".activities.MainActivity">
+        tools:context=".NoteList.NoteListActivity">
 
         <RelativeLayout
                 android:id="@+id/topTitle"
@@ -136,7 +136,6 @@
                 app:layout_constraintBottom_toTopOf="@id/layoutQuickActions"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/layoutQuickActions"
-                android:onClick="createNote"
                 app:tint="?colorPrimary"/>
 
 
