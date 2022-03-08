@@ -14,7 +14,8 @@ data class Note(
     var body: String = "",
     var createTime: String = "",
     var modifyTime: String = "",
-    var folderID: Int = -1
+    var folderID: Int = -1,
+    var reminders: MutableList<Reminder> = mutableListOf<Reminder>()
 
 ) : java.io.Serializable
 
