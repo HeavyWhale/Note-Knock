@@ -12,13 +12,14 @@
                   android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/_8sdp"
                   android:background="@drawable/background_list_item_folder">
         <CheckBox
                 android:id="@+id/checkbox"
                 android:layout_width="@dimen/_270sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Test Checklist Item"
                 android:fontFamily="@font/ubuntu_regular"
                 android:textColor="@color/white"
                 android:includeFontPadding="false"
@@ -38,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         android:fontFamily="@font/ubuntu_regular"
         android:textColor="@color/rubai"
         android:includeFontPadding="false"
