@@ -1,7 +1,9 @@
 package com.example.note.database
 
 import android.util.Log
-import com.example.note.adapters.NotesAdapter
+import androidx.lifecycle.LiveData
+import com.example.note.database.entities.Folder
+import com.example.note.database.entities.Note
 import com.example.note.getCurrentTime
 
 object Model {
@@ -23,121 +25,135 @@ object Model {
         val id: Int = ordinal
     }
 
+    init {
+        addDefaultFolders()
+    }
+
     /*****************************************************************************
      * Properties
      ****************************************************************************/
 
     // Container for all folders
-    val folders: MutableList<Folder> = DF
-        .values()
-        .map { Folder( it.id, it.printableName ) }
-        .toMutableList()
-
-    // pointer to current folder
-    var curFolderID = 0
-        set(value) {
-            field = value
-            Log.d("INFO: Model::curFolderID", "Switched to folder $curFolder at position $value")
-        }
+//    val folders: MutableList<Folder> = DF
+//        .values()
+//        .map { Folder( it.id, it.printableName ) }
+//        .toMutableList()
+//
+//    // pointer to current folder
+//    var curFolderID = 0
+//        set(value) {
+//            field = value
+//            Log.d("INFO", "Model::curFolderID - Switched to folder $curFolder at position $value")
+//        }
 
     /**************** Aliases ****************/
-    val curFolder get() = folders[curFolderID]
-    // Mimic class Folder's properties, pointed by curFolder
-    val notes get() = curFolder.notes
-    val id    get() = curFolder.id
-    val name  get() = curFolder.name
+    private val noteDao   get() = AppDatabase.INSTANCE?.getNoteDao()!!
+    private val folderDao get() = AppDatabase.INSTANCE?.getFolderDao()!!
 
-    var curNotePosition : Int = -1
+//    val curFolder get() = folderDao.getFolderNameByID(curFolderID)
+//    val folders   get() = folderDao.getAll()
+//    val notes     get() = noteDao.getNotesByFolderID(curFolderID)
 
-    var notesAdapter : NotesAdapter? = null
+//    var curNotePosition : Int = -1
 
-    /****************** Private Counters ******************/
-    private var noteIDCounter = 0
-        get() = field++     // auto-increment on reference
-
-    private var folderIDCounter = folders.size
-        get() = field++
 
     /*****************************************************************************
      * Public Functions
      ****************************************************************************/
 
-    fun addNote(note: Note) {
-        val newNote = note.copy(id = noteIDCounter)
-
-        // Save a copy to all notes
-        folders[DF.ALL_NOTES.id].addNote(newNote)
-
-        // Set target id to "Snippet" folder id if currently in "All Notes" folder
-        val targetID =
-            if (curFolderID == DF.ALL_NOTES.id)
-                DF.SNIPPETS.id
-            else
-                curFolderID
-
-        folders[targetID].addNote(
-            newNote.apply { parentFolder = targetID }
-        )
-
-        Log.d("Model log", "Added note ID=${newNote.id}")
-        notesAdapter?.notifyItemInserted(0)
+    fun insertNote(noteID: Int = 0, title: String, body: String, folderID: Int) {
+        Log.d("Model", "Insert/update note ID $noteID to folder $folderID")
+        Note(noteID, title, body, getCurrentTime(), getCurrentTime(), folderID).let {
+            noteDao.insert(it)
+        }
     }
 
     // If the id does not exist, do nothing
-    fun deleteNote() {
-//        curFolder.deleteNote(id)
-//        folders[DF.ALL_NOTES.ordinal].deleteNote(id)
-        if (curNotePosition != -1) {
-            val note = notes[curNotePosition]
-            if (curFolderID != DF.ALL_NOTES.id) {
-                folders[DF.ALL_NOTES.id].deleteNote(note.id!!)
-            } else {
-                folders[note.parentFolder].deleteNote(note.id!!)
-            }
-            notes.removeAt(curNotePosition)
-            notesAdapter?.notifyItemRemoved(curNotePosition)
-        }
+    fun deleteNote(noteID: Int) {
+        noteDao.delete(Note(id = noteID))
     }
 
-    fun updateNote(title: String, body: String) {
-//        curFolder.updateNote(updatedNote)
-//        folders[DF.ALL_NOTES.ordinal].updateNote(updatedNote)
-        if (curNotePosition == -1 || curNotePosition > notes.size) {
-            Log.d("Model log", "ERROR: updating invalid curNotePosition: $curNotePosition")
-            return
+    fun updateNote(noteID: Int, title: String, body: String, folderID: Int = -1) {
+        val previousNote = noteDao.getNoteByID(noteID)
+
+        Note(noteID, title, body,
+            createTime = previousNote.createTime,
+            modifyTime = getCurrentTime(),
+            folderID = if (folderID != -1) previousNote.folderID else folderID
+        ).let { noteDao.update(it) }
+    }
+
+    fun getNoteByID(noteID: Int): Note {
+        return noteDao.getNoteByID(noteID)
+    }
+
+    fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> {
+        if (folderID == 1) {  // All Notes folder
+            return noteDao.getAllNotes()
         }
-        val curNote = notes[curNotePosition]
-        curNote.title = title
-        curNote.body = body
-        curNote.modifyDate = getCurrentTime()
-        notesAdapter?.notifyItemChanged(curNotePosition)
+        return noteDao.getNotesByFolderID(folderID)
+    }
+
+    fun getNotesCountByFolderID(folderID: Int): Int {
+        if (folderID == 1) {  // All Notes folder
+            return noteDao.getAllNotesCount()
+        }
+        return noteDao.getNotesCountByFolderID(folderID)
     }
 
     fun addFolder(name: String) {
-        folders.add( Folder( folderIDCounter, name ) )
-        Log.d("Model log", "Added folder ID=${folders.last().id} name=$name")
+        folderDao.insert(Folder(id = 0, name = name))
+    }
+
+    fun deleteFolder(folderID: Int) {
+        folderDao.delete(Folder(id = folderID))
+    }
+
+    fun updateFolder(folderID: Int, name: String) {
+        folderDao.update(Folder(folderID, name))
+    }
+
+    fun getAllFolders(): LiveData<List<Folder>> {
+        return folderDao.getAll()
+    }
+
+    fun getFolderNameByID(folderID: Int): String {
+        return folderDao.getFolderNameByID(folderID)
+    }
+
+    /*****************************************************************************
+     * Private Functions
+     ****************************************************************************/
+
+    private fun addDefaultFolders() {
+        val defaultFolders = DF
+            .values()
+            .map { Folder( 0, it.printableName ) }
+            .toTypedArray()
+        println("HERE" + folderDao)
+        folderDao.insertAll(*defaultFolders)
     }
 
     /*****************************************************************************
      * FUNCTIONS FOR DEBUGGING PURPOSE ONLY
      ****************************************************************************/
-    fun printNotes(firstN: Int = curFolder.notes.size) {
-        curFolder.printNotes(firstN)
-    }
-
-    fun getNoteCounter():   Int = --noteIDCounter
-    fun getFolderCounter(): Int = --folderIDCounter
-
-    fun reset() {
-        folders.clear()
-        folders.addAll( DF
-            .values()
-            .map { Folder( it.id, it.printableName ) }
-            .toMutableList()
-        )
-
-        curFolderID = 0
-        noteIDCounter = 0
-        curFolderID = 0
-    }
+//    fun printNotes(firstN: Int = curFolder.notes.size) {
+//        curFolder.printNotes(firstN)
+//    }
+//
+//    fun getNoteCounter():   Int = --noteIDCounter
+//    fun getFolderCounter(): Int = --folderIDCounter
+//
+//    fun reset() {
+//        folders.clear()
+//        folders.addAll( DF
+//            .values()
+//            .map { Folder( it.id, it.printableName ) }
+//            .toMutableList()
+//        )
+//
+//        curFolderID = 0
+//        noteIDCounter = 0
+//        curFolderID = 0
+//    }
 }
