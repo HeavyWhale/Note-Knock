@@ -114,6 +114,7 @@ object Model {
 
     fun deleteFolder(folderID: Int) {
         folderDao.delete(Folder(id = folderID))
+        noteDao.deleteAllNotesFromFolderID(folderID)
     }
 
     fun updateFolder(folderID: Int, name: String) {
@@ -126,6 +127,11 @@ object Model {
 
     fun getFolderNameByID(folderID: Int): String {
         return folderDao.getFolderNameByID(folderID)
+    }
+
+    fun getFolderIDByPosition(position: Int): Int {
+        val folders = folderDao.getFolderList()
+        return folders[position].id
     }
 
     /*****************************************************************************

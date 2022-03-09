@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import android.util.Log
+import android.view.MenuItem
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -52,12 +53,31 @@ class FolderListActivity : AppCompatActivity() {
         folderListRecyclerView.adapter = folderAdapter
         folderListRecyclerView.layoutManager =
             StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+
+        registerForContextMenu(folderListRecyclerView)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
         folderAdapter.notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val position = item.order
+        return when (item.itemId) {
+            1 -> {
+                if (position < 4) {
+                    Toast.makeText(baseContext, "Default folders cannot be deleted!", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+                Model.deleteFolder(Model.getFolderIDByPosition(position))
+                folderAdapter.notifyDataSetChanged()
+                true
+            }
+            else -> super.onContextItemSelected(item)
+        }
     }
 
     private fun showCreateFolderDialog() {

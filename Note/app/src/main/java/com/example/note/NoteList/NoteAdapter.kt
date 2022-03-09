@@ -15,8 +15,6 @@ import kotlin.properties.Delegates
 class NoteAdapter(private val onClick: (Note) -> Unit) :
     ListAdapter<Note, NoteAdapter.NoteViewHolder>(NotesDiffCallback) {
 
-    var currNote by Delegates.notNull<Note>()
-
     class NoteViewHolder(itemView: View, val onClick: (Note) -> Unit) :
         RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener  {
 
