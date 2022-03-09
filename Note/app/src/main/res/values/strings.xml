@@ -13,4 +13,5 @@
     <string name="create_for_button">Create</string>
     <string name="cancel_for_button">Cancel</string>
     <string name="add_checkbox">add checkbox</string>
+    <string name="schedule_notification">Schedule Notification</string>
 </resources>

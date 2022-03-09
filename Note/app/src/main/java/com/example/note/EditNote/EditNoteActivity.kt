@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.*
+import com.example.note.Notification.Notification
 import com.example.note.database.Model
 import com.example.note.database.entities.Note
 import kotlin.properties.Delegates
@@ -44,6 +45,7 @@ class EditNoteActivity : AppCompatActivity() {
         val saveNoteButton = findViewById<ImageView>(R.id.imageSave)
         val deleteNoteButton = findViewById<ImageView>(R.id.imageDelete)
         val addReminderButton = findViewById<ImageView>(R.id.imageAddReminder)
+        val redoButton = findViewById<ImageView>(R.id.redo)
         inputNoteTitle = findViewById(R.id.inputNoteTitle)
         inputNoteBody = findViewById(R.id.inputNote)
         textDateTime = findViewById(R.id.TextDateTime)
@@ -54,6 +56,7 @@ class EditNoteActivity : AppCompatActivity() {
         saveNoteButton.setOnClickListener { saveNote() }
         deleteNoteButton.setOnClickListener { deleteNote() }
         addReminderButton.setOnClickListener { addReminder() }
+        redoButton.setOnClickListener{ addNotification() }
         textDateTime.text = getCurrentTime()
         Model.getRemindersByNoteID(currentNoteID).observe(this) { reminders ->
             checklistAdapter.submitList(reminders)
@@ -116,5 +119,10 @@ class EditNoteActivity : AppCompatActivity() {
     private fun addReminder() {
         Model.insertReminder(0, "", "",  currentNoteID)
         checklistAdapter.notifyDataSetChanged()
+    }
+
+    private fun addNotification() {
+        val intent = Intent(this, Notification::class.java)
+        startActivity(intent)
     }
 }
