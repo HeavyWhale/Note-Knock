@@ -25,7 +25,7 @@ class Notification : AppCompatActivity() {
     }
 
     private fun scheduleNotification() {
-        val intent = Intent(applicationContext, Notification::class.java)
+        val intent = Intent(applicationContext, SendNotification::class.java)
         val title = binding.TitleET.text.toString()
         val message = binding.messageET.text.toString()
         intent.putExtra(titleExtra, title)
