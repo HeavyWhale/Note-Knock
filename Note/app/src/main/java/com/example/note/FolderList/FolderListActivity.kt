@@ -86,7 +86,7 @@ class FolderListActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // Opens EditNoteActivity when RecyclerView item (a note) is clicked, but is updating a previous note
+    // Opens NoteListActivity when RecyclerView item (a folder) is clicked, but is updating a previous folder
     private fun selectFolderOnClick(folder: Folder) {
         val intent = Intent(applicationContext, NoteListActivity::class.java).apply {
             putExtra(EXTRA_FOLDER_ID, folder.id)

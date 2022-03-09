@@ -23,7 +23,8 @@
                 android:fontFamily="@font/ubuntu_regular"
                 android:textColor="@color/white"
                 android:includeFontPadding="false"
-                android:textSize="@dimen/_13ssp"/>
+                android:textSize="@dimen/_13ssp"
+                android:hint="@string/type_note_here"/>
 
         <ImageView
                 android:id="@+id/setNotification"

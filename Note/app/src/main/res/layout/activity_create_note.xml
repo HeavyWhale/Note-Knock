@@ -121,7 +121,6 @@
                                 android:layout_marginStart="@dimen/_12sdp"
                                 android:layout_marginTop="@dimen/_15sdp"
                                 android:layout_marginEnd="@dimen/_12sdp"
-                                android:visibility="gone"
                                 android:clipToPadding="false"
                                 android:paddingStart="0dp"
                                 android:paddingEnd="@dimen/_12sdp"
@@ -143,7 +142,7 @@
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <ImageView
-                        android:id="@+id/imageAddNote"
+                        android:id="@+id/imageAddReminder"
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:layout_marginStart="@dimen/_14sdp"
