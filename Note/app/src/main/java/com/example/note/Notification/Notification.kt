@@ -22,6 +22,10 @@ class Notification : AppCompatActivity() {
         binding.submitBottom.setOnClickListener {
             scheduleNotification()
         }
+        
+        binding.imageBack.setOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun scheduleNotification() {
