@@ -22,6 +22,9 @@ interface FolderDao {
     @Query("SELECT * FROM folders ORDER BY id ASC")
     fun getAll(): LiveData<List<Folder>>
 
+    @Query("SELECT * FROM folders ORDER BY id ASC")
+    fun getFolderList(): List<Folder>
+
     @Query("SELECT name FROM folders WHERE id = :id")
     fun getFolderNameByID(id: Int): String
 

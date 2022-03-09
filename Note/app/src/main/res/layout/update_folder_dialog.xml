@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="match_parent"
+                                                     android:background="@color/gray">
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+                android:id="@+id/update_folder_dialog_content"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/update_folder_dialog_title"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/ubuntu_bold"
+                    android:ellipsize="end"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:text="@string/update_folder_dialog_title"
+                    android:maxLines="3"
+                    android:textAlignment="center"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:textAllCaps="false"/>
+
+            <EditText
+                    android:id="@+id/curr_folder_name"
+                    android:inputType="text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/ubuntu_regular"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:hint="@string/enter_folder_name"
+                    android:textColorHint="@color/colorTextHint"
+                    android:importantForAutofill="no"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                <Button
+                        android:id="@+id/update_folder_cancel_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="55dp"
+                        android:layout_weight="0.5"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:fontFamily="@font/ubuntu_regular"
+                        android:textColor="@color/white"
+                        android:text="@string/cancel_for_button" />
+
+                <Button
+                        android:id="@+id/update_folder_done_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="55dp"
+                        android:layout_weight="0.5"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:fontFamily="@font/ubuntu_regular"
+                        android:textColor="@color/white"
+                        android:text="@string/done_button" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

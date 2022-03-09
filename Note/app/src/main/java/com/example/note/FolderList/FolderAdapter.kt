@@ -1,5 +1,6 @@
 package com.example.note.FolderList
 
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,7 @@ class FolderAdapter(private val onClick: (Folder) -> Unit) :
     ListAdapter<Folder, FolderAdapter.FolderViewHolder>(FoldersDiffCallback) {
 
     class FolderViewHolder(itemView: View, val onClick: (Folder) -> Unit) :
-        RecyclerView.ViewHolder(itemView)  {
+        RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener  {
 
         private val folderName: TextView = itemView.findViewById(R.id.folderName)
         private val folderSize: TextView = itemView.findViewById(R.id.folderSize)
@@ -23,6 +24,7 @@ class FolderAdapter(private val onClick: (Folder) -> Unit) :
 
         init {
             itemView.setOnClickListener { currentFolder?.let { onClick(it) } }
+            itemView.setOnCreateContextMenuListener(this)
         }
 
         fun bind(folder: Folder) {
@@ -31,6 +33,11 @@ class FolderAdapter(private val onClick: (Folder) -> Unit) :
                 folderName.text = name
                 folderSize.text = Model.getNotesCountByFolderID(id).toString()
             }
+        }
+
+        override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+            menu.add(0, 1, bindingAdapterPosition, R.string.delete)   // 0=?, 1=id
+            menu.add(0, 2, bindingAdapterPosition, R.string.rename)
         }
     }
 

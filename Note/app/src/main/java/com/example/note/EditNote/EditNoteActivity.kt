@@ -51,7 +51,7 @@ class EditNoteActivity : AppCompatActivity() {
 //            onBackPressed()
 //        }
 
-        val format = SimpleDateFormat("EEEE, yyyy-MM-dd at HH:mm a", Locale.US)
+        val format = SimpleDateFormat("EEEE, yyyy-MM-dd HH:mm a", Locale.US)
         // Set content of title, body and timestamp according to received intent
         when (isUpdate) {
             false -> {

@@ -69,9 +69,7 @@ class NoteListActivity : AppCompatActivity() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-//        val note = noteAdapter.currNote
         val position = item.order
-        Log.d("noteactivity", "selected note position $position")
         return when (item.itemId) {
             1 -> {
                 deleteNote(Model.getNoteIDByPosition(position, currentFolderID))
