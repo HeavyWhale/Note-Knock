@@ -37,6 +37,7 @@ class FolderAdapter(private val onClick: (Folder) -> Unit) :
 
         override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
             menu.add(0, 1, bindingAdapterPosition, R.string.delete)   // 0=?, 1=id
+            menu.add(0, 2, bindingAdapterPosition, R.string.rename)
         }
     }
 

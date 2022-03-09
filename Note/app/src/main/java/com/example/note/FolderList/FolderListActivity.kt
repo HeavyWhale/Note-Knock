@@ -76,6 +76,16 @@ class FolderListActivity : AppCompatActivity() {
                 folderAdapter.notifyDataSetChanged()
                 true
             }
+            2 -> {
+                if (position < 4) {
+                    Toast.makeText(baseContext, "Default folders cannot be renamed!", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+                val folderID = Model.getFolderIDByPosition(position)
+                val folderName = Model.getFolderNameByID(folderID)
+                showUpdateFolderDialog(folderID, folderName)
+                true
+            }
             else -> super.onContextItemSelected(item)
         }
     }
@@ -91,10 +101,38 @@ class FolderListActivity : AppCompatActivity() {
         createButton.setOnClickListener {
             val folderName = dialog.findViewById<EditText>(R.id.folder_name).text.toString()
             if (folderName.isEmpty()) {
-                Toast.makeText(baseContext, "Please name your folder!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, "Do not leave folder name blank", Toast.LENGTH_SHORT).show()
             } else {
                 // Add the new folder
                 Model.addFolder(folderName)
+                dialog.dismiss()
+                hideKeyboard()
+            }
+        }
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+            hideKeyboard()
+        }
+        dialog.show()
+    }
+
+    private fun showUpdateFolderDialog(folderID: Int, folderName: String) {
+        val dialog = Dialog(this).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setCancelable(false)
+            setContentView(R.layout.update_folder_dialog)
+        }
+        val doneButton = dialog.findViewById<Button>(R.id.update_folder_done_btn)
+        val cancelButton = dialog.findViewById<Button>(R.id.update_folder_cancel_btn)
+        val editFolderName = dialog.findViewById<EditText>(R.id.curr_folder_name)
+        editFolderName.setText(folderName)
+        doneButton.setOnClickListener {
+            val updatedName = editFolderName.text.toString()
+            if (updatedName.isEmpty()) {
+                Toast.makeText(baseContext, "Do not leave folder name blank", Toast.LENGTH_SHORT).show()
+            } else {
+                // Update folder's name
+                Model.updateFolder(folderID, updatedName)
                 dialog.dismiss()
                 hideKeyboard()
             }
