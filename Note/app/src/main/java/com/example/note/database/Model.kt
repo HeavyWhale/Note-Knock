@@ -74,7 +74,7 @@ object Model {
         reminderDao.delete(Reminder(id = reminderID))
     }
 
-    fun updateReminder(reminderID: Int, body: String, time: String, noteID: Int = -1, reminderOff: Boolean) {
+    fun updateReminder(reminderID: Int, body: String, time: String, noteID: Int, reminderOff: Boolean) {
         val previousReminder = reminderDao.getReminderByID(reminderID)
         Reminder(reminderID, body, time,
             noteID = if (noteID != -1) previousReminder.noteID else noteID,

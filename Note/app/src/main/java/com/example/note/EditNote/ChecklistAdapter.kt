@@ -1,15 +1,20 @@
 package com.example.note.EditNote
 
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.note.Notification.Notification
 import com.example.note.R
+import com.example.note.database.Model
 import com.example.note.database.entities.Reminder
 
 class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
@@ -26,6 +31,24 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
 
         init {
             itemView.setOnClickListener{ currentReminder?.let{ onClick(it) } }
+            itemView.setOnFocusChangeListener{ _, hasFocus ->
+                Log.d("Checklist", "Focus changed")
+                if(!hasFocus) {
+                    Log.d("Checklist", "enter focus check.")
+                    currentReminder?.let {
+                        Log.d("Checklist", "Focus changed.")
+                        Model.updateReminder(
+                            reminderID = it.id,
+                            body = checkboxBody.text.toString(),
+                            time = dateTime.text.toString(),
+                            noteID = it.noteID,
+                            reminderOff = checkbox.isChecked
+                        )
+                    }
+                }
+            }
+
+            notificationButton.setOnClickListener{}
         }
 
         fun bind(reminder: Reminder) {

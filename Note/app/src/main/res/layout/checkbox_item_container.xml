@@ -21,10 +21,10 @@
 
         <EditText
                 android:id="@+id/checkboxBody"
-                android:layout_width="@dimen/_205sdp"
+                android:layout_width="@dimen/_210sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
                 android:background="@null"
                 android:fontFamily="@font/ubuntu_regular"
                 android:gravity="top"
@@ -39,7 +39,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="8.00dp"
                 android:src="@drawable/ic_edit_calendar"
-                app:tint="@color/colorSearchIcons"/>
+                app:tint="@color/colorIcons"/>
     </LinearLayout>>
 
     <TextView
