@@ -61,9 +61,10 @@ object Model {
      * Public Functions
      ****************************************************************************/
 
-    fun insertNote(noteID: Int = 0, title: String, body: String, folderID: Int) {
-        Log.d("Model", "Insert/update note ID $noteID to folder $folderID")
-        Note(noteID, title, body, getCurrentTime(), getCurrentTime(), folderID).let {
+    fun insertNote(noteID: Int = 0, title: String, body: String, createTime: Long, folderID: Int) {
+        val currentTime = System.currentTimeMillis()
+        Log.d("Model", "Insert note ID $noteID to folder $folderID at time $currentTime")
+        Note(noteID, title, body, createTime, currentTime, folderID).let {
             noteDao.insert(it)
         }
     }
@@ -75,12 +76,18 @@ object Model {
 
     fun updateNote(noteID: Int, title: String, body: String, folderID: Int = -1) {
         val previousNote = noteDao.getNoteByID(noteID)
+        Log.d("Model", "Update note ID $noteID at time ${System.currentTimeMillis()}")
 
         Note(noteID, title, body,
             createTime = previousNote.createTime,
-            modifyTime = getCurrentTime(),
-            folderID = if (folderID != -1) previousNote.folderID else folderID
+            modifyTime = System.currentTimeMillis(),
+            folderID = if (folderID == -1) previousNote.folderID else folderID
         ).let { noteDao.update(it) }
+    }
+
+    fun getNoteIDByPosition(position: Int, currentFolderID: Int): Int {
+        val notes = if (currentFolderID == 1) noteDao.getAllNoteList() else noteDao.getNoteListByFolderID(currentFolderID)
+        return notes[position].id
     }
 
     fun getNoteByID(noteID: Int): Note {

@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.note.*
 import com.example.note.database.Model
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.properties.Delegates
 
 class EditNoteActivity : AppCompatActivity() {
@@ -20,6 +22,7 @@ class EditNoteActivity : AppCompatActivity() {
     private var isUpdate by Delegates.notNull<Boolean>()
     private var currentNoteID by Delegates.notNull<Int>()
     private var currentFolderID by Delegates.notNull<Int>()
+    private var createTime = System.currentTimeMillis()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,19 +45,23 @@ class EditNoteActivity : AppCompatActivity() {
         backButton.setOnClickListener { saveNote() }
         saveNoteButton.setOnClickListener { saveNote() }
         deleteNoteButton.setOnClickListener { deleteNote() }
-        textDateTime.text = getCurrentTime()
+
 //        with(backButton) {
 //            hideKeyboard()
 //            onBackPressed()
 //        }
 
-        // Set content of title and body according to received intent
+        val format = SimpleDateFormat("EEEE, yyyy-MM-dd at HH:mm a", Locale.US)
+        // Set content of title, body and timestamp according to received intent
         when (isUpdate) {
-            false -> { /* Do nothing */ }
+            false -> {
+                textDateTime.text = format.format(Date(createTime))
+            }
             true -> {
                 Model.getNoteByID(currentNoteID).also {
                     inputNoteTitle.setText(it.title)
                     inputNoteBody.setText(it.body)
+                    textDateTime.text = format.format(Date(it.modifyTime))
                 }
             }
         }
@@ -63,18 +70,31 @@ class EditNoteActivity : AppCompatActivity() {
     private fun saveNote() {
         // Save to model only if title or body has text
         if (inputNoteBody.text.isNotEmpty() || inputNoteTitle.text.isNotEmpty()) {
-            // Change folderID to Snippets if we are in All Notes folder
-            val folderID = if (currentFolderID == 1) 2 else currentFolderID
-            Model.insertNote(
-                noteID = currentNoteID,
-                title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
-                body = inputNoteBody.text.toString(),
-                folderID = folderID
-            )
+            if (isUpdate) {
+                // Update current note
+                Model.updateNote(
+                    noteID = currentNoteID,
+                    title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
+                    body = inputNoteBody.text.toString()
+                )
+            } else {
+                // Insert new note
+
+                // Change folderID to Snippets if we are in All Notes folder
+                val folderID = if (currentFolderID == 1) 2 else currentFolderID
+                Model.insertNote(
+                    noteID = currentNoteID,
+                    title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
+                    body = inputNoteBody.text.toString(),
+                    createTime = createTime,
+                    folderID = folderID
+                )
+            }
+
         } else {
             // Since both title and body of the note are empty, we simply delete or
             // discard the current note
-            if (currentNoteID != 0) { Model.deleteNote(currentNoteID) }
+            if (isUpdate) { Model.deleteNote(currentNoteID) }
         }
         hideKeyboard()
         finish()

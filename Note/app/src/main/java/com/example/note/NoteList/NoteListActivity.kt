@@ -2,36 +2,38 @@
 
 package com.example.note.NoteList
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.EXTRA_FOLDER_ID
-import com.example.note.FolderList.FolderListActivity
 import com.example.note.EXTRA_IS_UPDATE
 import com.example.note.EXTRA_NOTE_ID
-import com.example.note.R
 import com.example.note.EditNote.EditNoteActivity
+import com.example.note.R
 import com.example.note.database.Model
+import com.example.note.database.Model.deleteNote
 import com.example.note.database.entities.Note
-import org.w3c.dom.Text
 import kotlin.properties.Delegates
+
 
 class NoteListActivity : AppCompatActivity() {
 
     private var currentFolderID by Delegates.notNull<Int>()
+
+    // Generate notesAdapter for recycler view to apply to each note
+    private val noteAdapter = NoteAdapter { note -> updateNoteOnClick(note) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         currentFolderID = intent.getIntExtra(EXTRA_FOLDER_ID, 0)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        // Generate notesAdapter for recycler view to apply to each note
-        val noteAdapter = NoteAdapter { note -> updateNoteOnClick(note) }
 
         // Find all views
         val insertNoteButton = findViewById<ImageView>(R.id.imageAddNoteMain)
@@ -44,6 +46,7 @@ class NoteListActivity : AppCompatActivity() {
         Model.getNotesByFolderID(currentFolderID).observe(this) { notes ->
             noteAdapter.submitList(notes)
         }
+
         insertNoteButton.setOnClickListener {
             insertNoteOnClick()
         }
@@ -55,12 +58,27 @@ class NoteListActivity : AppCompatActivity() {
             StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         noteListRecyclerView.adapter = noteAdapter
 
+        registerForContextMenu(noteListRecyclerView)
+
 //        noteListRecyclerView.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
 
 //        if (intent.getBooleanExtra("switchFolder", false)) {
 //            val folderClickedPosition = intent.getIntExtra("folderClickedPosition", 0)
 //            switchFolder(folderClickedPosition)
 //        }
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+//        val note = noteAdapter.currNote
+        val position = item.order
+        Log.d("noteactivity", "selected note position $position")
+        return when (item.itemId) {
+            1 -> {
+                deleteNote(Model.getNoteIDByPosition(position, currentFolderID))
+                true
+            }
+            else -> super.onContextItemSelected(item)
+        }
     }
 
     // Opens EditNoteActivity when the add note button is clicked, but is inserting a new note

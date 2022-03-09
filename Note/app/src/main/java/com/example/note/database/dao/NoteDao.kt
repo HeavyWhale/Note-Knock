@@ -29,18 +29,24 @@ interface NoteDao {
     fun getNoteByID(noteID: Int): Note
 
     @Query("SELECT createTime FROM notes WHERE id = :noteID")
-    fun getNoteCreateTimeByID(noteID: Int): String
+    fun getNoteCreateTimeByID(noteID: Int): Long
 
     @Query("SELECT folderID FROM notes WHERE id = :noteID")
     fun getNoteFolderIDByID(noteID: Int): Int
 
-    // Descending order
-    @Query("SELECT * FROM notes ORDER BY id DESC")
+    // Descending order from newest to oldest timestamp
+    @Query("SELECT * FROM notes ORDER BY modifyTime DESC")
     fun getAllNotes(): LiveData<List<Note>>
 
-    // Descending order
-    @Query("SELECT * FROM notes WHERE folderID = :folderID ORDER BY id DESC")
+    @Query("SELECT * FROM notes ORDER BY modifyTime DESC")
+    fun getAllNoteList(): List<Note>
+
+    // Descending order from newest to oldest timestamp
+    @Query("SELECT * FROM notes WHERE folderID = :folderID ORDER BY modifyTime DESC")
     fun getNotesByFolderID(folderID: Int): LiveData<List<Note>>
+
+    @Query("SELECT * FROM notes WHERE folderID = :folderID ORDER BY modifyTime DESC")
+    fun getNoteListByFolderID(folderID: Int): List<Note>
 
     @Query("SELECT * FROM notes ORDER BY createTime DESC")
     fun getNotesOrderedByCreateTime(): List<Note>
