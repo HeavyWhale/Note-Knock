@@ -1,20 +1,24 @@
 package com.example.note.NoteList
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note.R
 import com.example.note.database.entities.Note
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.properties.Delegates
 
 class NoteAdapter(private val onClick: (Note) -> Unit) :
     ListAdapter<Note, NoteAdapter.NoteViewHolder>(NotesDiffCallback) {
 
+    var currNote by Delegates.notNull<Note>()
+
     class NoteViewHolder(itemView: View, val onClick: (Note) -> Unit) :
-        RecyclerView.ViewHolder(itemView)  {
+        RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener  {
 
         private val textTitle: TextView = itemView.findViewById(R.id.textTitle)
         private val textDatetime: TextView = itemView.findViewById(R.id.textDatetime)
@@ -22,14 +26,20 @@ class NoteAdapter(private val onClick: (Note) -> Unit) :
 
         init {
             itemView.setOnClickListener { currentNote?.let { onClick(it) } }
+            itemView.setOnCreateContextMenuListener(this)
         }
 
         fun bind(note: Note) {
+            val format = SimpleDateFormat("EEEE, yyyy-MM-dd HH:mm", Locale.US)
             with (note) {
                 currentNote = this
                 textTitle.text = title
-                textDatetime.text = modifyTime
+                textDatetime.text = format.format(Date(modifyTime))
             }
+        }
+
+        override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+            menu.add(0, 1, bindingAdapterPosition, R.string.delete)   // 0=?, 1=id
         }
     }
 

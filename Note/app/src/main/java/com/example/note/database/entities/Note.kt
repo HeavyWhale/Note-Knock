@@ -12,8 +12,8 @@ data class Note(
     // @ColumnInfo above each field: not needed, default to construct none-primary fields as ColumnInfo
     var title: String = "",
     var body: String = "",
-    var createTime: String = "",
-    var modifyTime: String = "",
+    var createTime: Long = 0,
+    var modifyTime: Long = 0,
     var folderID: Int = -1
 
 ) : java.io.Serializable
