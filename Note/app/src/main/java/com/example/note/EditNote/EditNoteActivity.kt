@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.example.note.*
 import com.example.note.database.Model
 import kotlin.properties.Delegates
@@ -16,6 +17,7 @@ class EditNoteActivity : AppCompatActivity() {
     private lateinit var inputNoteTitle: EditText
     private lateinit var inputNoteBody: EditText
     private lateinit var textDateTime: TextView
+    private lateinit var checklistRecyclerView : RecyclerView
 
     private var isUpdate by Delegates.notNull<Boolean>()
     private var currentNoteID by Delegates.notNull<Int>()
@@ -30,6 +32,9 @@ class EditNoteActivity : AppCompatActivity() {
         currentNoteID = intent.getIntExtra(EXTRA_NOTE_ID, 0)
         currentFolderID = intent.getIntExtra(EXTRA_FOLDER_ID, Model.DF.ALL_NOTES.id)
 
+        // Generate checklistAdapter
+            //val checklistAdapter = ChecklistAdapter {reminder ->  updateReminderOnClick(reminder) }
+
         // Find all views
         val backButton = findViewById<ImageView>(R.id.imageBack)
         val saveNoteButton = findViewById<ImageView>(R.id.imageSave)
@@ -37,6 +42,7 @@ class EditNoteActivity : AppCompatActivity() {
         inputNoteTitle = findViewById(R.id.inputNoteTitle)
         inputNoteBody = findViewById(R.id.inputNote)
         textDateTime = findViewById(R.id.TextDateTime)
+        checklistRecyclerView = findViewById(R.id.checklistRecyclerView)
 
         // Set all views
         backButton.setOnClickListener { saveNote() }

@@ -111,8 +111,24 @@
                                 android:textColor="@color/white"
                                 android:textColorHint="@color/colorTextHint"
                                 android:textSize="@dimen/_13ssp"
-                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintBottom_toTopOf="@+id/checklistRecyclerView"
                                 app:layout_constraintTop_toBottomOf="@id/TextDateTime" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/checklistRecyclerView"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_15sdp"
+                                android:layout_marginEnd="@dimen/_12sdp"
+                                android:visibility="gone"
+                                android:clipToPadding="false"
+                                android:paddingStart="0dp"
+                                android:paddingEnd="@dimen/_12sdp"
+                                android:paddingBottom="@dimen/_12sdp"
+                                app:layout_constraintTop_toBottomOf="@id/inputNote" />
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>
