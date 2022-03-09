@@ -55,6 +55,9 @@ class EditNoteActivity : AppCompatActivity() {
         deleteNoteButton.setOnClickListener { deleteNote() }
         addReminderButton.setOnClickListener { addReminder() }
         textDateTime.text = getCurrentTime()
+        Model.getRemindersByNoteID(currentNoteID).observe(this) { reminders ->
+            checklistAdapter.submitList(reminders)
+        }
         checklistRecyclerView.layoutManager =
                 StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         checklistRecyclerView.adapter = checklistAdapter
@@ -114,5 +117,4 @@ class EditNoteActivity : AppCompatActivity() {
         Model.insertReminder(0, "", "",  currentNoteID)
         checklistAdapter.notifyDataSetChanged()
     }
-
 }

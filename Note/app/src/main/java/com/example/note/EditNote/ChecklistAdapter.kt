@@ -21,6 +21,7 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
         private val checkbox: CheckBox = itemView.findViewById(R.id.checkbox)
         private val dateTime: TextView = itemView.findViewById(R.id.notificationDatetime)
         private val notificationButton: ImageView = itemView.findViewById(R.id.setNotification)
+        private val checkboxBody: TextView = itemView.findViewById(R.id.checkboxBody)
         private var currentReminder: Reminder? = null
 
         init {
@@ -30,7 +31,7 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
         fun bind(reminder: Reminder) {
             with(reminder) {
                 currentReminder = this
-                checkbox.text = body
+                checkboxBody.text = body
                 dateTime.text = time
                 checkbox.isChecked = reminderOff
             }

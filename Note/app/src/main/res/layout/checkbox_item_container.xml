@@ -12,19 +12,27 @@
                   android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/_8sdp"
                   android:background="@drawable/background_list_item_folder">
 
         <CheckBox
                 android:id="@+id/checkbox"
-                android:layout_width="@dimen/_270sdp"
+                android:layout_width="@dimen/_20sdp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_5sdp"
+                android:includeFontPadding="false"/>
+
+        <EditText
+                android:id="@+id/checkboxBody"
+                android:layout_width="@dimen/_250sdp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:background="@null"
                 android:fontFamily="@font/ubuntu_regular"
-                android:textColor="@color/white"
+                android:gravity="top"
                 android:includeFontPadding="false"
-                android:textSize="@dimen/_13ssp"
-                android:hint="@string/type_note_here"/>
+                android:inputType="textMultiLine"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13ssp"/>
 
         <ImageView
                 android:id="@+id/setNotification"
@@ -39,7 +47,7 @@
         android:id="@+id/notificationDatetime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginStart="@dimen/_20sdp"
         android:fontFamily="@font/ubuntu_regular"
         android:textColor="@color/rubai"
         android:includeFontPadding="false"
