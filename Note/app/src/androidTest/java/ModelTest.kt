@@ -1,6 +1,6 @@
 //package com.example.note.database
 //
-//import com.example.note.entities.Note
+//import com.example.note.database.entities.Note
 //import com.example.note.getCurrentTime
 //import kotlin.random.Random
 //import kotlin.test.*
@@ -12,9 +12,8 @@
 //
 //    @BeforeTest @AfterTest
 //    fun reset() {
-//        noteIDCounter = -1
-//        notesSizeCounter = 0
-//        Model.reset()
+//        AppDatabase.destroyInstance()
+//        AppDatabase.initInstance(this)
 //    }
 //
 //    // Stolen from: https://stackoverflow.com/questions/46943860/idiomatic-way-to-generate-a-random-alphanumeric-string-in-kotlin
@@ -26,25 +25,25 @@
 //    }
 //
 //    private fun genNote(
-//        id: Int? = Random.nextInt(),
+//        id: Int = 0,
 //        title: String = getRandomString(15),
 //        body: String = getRandomString(100),
-//        createDate: String = getRandomString(5),
-//        modifyDate: String = getCurrentTime()
+//        createDate: Long = System.currentTimeMillis(),
+//        modifyDate: Long = System.currentTimeMillis()
 //    ) : Note = Note(id, title, body, createDate, modifyDate)
 //
-//    private fun addNoteAndTest(note: Note) {
-//        note.let {
-//            Model.addNote(it)
-//            noteIDCounter++
-//            notesSizeCounter++
-//
-//            assertEquals(noteIDCounter, Model.notes.first().id)     // new id appended to new note
-//            assertEquals(noteIDCounter, Model.getNoteCounter())     // Model's counter updated
-//            assertEquals(Model.notes.first(), it)                   // new note is the first
-//            assertEquals(notesSizeCounter, Model.notes.size)        // size added 1
-//        }
-//    }
+////    private fun addNoteAndTest(note: Note) {
+////        note.let {
+////            Model.insertNote(it)
+////            noteIDCounter++
+////            notesSizeCounter++
+////
+////            assertEquals(noteIDCounter, Model.notes.first().id)     // new id appended to new note
+////            assertEquals(noteIDCounter, Model.getNoteCounter())     // Model's counter updated
+////            assertEquals(Model.notes.first(), it)                   // new note is the first
+////            assertEquals(notesSizeCounter, Model.notes.size)        // size added 1
+////        }
+////    }
 //
 //    private fun deleteNoteAndTest(id: Int, exists: Boolean) {
 //        Model.deleteNote(id)
@@ -76,27 +75,36 @@
 //    @Test
 //    fun addNoteTest() {
 //        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @addNoteTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-//        addNoteAndTest(genNote(null, "My Title1", "My Body1", "Created now", "Modified later"))
-//        addNoteAndTest(genNote(-18739, "!#199`", "BODY__++ 123", "?", ""))
-//        addNoteAndTest(genNote(
-//            123456789,
-//            "A very very very very very very very very very very long title",
-//            "A very very very very very very very very very very long body",
-//            "12345678901234567890123456789012345678901234567890",
-//            "09876543210987654321098765432109876543210987654321"
-//        ))
-//        for (i in 1..1000) {
-//            addNoteAndTest(genNote())
-//        }
-//        assertEquals(1003, Model.notes.size)
+//        val note1 = genNote()
+//        Model.insertNote(note1.id, note1.title, note1.body, note1.createTime, 2)
 //
-//        Model.printNotes(10)
+//        assertEquals(1, Model.getNotesCountByFolderID(1))
+//        assertEquals(1, Model.getNotesCountByFolderID(2))
+//
+//        val note2 = genNote()
+//        Model.insertNote(note2.id, note2.title, note2.body, note2.createTime, 3)
+//
+//        assertEquals(2, Model.getNotesCountByFolderID(1))
+//        assertEquals(1, Model.getNotesCountByFolderID(3))
+//
+//        for (i in 1..1000) {
+//            val testNote = genNote()
+//            Model.insertNote(testNote.id, testNote.title, testNote.body, testNote.createTime, 3)
+//        }
+//        assertEquals(1002, Model.getNotesCountByFolderID(1))
+//        assertEquals(1001, Model.getNotesCountByFolderID(3))
+//
 //        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @addNoteTest: END   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 //    }
 //
 //    @Test
 //    fun deleteNoteTest() {
 //        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @deleteNoteTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+//        // Add test notes
+//        for (i in 1..1000) {
+//            val testNote = genNote()
+//            Model.insertNote(testNote.id, testNote.title, testNote.body, testNote.createTime, 3)
+//        }
 //
 //        // Basic test
 //        addNoteAndTest(genNote(null, "My Title1", "My Body1", "Created now", "Modified later"))
@@ -181,14 +189,3 @@
 //        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @updateNoteTest: END   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 //    }
 //}
-
-package com.example.note.database
-
-import com.example.note.database.entities.Note
-import com.example.note.getCurrentTime
-import kotlin.random.Random
-import kotlin.test.*
-
-internal class ModelTest {
-
-}

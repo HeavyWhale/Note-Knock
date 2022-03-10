@@ -134,6 +134,15 @@ object Model {
         return folders[position].id
     }
 
+    // For testing purposes
+    fun getNoteTitleByID(noteID: Int): String {
+        return noteDao.getNoteTitleByID(noteID)
+    }
+
+    fun getNoteBodyTitleByID(noteID: Int): String {
+        return noteDao.getNoteBodyTitleByID(noteID)
+    }
+
     /*****************************************************************************
      * Private Functions
      ****************************************************************************/
@@ -143,7 +152,6 @@ object Model {
             .values()
             .map { Folder( 0, it.printableName ) }
             .toTypedArray()
-        println("HERE" + folderDao)
         folderDao.insertAll(*defaultFolders)
     }
 
