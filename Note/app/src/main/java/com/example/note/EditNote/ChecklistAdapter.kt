@@ -31,6 +31,11 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
 
         init {
             itemView.setOnClickListener{ currentReminder?.let{ onClick(it) } }
+            val context:Context = notificationButton.context
+            notificationButton.setOnClickListener{
+                val intent = Intent(context, Notification::class.java)
+                context.startActivity(intent)
+            }
             itemView.setOnFocusChangeListener{ _, hasFocus ->
                 Log.d("Checklist", "Focus changed")
                 if(!hasFocus) {
