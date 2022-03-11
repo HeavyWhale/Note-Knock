@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.example.note.database.dao.FolderDao
 import com.example.note.database.dao.NoteDao
+import com.example.note.database.entities.Folder
 import com.example.note.database.entities.Note
 import junit.framework.Assert.assertEquals
 import org.junit.After
@@ -50,6 +51,11 @@ internal class AppDatabaseTest {
         createDate: Long = System.currentTimeMillis(),
         modifyDate: Long = System.currentTimeMillis()
     ) : Note = Note(id, title, body, createDate, modifyDate)
+
+    private fun genFolder(
+        id: Int = 0,
+        name: String = getRandomString(15)
+    ) : Folder = Folder(id, name)
 
     @Test
     fun addNoteTest() {
@@ -121,6 +127,71 @@ internal class AppDatabaseTest {
         assertEquals("test title", Model.getNoteTitleByID(currID))
         assertEquals("test body", Model.getNoteBodyTitleByID(currID))
 
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @addNoteTest: END   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @updateNoteTest: END   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+    }
+
+    @Test
+    fun addFolderTest() {
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @addFolderTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        val folder1 = genFolder()
+        Model.addFolder(folder1.name)
+
+        assertEquals(1, Model.getFolderCounts())
+
+        val folder2 = genFolder()
+        Model.addFolder(folder2.name)
+
+        assertEquals(2, Model.getFolderCounts())
+
+        for (i in 1..1000) {
+            val testFolder = genFolder()
+            Model.addFolder(testFolder.name)
+        }
+        assertEquals(1002, Model.getFolderCounts())
+
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @addFolderTest: END   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+    }
+
+    @Test
+    fun deleteFolderTest() {
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @deleteFolderTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        var currID = 1002
+        // Add one test folder
+        val folder1 = genFolder()
+        Model.addFolder(folder1.name)
+
+        assertEquals(1, Model.getFolderCounts())
+
+        // Test delete one note
+        Model.deleteFolder(1)
+
+        assertEquals(0, Model.getFolderCounts())
+
+        // Add massive test notes
+        for (i in 1..1000) {
+            val testFolder = genFolder()
+            Model.addFolder(testFolder.name)
+            currID++
+        }
+
+        assertEquals(1000, Model.getFolderCounts())
+
+        for (id in currID-1000..currID) {
+            Model.deleteFolder(id)
+        }
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @deleteFolderTest: END   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+    }
+
+    @Test
+    fun updateFolderTest() {
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @updateFolderTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        val folder1 = genFolder()
+        Model.addFolder(folder1.name)
+
+        Model.updateFolder(1, "test name")
+
+        // Check if note content has been updated
+        assertEquals("test name", Model.getFolderNameByID(1))
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @updateFolderTest: END   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
     }
 }

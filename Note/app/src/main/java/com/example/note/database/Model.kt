@@ -143,6 +143,10 @@ object Model {
         return noteDao.getNoteBodyTitleByID(noteID)
     }
 
+    fun getFolderCounts(): Int {
+        return folderDao.getFolderCounts()
+    }
+
     /*****************************************************************************
      * Private Functions
      ****************************************************************************/

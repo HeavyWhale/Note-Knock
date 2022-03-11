@@ -30,4 +30,7 @@ interface FolderDao {
 
     @Query("SELECT id FROM folders WHERE name = :name")
     fun getFolderIDByName(name: String): Int
+
+    @Query("SELECT count(*) FROM folders")
+    fun getFolderCounts(): Int
 }
