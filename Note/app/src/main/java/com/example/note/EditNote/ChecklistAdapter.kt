@@ -1,5 +1,6 @@
 package com.example.note.EditNote
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
@@ -30,30 +31,13 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
         private var currentReminder: Reminder? = null
 
         init {
-            itemView.setOnClickListener{ currentReminder?.let{ onClick(it) } }
-            val context:Context = notificationButton.context
+            itemView.setOnClickListener{ currentReminder?.let { onClick(it) } }
+            val context: Context = notificationButton.context
             notificationButton.setOnClickListener{
+                updateReminder()
                 val intent = Intent(context, Notification::class.java)
                 context.startActivity(intent)
             }
-            itemView.setOnFocusChangeListener{ _, hasFocus ->
-                Log.d("Checklist", "Focus changed")
-                if(!hasFocus) {
-                    Log.d("Checklist", "enter focus check.")
-                    currentReminder?.let {
-                        Log.d("Checklist", "Focus changed.")
-                        Model.updateReminder(
-                            reminderID = it.id,
-                            body = checkboxBody.text.toString(),
-                            time = dateTime.text.toString(),
-                            noteID = it.noteID,
-                            reminderOff = checkbox.isChecked
-                        )
-                    }
-                }
-            }
-
-            notificationButton.setOnClickListener{}
         }
 
         fun bind(reminder: Reminder) {
@@ -62,6 +46,19 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
                 checkboxBody.text = body
                 dateTime.text = time
                 checkbox.isChecked = reminderOff
+            }
+        }
+
+        private fun updateReminder(){
+            Log.d("Reminder", "Update reminder.")
+            currentReminder?.let {
+                Model.updateReminder(
+                    reminderID = it.id,
+                    body = checkboxBody.text.toString(),
+                    time = dateTime.text.toString(),
+                    noteID = it.noteID,
+                    reminderOff = checkbox.isChecked
+                )
             }
         }
     }
