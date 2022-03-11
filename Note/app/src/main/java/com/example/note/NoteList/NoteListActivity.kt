@@ -2,6 +2,7 @@
 
 package com.example.note.NoteList
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -20,7 +21,6 @@ import com.example.note.database.Model
 import com.example.note.database.Model.deleteNote
 import com.example.note.database.entities.Note
 import kotlin.properties.Delegates
-
 
 class NoteListActivity : AppCompatActivity() {
 

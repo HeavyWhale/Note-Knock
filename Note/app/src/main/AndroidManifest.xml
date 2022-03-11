@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.example.note">
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -9,8 +11,21 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.Note">
+            <receiver android:name=".Notification.SendNotification"
+                      android:enabled="true"/>
         <activity
                 android:name=".FolderList.FolderListActivity"
+                android:exported="true"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".EditNote.EditNoteActivity"
                 android:exported="true"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="stateHidden">
@@ -20,12 +35,12 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".EditNote.EditNoteActivity"
+                android:name=".NoteList.NoteListActivity"
                 android:exported="true"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="stateHidden"/>
         <activity
-                android:name=".NoteList.NoteListActivity"
+                android:name=".Notification.Notification"
                 android:exported="true"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="stateHidden">

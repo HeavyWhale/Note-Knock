@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.note.database.entities.Folder
 import com.example.note.database.entities.Note
+import com.example.note.database.entities.Reminder
 import com.example.note.getCurrentTime
 
 object Model {
@@ -49,6 +50,8 @@ object Model {
     /**************** Aliases ****************/
     private val noteDao   get() = AppDatabase.INSTANCE?.getNoteDao()!!
     private val folderDao get() = AppDatabase.INSTANCE?.getFolderDao()!!
+    private val reminderDao get() = AppDatabase.INSTANCE?.getReminderDao()!!
+
 
 //    val curFolder get() = folderDao.getFolderNameByID(curFolderID)
 //    val folders   get() = folderDao.getAll()
@@ -94,6 +97,54 @@ object Model {
         return noteDao.getNoteByID(noteID)
     }
 
+    /**************** Reminders ****************/
+    fun insertReminder(reminderID: Int = 0, body: String, time: String, noteID: Int) {
+        Reminder(reminderID, body, time, noteID).let {
+            reminderDao.insert(it)
+        }
+    }
+
+    fun deleteReminder(reminderID: Int) {
+        reminderDao.delete(Reminder(id = reminderID))
+    }
+
+    fun updateReminder(reminderID: Int, body: String, time: String, noteID: Int, reminderOff: Boolean) {
+        val previousReminder = reminderDao.getReminderByID(reminderID)
+        Reminder(reminderID, body, time,
+            noteID = if (noteID != -1) previousReminder.noteID else noteID,
+            reminderOff
+        ).let {
+            reminderDao.update(it)
+        }
+    }
+
+    fun getReminderByID(reminderID: Int): Reminder {
+        return reminderDao.getReminderByID(reminderID)
+    }
+
+    fun getRemindersByNoteID(noteID: Int): LiveData<List<Reminder>> {
+        return reminderDao.getRemindersByNoteID(noteID)
+    }
+
+    fun updateNotificationTime(reminderID: Int, time: String) {
+        val previousReminder = reminderDao.getReminderByID(reminderID)
+        Reminder(reminderID,
+            previousReminder.body, time,
+            previousReminder.noteID,
+            previousReminder.reminderOff
+        ).let {
+            reminderDao.update(it)
+        }
+    }
+
+    fun updateNoteIDForReminders(noteID: Int) {
+        val reminderIDs = reminderDao.getReminderIDsByNoteID(0)
+        for (reminderID in reminderIDs) {
+            reminderDao.updateNoteIDByReminderID(noteID, reminderID)
+        }
+    }
+
+
     fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> {
         if (folderID == 1) {  // All Notes folder
             return noteDao.getAllNotes()
@@ -108,6 +159,7 @@ object Model {
         return noteDao.getNotesCountByFolderID(folderID)
     }
 
+    /**************** Folders ****************/
     fun addFolder(name: String) {
         folderDao.insert(Folder(id = 0, name = name))
     }

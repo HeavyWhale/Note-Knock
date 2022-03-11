@@ -32,6 +32,7 @@ interface NoteDao {
     fun getNoteByID(noteID: Int): Note
 
     @Query("SELECT createTime FROM notes WHERE id = :noteID")
+
     fun getNoteCreateTimeByID(noteID: Int): Long
 
     @Query("SELECT folderID FROM notes WHERE id = :noteID")
@@ -68,4 +69,5 @@ interface NoteDao {
 
     @Query("SELECT body FROM notes WHERE id = :noteID")
     fun getNoteBodyTitleByID(noteID: Int): String
+
 }

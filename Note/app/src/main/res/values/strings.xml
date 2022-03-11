@@ -16,4 +16,6 @@
     <string name="done_button">Done</string>
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
+    <string name="add_checkbox">add checkbox</string>
+    <string name="schedule_notification">Schedule Notification</string>
 </resources>

@@ -15,7 +15,6 @@ data class Note(
     var createTime: Long = 0,
     var modifyTime: Long = 0,
     var folderID: Int = -1
-
 ) : java.io.Serializable
 
 // OMG Room provides search functionality:

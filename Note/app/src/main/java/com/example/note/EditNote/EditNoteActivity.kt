@@ -1,6 +1,7 @@
 package com.example.note.EditNote
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -11,6 +12,9 @@ import com.example.note.*
 import com.example.note.database.Model
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.note.Notification.Notification
 import kotlin.properties.Delegates
 
 class EditNoteActivity : AppCompatActivity() {
@@ -18,6 +22,8 @@ class EditNoteActivity : AppCompatActivity() {
     private lateinit var inputNoteTitle: EditText
     private lateinit var inputNoteBody: EditText
     private lateinit var textDateTime: TextView
+    private lateinit var checklistRecyclerView : RecyclerView
+    private lateinit var checklistAdapter: ChecklistAdapter
 
     private var isUpdate by Delegates.notNull<Boolean>()
     private var currentNoteID by Delegates.notNull<Int>()
@@ -33,23 +39,39 @@ class EditNoteActivity : AppCompatActivity() {
         currentNoteID = intent.getIntExtra(EXTRA_NOTE_ID, 0)
         currentFolderID = intent.getIntExtra(EXTRA_FOLDER_ID, Model.DF.ALL_NOTES.id)
 
+        // Generate checklistAdapter
+        checklistAdapter = ChecklistAdapter {}
+
         // Find all views
         val backButton = findViewById<ImageView>(R.id.imageBack)
         val saveNoteButton = findViewById<ImageView>(R.id.imageSave)
         val deleteNoteButton = findViewById<ImageView>(R.id.imageDelete)
+        val addReminderButton = findViewById<ImageView>(R.id.imageAddReminder)
+        val redoButton = findViewById<ImageView>(R.id.redo)
         inputNoteTitle = findViewById(R.id.inputNoteTitle)
         inputNoteBody = findViewById(R.id.inputNote)
         textDateTime = findViewById(R.id.TextDateTime)
+        checklistRecyclerView = findViewById(R.id.checklistRecyclerView)
 
         // Set all views
         backButton.setOnClickListener { saveNote() }
         saveNoteButton.setOnClickListener { saveNote() }
         deleteNoteButton.setOnClickListener { deleteNote() }
+        addReminderButton.setOnClickListener { addReminder() }
+        redoButton.setOnClickListener{ addNotification() }
+        textDateTime.text = getCurrentTime()
+        Model.getRemindersByNoteID(currentNoteID).observe(this) { reminders ->
+            checklistAdapter.submitList(reminders)
+        }
+        checklistRecyclerView.layoutManager =
+                StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+        checklistRecyclerView.adapter = checklistAdapter
 
 //        with(backButton) {
 //            hideKeyboard()
 //            onBackPressed()
 //        }
+
 
         val format = SimpleDateFormat("EEEE, yyyy-MM-dd HH:mm a", Locale.US)
         // Set content of title, body and timestamp according to received intent
@@ -89,6 +111,9 @@ class EditNoteActivity : AppCompatActivity() {
                     createTime = createTime,
                     folderID = folderID
                 )
+
+                // Update reminders' note ID
+                updateReminderNoteID(Model.getNotesCountByFolderID(currentFolderID))
             }
 
         } else {
@@ -112,5 +137,19 @@ class EditNoteActivity : AppCompatActivity() {
         if (currentFocus == null) return
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+    }
+
+    private fun addReminder() {
+        Model.insertReminder(0, "", "",  0)
+        checklistAdapter.notifyDataSetChanged()
+    }
+
+    private fun addNotification() {
+        val intent = Intent(this, Notification::class.java)
+        startActivity(intent)
+    }
+
+    private fun updateReminderNoteID(noteID: Int) {
+        Model.updateNoteIDForReminders(noteID)
     }
 }

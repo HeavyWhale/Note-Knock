@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/folderListLayout"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/background_list_item_folder">
+
+    <LinearLayout
+            android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@drawable/background_list_item_folder">
+
+        <CheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"/>
+
+        <EditText
+                android:id="@+id/checkboxBody"
+                android:layout_width="@dimen/_180sdp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:background="@null"
+                android:fontFamily="@font/ubuntu_regular"
+                android:gravity="top"
+                android:includeFontPadding="false"
+                android:inputType="textMultiLine"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13ssp"/>
+
+        <ImageView
+                android:id="@+id/saveChecklistChange"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8.00dp"
+                android:src="@drawable/ic_done"
+                app:tint="@color/colorIcons"/>
+
+        <ImageView
+                android:id="@+id/setNotification"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8.00dp"
+                android:src="@drawable/ic_edit_calendar"
+                app:tint="@color/colorIcons"/>
+    </LinearLayout>>
+
+    <TextView
+        android:id="@+id/notificationDatetime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:fontFamily="@font/ubuntu_regular"
+        android:textColor="@color/rubai"
+        android:includeFontPadding="false"
+        android:textSize="@dimen/_7ssp"/>
+
+</LinearLayout>
