@@ -12,6 +12,8 @@ import java.util.*
 class Notification : AppCompatActivity() {
     private  lateinit var binding : SetNotificationBinding
 
+    public var notificationTime:String = ""
+
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         // use binding to bind the view
@@ -21,6 +23,7 @@ class Notification : AppCompatActivity() {
         createNotificationChannel()
         binding.submitBottom.setOnClickListener {
             scheduleNotification()
+            notificationTime = getTimeInString()
         }
         
         binding.imageBack.setOnClickListener {
@@ -65,6 +68,15 @@ class Notification : AppCompatActivity() {
             )
             .setPositiveButton("OK"){_,_ ->}
             .show()
+    }
+
+    fun getTimeInString(): String {
+        val minute = binding.timePicker.minute
+        val hour = binding.timePicker.hour
+        val day = binding.datePicker.dayOfMonth
+        val month = binding.datePicker.month
+        val year = binding.datePicker.year
+        return year.toString() + "." + month.toString() + "." + day.toString() + " " + hour.toString() + ":" + minute.toString()
     }
 
     private fun getTime(): Long {
