@@ -62,4 +62,10 @@ interface NoteDao {
 
     @Query("SELECT count(*) FROM notes WHERE folderID = :folderID")
     fun getNotesCountByFolderID(folderID: Int): Int
+
+    @Query("SELECT title FROM notes WHERE id = :noteID")
+    fun getNoteTitleByID(noteID: Int): String
+
+    @Query("SELECT body FROM notes WHERE id = :noteID")
+    fun getNoteBodyTitleByID(noteID: Int): String
 }
