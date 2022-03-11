@@ -5,13 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.note.EXTRA_IS_UPDATE
+import com.example.note.EXTRA_REMINDER_ID
+import com.example.note.database.Model
 import com.example.note.databinding.SetNotificationBinding
 import java.text.DateFormat
 import java.util.*
+import kotlin.properties.Delegates
 
 class Notification : AppCompatActivity() {
     private  lateinit var binding : SetNotificationBinding
-
+    private var currentReminderID by Delegates.notNull<Int>()
     public var notificationTime:String = ""
 
     override fun onCreate(savedInstanceState: Bundle?){
@@ -20,10 +24,13 @@ class Notification : AppCompatActivity() {
         binding = SetNotificationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        currentReminderID = intent.getIntExtra(EXTRA_REMINDER_ID, 0)
+
         createNotificationChannel()
         binding.submitBottom.setOnClickListener {
             scheduleNotification()
             notificationTime = getTimeInString()
+            Model.updateNotificationTime(currentReminderID, notificationTime)
         }
         
         binding.imageBack.setOnClickListener {

@@ -13,6 +13,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.note.EXTRA_IS_UPDATE
+import com.example.note.EXTRA_REMINDER_ID
 import com.example.note.Notification.Notification
 import com.example.note.R
 import com.example.note.database.Model
@@ -35,7 +37,9 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
             itemView.setOnClickListener{ currentReminder?.let { onClick(it) } }
             val context: Context = notificationButton.context
             notificationButton.setOnClickListener{
-                val intent = Intent(context, Notification::class.java)
+                val intent = Intent(context, Notification::class.java).apply {
+                    currentReminder?.let { it1 -> putExtra(EXTRA_REMINDER_ID, it1.id) }
+                }
                 context.startActivity(intent)
             }
             saveChangeButton.setOnClickListener{

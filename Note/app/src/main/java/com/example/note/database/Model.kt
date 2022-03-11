@@ -92,6 +92,17 @@ object Model {
         return reminderDao.getRemindersByNoteID(noteID)
     }
 
+    fun updateNotificationTime(reminderID: Int, time: String) {
+        val previousReminder = reminderDao.getReminderByID(reminderID)
+        Reminder(reminderID,
+            previousReminder.body, time,
+            previousReminder.noteID,
+            previousReminder.reminderOff
+        ).let {
+            reminderDao.update(it)
+        }
+    }
+
     /**************** Notes ****************/
     fun insertNote(noteID: Int = 0, title: String, body: String, folderID: Int) {
         Log.d("Model", "Insert/update note ID $noteID to folder $folderID")
