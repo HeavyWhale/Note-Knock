@@ -21,7 +21,7 @@
 
         <EditText
                 android:id="@+id/checkboxBody"
-                android:layout_width="@dimen/_210sdp"
+                android:layout_width="@dimen/_180sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_3sdp"
@@ -32,6 +32,14 @@
                 android:inputType="textMultiLine"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_13ssp"/>
+
+        <ImageView
+                android:id="@+id/saveChecklistChange"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8.00dp"
+                android:src="@drawable/ic_done"
+                app:tint="@color/colorIcons"/>
 
         <ImageView
                 android:id="@+id/setNotification"

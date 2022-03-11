@@ -114,6 +114,15 @@
                                 app:layout_constraintBottom_toTopOf="@+id/checklistRecyclerView"
                                 app:layout_constraintTop_toBottomOf="@id/TextDateTime" />
 
+                        <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:layout_marginEnd="@dimen/_12sdp"
+                                android:background="@color/colorIcons"
+                                app:layout_constraintBottom_toTopOf="@+id/checklistRecyclerView"
+                                app:layout_constraintTop_toBottomOf="@id/inputNote" />/>
+
                         <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/checklistRecyclerView"
                                 android:layout_width="match_parent"

@@ -28,16 +28,29 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
         private val dateTime: TextView = itemView.findViewById(R.id.notificationDatetime)
         private val notificationButton: ImageView = itemView.findViewById(R.id.setNotification)
         private val checkboxBody: TextView = itemView.findViewById(R.id.checkboxBody)
+        private val saveChangeButton: ImageView = itemView.findViewById(R.id.saveChecklistChange)
         private var currentReminder: Reminder? = null
 
         init {
             itemView.setOnClickListener{ currentReminder?.let { onClick(it) } }
             val context: Context = notificationButton.context
             notificationButton.setOnClickListener{
-                updateReminder()
                 val intent = Intent(context, Notification::class.java)
                 context.startActivity(intent)
             }
+            saveChangeButton.setOnClickListener{
+                updateReminder()
+            }
+            /*
+            itemView.setOnFocusChangeListener{ _, hasFocus ->
+                if(hasFocus) {
+                    Log.d("Reminder", "Get focus.")
+                }
+                else{
+                    updateReminder()
+                }
+            }
+            */
         }
 
         fun bind(reminder: Reminder) {
