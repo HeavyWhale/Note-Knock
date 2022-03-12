@@ -9,19 +9,20 @@
 
     <LinearLayout
             android:orientation="horizontal"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:background="@drawable/background_list_item_folder">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:background="@drawable/background_list_item_folder">
 
         <CheckBox
                 android:id="@+id/checkbox"
                 android:layout_width="@dimen/_20sdp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_20sdp"
                 android:includeFontPadding="false"/>
 
         <EditText
                 android:id="@+id/checkboxBody"
-                android:layout_width="@dimen/_180sdp"
+                android:layout_width="@dimen/_188sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_3sdp"
@@ -36,7 +37,7 @@
         <ImageView
                 android:id="@+id/saveChecklistChange"
                 android:layout_width="@dimen/_20sdp"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/_20sdp"
                 android:layout_marginStart="8.00dp"
                 android:src="@drawable/ic_done"
                 app:tint="@color/colorIcons"/>
@@ -44,7 +45,7 @@
         <ImageView
                 android:id="@+id/setNotification"
                 android:layout_width="@dimen/_20sdp"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/_20sdp"
                 android:layout_marginStart="8.00dp"
                 android:src="@drawable/ic_edit_calendar"
                 app:tint="@color/colorIcons"/>
@@ -54,7 +55,8 @@
         android:id="@+id/notificationDatetime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_28sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
         android:fontFamily="@font/ubuntu_regular"
         android:textColor="@color/rubai"
         android:includeFontPadding="false"

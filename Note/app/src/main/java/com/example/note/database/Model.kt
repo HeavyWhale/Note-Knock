@@ -64,6 +64,61 @@ object Model {
      * Public Functions
      ****************************************************************************/
 
+    /**************** Reminders ****************/
+    fun insertReminder(reminderID: Int = 0, body: String, time: String, noteID: Int) {
+        Reminder(reminderID, body, time, noteID).let {
+            reminderDao.insert(it)
+        }
+    }
+
+    fun deleteReminder(reminderID: Int) {
+        reminderDao.delete(Reminder(id = reminderID))
+    }
+
+    fun updateReminder(reminderID: Int, body: String, time: String, noteID: Int, reminderOff: Boolean) {
+        val previousReminder = reminderDao.getReminderByID(reminderID)
+        Reminder(reminderID, body, time,
+            noteID = if (noteID != -1) previousReminder.noteID else noteID,
+            reminderOff
+        ).let {
+            reminderDao.update(it)
+        }
+    }
+
+    fun getReminderByID(reminderID: Int): Reminder {
+        return reminderDao.getReminderByID(reminderID)
+    }
+
+    fun getRemindersByNoteID(noteID: Int): LiveData<List<Reminder>> {
+        return reminderDao.getRemindersByNoteID(noteID)
+    }
+
+    fun updateTimeByID(reminderID: Int, time: String) {
+        val previousReminder = reminderDao.getReminderByID(reminderID)
+        Reminder(reminderID,
+            previousReminder.body, time,
+            previousReminder.noteID,
+            previousReminder.reminderOff
+        ).let {
+            reminderDao.update(it)
+        }
+    }
+
+    fun updateNoteIDForReminders(noteID: Int) {
+        val reminderIDs = reminderDao.getReminderIDsByNoteID(0)
+        for (reminderID in reminderIDs) {
+            reminderDao.updateNoteIDByReminderID(noteID, reminderID)
+        }
+    }
+
+    fun deleteRemindersByNoteID(noteID: Int) {
+        var reminderIDs = reminderDao.getReminderIDsByNoteID(noteID)
+        for (reminderID in reminderIDs) {
+            deleteReminder(reminderID)
+        }
+    }
+
+    /**************** Notes ****************/
     fun insertNote(noteID: Int = 0, title: String, body: String, createTime: Long, folderID: Int) {
         val currentTime = System.currentTimeMillis()
         Log.d("Model", "Insert note ID $noteID to folder $folderID at time $currentTime")
@@ -96,54 +151,6 @@ object Model {
     fun getNoteByID(noteID: Int): Note {
         return noteDao.getNoteByID(noteID)
     }
-
-    /**************** Reminders ****************/
-    fun insertReminder(reminderID: Int = 0, body: String, time: String, noteID: Int) {
-        Reminder(reminderID, body, time, noteID).let {
-            reminderDao.insert(it)
-        }
-    }
-
-    fun deleteReminder(reminderID: Int) {
-        reminderDao.delete(Reminder(id = reminderID))
-    }
-
-    fun updateReminder(reminderID: Int, body: String, time: String, noteID: Int, reminderOff: Boolean) {
-        val previousReminder = reminderDao.getReminderByID(reminderID)
-        Reminder(reminderID, body, time,
-            noteID = if (noteID != -1) previousReminder.noteID else noteID,
-            reminderOff
-        ).let {
-            reminderDao.update(it)
-        }
-    }
-
-    fun getReminderByID(reminderID: Int): Reminder {
-        return reminderDao.getReminderByID(reminderID)
-    }
-
-    fun getRemindersByNoteID(noteID: Int): LiveData<List<Reminder>> {
-        return reminderDao.getRemindersByNoteID(noteID)
-    }
-
-    fun updateNotificationTime(reminderID: Int, time: String) {
-        val previousReminder = reminderDao.getReminderByID(reminderID)
-        Reminder(reminderID,
-            previousReminder.body, time,
-            previousReminder.noteID,
-            previousReminder.reminderOff
-        ).let {
-            reminderDao.update(it)
-        }
-    }
-
-    fun updateNoteIDForReminders(noteID: Int) {
-        val reminderIDs = reminderDao.getReminderIDsByNoteID(0)
-        for (reminderID in reminderIDs) {
-            reminderDao.updateNoteIDByReminderID(noteID, reminderID)
-        }
-    }
-
 
     fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> {
         if (folderID == 1) {  // All Notes folder

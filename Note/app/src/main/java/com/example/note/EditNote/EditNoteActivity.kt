@@ -111,15 +111,17 @@ class EditNoteActivity : AppCompatActivity() {
                     createTime = createTime,
                     folderID = folderID
                 )
-
-                // Update reminders' note ID
-                updateReminderNoteID(Model.getNotesCountByFolderID(currentFolderID))
             }
+            // Update reminders' note ID
+            updateReminderNoteID(Model.getNotesCountByFolderID(currentFolderID))
 
         } else {
             // Since both title and body of the note are empty, we simply delete or
             // discard the current note
-            if (isUpdate) { Model.deleteNote(currentNoteID) }
+            if (isUpdate) {
+                Model.deleteNote(currentNoteID)
+                Model.deleteRemindersByNoteID(0)
+            }
         }
         hideKeyboard()
         finish()
