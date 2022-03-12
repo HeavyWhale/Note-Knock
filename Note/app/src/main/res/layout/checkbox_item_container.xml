@@ -22,7 +22,7 @@
 
         <EditText
                 android:id="@+id/checkboxBody"
-                android:layout_width="@dimen/_180sdp"
+                android:layout_width="@dimen/_188sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_3sdp"

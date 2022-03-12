@@ -30,7 +30,7 @@ class Notification : AppCompatActivity() {
         binding.submitBottom.setOnClickListener {
             scheduleNotification()
             notificationTime = getTimeInString()
-            Model.updateNotificationTime(currentReminderID, notificationTime)
+            Model.updateTimeByID(currentReminderID, notificationTime)
         }
         
         binding.imageBack.setOnClickListener {
