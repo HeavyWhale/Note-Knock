@@ -111,17 +111,17 @@ class EditNoteActivity : AppCompatActivity() {
                     createTime = createTime,
                     folderID = folderID
                 )
+                // Update reminders' note ID
+                updateReminderNoteID(Model.getNotesCountByFolderID(currentFolderID))
             }
-            // Update reminders' note ID
-            updateReminderNoteID(Model.getNotesCountByFolderID(currentFolderID))
 
         } else {
             // Since both title and body of the note are empty, we simply delete or
             // discard the current note
             if (isUpdate) {
                 Model.deleteNote(currentNoteID)
-                Model.deleteRemindersByNoteID(0)
             }
+            Model.deleteRemindersByNoteID(0)
         }
         hideKeyboard()
         finish()
@@ -142,7 +142,7 @@ class EditNoteActivity : AppCompatActivity() {
     }
 
     private fun addReminder() {
-        Model.insertReminder(0, "", "",  0)
+        Model.insertReminder(0, "", "", currentNoteID)
         checklistAdapter.notifyDataSetChanged()
     }
 
