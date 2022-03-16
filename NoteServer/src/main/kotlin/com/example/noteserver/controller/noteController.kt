@@ -13,7 +13,7 @@ class NoteResource(private val noteRepository: NoteRepository) {
     fun index(): ResponseEntity<List<Note>> {
         val notes = noteRepository.findAll()
         if (notes.isEmpty()) {
-            return ResponseEntity<List<Note>>(HttpStatus.NO_CONTENT)
+            return ResponseEntity<List<Note>>(HttpStatus.NO_CONTENT) // should be empty list?
         }
         return ResponseEntity<List<Note>>(notes, HttpStatus.OK)
     }

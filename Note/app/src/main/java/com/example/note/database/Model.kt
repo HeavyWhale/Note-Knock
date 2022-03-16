@@ -6,8 +6,16 @@ import com.example.note.database.entities.Folder
 import com.example.note.database.entities.Note
 import com.example.note.database.entities.Reminder
 import com.example.note.getCurrentTime
+import java.net.*
 
 object Model {
+
+    /*****************************************************************************
+     * Private Properties
+     ****************************************************************************/
+
+    private const val SERVER_ADDRESS = "http://127.0.0.1:8080"
+//    private val server = HttpClient
 
     /*****************************************************************************
      * Enum subclass for setting up default folders
@@ -34,30 +42,10 @@ object Model {
      * Properties
      ****************************************************************************/
 
-    // Container for all folders
-//    val folders: MutableList<Folder> = DF
-//        .values()
-//        .map { Folder( it.id, it.printableName ) }
-//        .toMutableList()
-//
-//    // pointer to current folder
-//    var curFolderID = 0
-//        set(value) {
-//            field = value
-//            Log.d("INFO", "Model::curFolderID - Switched to folder $curFolder at position $value")
-//        }
-
     /**************** Aliases ****************/
     private val noteDao   get() = AppDatabase.INSTANCE?.getNoteDao()!!
     private val folderDao get() = AppDatabase.INSTANCE?.getFolderDao()!!
     private val reminderDao get() = AppDatabase.INSTANCE?.getReminderDao()!!
-
-
-//    val curFolder get() = folderDao.getFolderNameByID(curFolderID)
-//    val folders   get() = folderDao.getAll()
-//    val notes     get() = noteDao.getNotesByFolderID(curFolderID)
-
-//    var curNotePosition : Int = -1
 
 
     /*****************************************************************************
