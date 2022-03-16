@@ -1,4 +1,5 @@
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URI
@@ -39,10 +40,12 @@ data class Note(
 
 fun main(args: Array<String>) {
     val post_response = post(Note(null, "Title 1", "Body 1", 1234, 5678, 1))
-    println(post_response) // no data returned
+    println(post_response)
 
     val get_response = get()
+    val decoded = Json.decodeFromString<List<Note>>(get_response)
     println(get_response) // list of JSON objects from database
+    print(decoded)
 }
 
 fun get(): String {
