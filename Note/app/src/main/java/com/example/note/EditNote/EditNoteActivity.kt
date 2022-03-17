@@ -81,9 +81,11 @@ class EditNoteActivity : AppCompatActivity() {
             }
             true -> {
                 Model.getNoteByID(currentNoteID).also {
-                    inputNoteTitle.setText(it.title)
-                    inputNoteBody.setText(it.body)
-                    textDateTime.text = format.format(Date(it.modifyTime))
+                    if (it != null) {
+                        inputNoteTitle.setText(it.title)
+                        inputNoteBody.setText(it.body)
+                        textDateTime.text = format.format(Date(it.modifyTime))
+                    }
                 }
             }
         }
@@ -105,7 +107,6 @@ class EditNoteActivity : AppCompatActivity() {
                 // Change folderID to Snippets if we are in All Notes folder
                 val folderID = if (currentFolderID == 1) 2 else currentFolderID
                 Model.insertNote(
-                    noteID = currentNoteID,
                     title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
                     body = inputNoteBody.text.toString(),
                     createTime = createTime,

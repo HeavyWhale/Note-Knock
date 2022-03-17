@@ -13,5 +13,6 @@ data class Note(
     @Column(updatable = false)
     var createTime: Long,
     var modifyTime: Long,
+    @Column(updatable = false)
     var folderID: Int = -1
 )

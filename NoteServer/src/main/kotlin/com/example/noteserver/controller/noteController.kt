@@ -1,48 +1,40 @@
 package com.example.noteserver.controller
 
 import com.example.noteserver.model.Note
-import com.example.noteserver.repository.NoteRepository
+import com.example.noteserver.repository.NoteService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/notes")
-class NoteResource(private val noteRepository: NoteRepository) {
+class NoteResource(val service: NoteService) {
     @GetMapping
-    fun index(): ResponseEntity<List<Note>> {
-        val notes = noteRepository.findAll()
-        if (notes.isEmpty()) {
-            return ResponseEntity<List<Note>>(HttpStatus.NO_CONTENT) // should be empty list?
-        }
-        return ResponseEntity<List<Note>>(notes, HttpStatus.OK)
-    }
+    fun index(): List<Note> = service.getAllNotes()
 
     @PostMapping
     fun post(@RequestBody note: Note) {
-        noteRepository.save(note)
+        service.insertNote(note)
     }
 
     @DeleteMapping("/{id}")
-    fun removeNoteById(@PathVariable("id") noteID: Int): ResponseEntity<Void> {
-        val note = noteRepository.findById(noteID)
-        if (note.isPresent) {
-            noteRepository.deleteById(noteID)
-            return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
-        }
-        return ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun removeNoteById(@PathVariable("id") noteID: Int) {
+        service.removeNoteByID(noteID)
     }
 
     @PutMapping("/{id}")
-    fun updateNoteById(@PathVariable("id") noteID: Int, @RequestBody note: Note): ResponseEntity<Note> {
-        return noteRepository.findById(noteID).map { noteDetails ->
-            val updatedNote: Note = noteDetails.copy(
-                title = note.title,
-                body = note.body,
-                modifyTime = note.modifyTime,
-                folderID = note.folderID
-            )
-            ResponseEntity(noteRepository.save(updatedNote), HttpStatus.OK)
-        }.orElse(ResponseEntity<Note>(HttpStatus.INTERNAL_SERVER_ERROR))
+    fun updateNoteById(@PathVariable("id") noteID: Int, @RequestBody note: Note) {
+        service.updateNoteById(noteID, note)
+    }
+
+    @GetMapping("/{id}")
+    fun findNoteById(@PathVariable("id") noteID: Int): Optional<Note> {
+        return service.findNoteById(noteID)
+    }
+
+    @GetMapping("/folder/{folderID}")
+    fun findNotesByFolderId(@PathVariable("folderID") folderID: Int): List<Note> {
+        return service.findNotesByFolderId(folderID)
     }
 }

@@ -5,8 +5,14 @@ import androidx.lifecycle.LiveData
 import com.example.note.database.entities.Folder
 import com.example.note.database.entities.Note
 import com.example.note.database.entities.Reminder
-import com.example.note.getCurrentTime
-import java.net.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URI
+import java.net.URL
+import java.time.Duration
 
 object Model {
 
@@ -14,8 +20,7 @@ object Model {
      * Private Properties
      ****************************************************************************/
 
-    private const val SERVER_ADDRESS = "http://127.0.0.1:8080"
-//    private val server = HttpClient
+    private val baseURL = "http://127.0.0.1:8080"
 
     /*****************************************************************************
      * Enum subclass for setting up default folders
@@ -41,11 +46,6 @@ object Model {
     /*****************************************************************************
      * Properties
      ****************************************************************************/
-
-    /**************** Aliases ****************/
-    private val noteDao   get() = AppDatabase.INSTANCE?.getNoteDao()!!
-    private val folderDao get() = AppDatabase.INSTANCE?.getFolderDao()!!
-    private val reminderDao get() = AppDatabase.INSTANCE?.getReminderDao()!!
 
 
     /*****************************************************************************
@@ -107,44 +107,84 @@ object Model {
     }
 
     /**************** Notes ****************/
-    fun insertNote(noteID: Int = 0, title: String, body: String, createTime: Long, folderID: Int) {
+    fun insertNote(title: String, body: String, createTime: Long, folderID: Int) {
         val currentTime = System.currentTimeMillis()
-        Log.d("Model", "Insert note ID $noteID to folder $folderID at time $currentTime")
-        Note(noteID, title, body, createTime, currentTime, folderID).let {
-            noteDao.insert(it)
+        val jsonNote = Json.encodeToString(Note(0, title, body, createTime, currentTime, folderID))
+        val url = URL("$baseURL/notes")
+
+        if (pushDataToHttpServer("POST", jsonNote, url)) {
+            Log.d("Model", "Insert note $title to folder $folderID at time $currentTime")
+        } else {
+            Log.e("Model", "Insert note $title failed")
         }
     }
 
     // If the id does not exist, do nothing
     fun deleteNote(noteID: Int) {
-        noteDao.delete(Note(id = noteID))
+        val url = URL("$baseURL/notes/$noteID")
+        with(url.openConnection() as HttpURLConnection) {
+            requestMethod = "DELETE"
+
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e("Model", "Failed to delete note $noteID")
+            }
+        }
     }
 
     fun updateNote(noteID: Int, title: String, body: String, folderID: Int = -1) {
-        val previousNote = noteDao.getNoteByID(noteID)
-        Log.d("Model", "Update note ID $noteID at time ${System.currentTimeMillis()}")
-
-        Note(noteID, title, body,
-            createTime = previousNote.createTime,
+        val note = Note(
+            noteID, title, body,
+            createTime = 0,
             modifyTime = System.currentTimeMillis(),
-            folderID = if (folderID == -1) previousNote.folderID else folderID
-        ).let { noteDao.update(it) }
+            folderID = 0
+        )
+        val jsonNote = Json.encodeToString(note)
+        val url = URL("$baseURL/notes/$noteID")
+
+        if (pushDataToHttpServer("PUT", jsonNote, url)) {
+            Log.d("Model", "Update note $noteID")
+        } else {
+            Log.e("Model", "Update note $noteID failed")
+        }
+    }
+
+    fun getAllNotes(): List<Note> {
+        val url = URL("$baseURL/notes")
+        return getListDataFromHttpServer(url)
     }
 
     fun getNoteIDByPosition(position: Int, currentFolderID: Int): Int {
-        val notes = if (currentFolderID == 1) noteDao.getAllNoteList() else noteDao.getNoteListByFolderID(currentFolderID)
+        val notes = if (currentFolderID == 1) getAllNotes() else getNoteListByFolderID(currentFolderID)
         return notes[position].id
     }
 
-    fun getNoteByID(noteID: Int): Note {
-        return noteDao.getNoteByID(noteID)
+    fun getNoteByID(noteID: Int): Note? {
+        val url = URL("$baseURL/notes/$noteID")
+        with(url.openConnection() as HttpURLConnection) {
+            requestMethod = "GET"
+            doInput = true
+            setRequestProperty("Accept", "application/json")
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val response = inputStream.bufferedReader().use {
+                    it.readText()
+                }  // defaults to UTF-8
+
+                return Json.decodeFromString(response)
+            } else {
+                Log.e("Model", "Getting all notes failed")
+                return null
+            }
+        }
     }
 
     fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> {
         if (folderID == 1) {  // All Notes folder
-            return noteDao.getAllNotes()
+            // TODO: getAllNotes now returns list<note>, need livedata instead
+            return LiveData<getAllNotes()>
         }
-        return noteDao.getNotesByFolderID(folderID)
+        val url = URL("$baseURL/notes/$folderID")
+        return getListDataFromHttpServer(url)
     }
 
     fun getNotesCountByFolderID(folderID: Int): Int {
@@ -204,6 +244,41 @@ object Model {
             .map { Folder( 0, it.printableName ) }
             .toTypedArray()
         folderDao.insertAll(*defaultFolders)
+    }
+
+    private fun pushDataToHttpServer(request: String, jsonData: String, url: URL): Boolean {
+        with(url.openConnection() as HttpURLConnection) {
+            requestMethod = request
+            doOutput = true
+            setRequestProperty("Content-Type", "application/json")
+            setRequestProperty("Accept", "application/json")
+
+            // Write to OutputStream
+            val outputStreamWriter = OutputStreamWriter(outputStream)
+            outputStreamWriter.write(jsonData)
+            outputStreamWriter.flush()
+
+            return responseCode == HttpURLConnection.HTTP_OK
+        }
+    }
+
+    private fun getListDataFromHttpServer(url: URL): List<Note> {
+        with(url.openConnection() as HttpURLConnection) {
+            requestMethod = "GET"
+            doInput = true
+            setRequestProperty("Accept", "application/json")
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val response = inputStream.bufferedReader().use {
+                    it.readText()
+                }  // defaults to UTF-8
+
+                return Json.decodeFromString(response)
+            } else {
+                Log.e("Model", "Getting all notes failed")
+                return emptyList()
+            }
+        }
     }
 
     /*****************************************************************************

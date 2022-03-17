@@ -8,21 +8,28 @@ Content-Type: application/json
 {
   "title": "Note 1",
   "body": "body",
-  "folderID": 0
+  "folderID": 1
 }
 
 ###
 DELETE http://localhost:8080/notes/3
 
 ###
-PUT http://localhost:8080/notes/2
+PUT http://localhost:8080/notes/3
 Content-Type: application/json
 
 {
   "title": "new note",
   "body": "new body",
+  "modifyTime": 1,
   "folderID": 1
 }
+
+###
+GET http://localhost:8080/notes/1
+
+###
+GET http://localhost:8080/notes/folder/1
 
 ###
 GET http://localhost:8080/folders
