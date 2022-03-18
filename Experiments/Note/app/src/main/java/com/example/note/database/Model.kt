@@ -136,17 +136,8 @@ object Model {
         var notes: List<Note>? = null
         val ENDPOINT = if (folderID == 1) "$baseURL/notes" else "$baseURL/notes/$folderID"
 
-        if (folderID == 1) {  // All Notes folder
-
-            val job = CoroutineScope(IO).launch {
-                notes = get("$baseURL/notes")
-            }
-            println("@ getNotesByFolderID $notes")
-            return notes ?: emptyList()
-        }
-
-        CoroutineScope(IO).launch {
-            notes = get("$baseURL/notes/$folderID")
+        runBlocking {
+            launch { notes = get(ENDPOINT) }
         }
 
         return notes ?: emptyList()

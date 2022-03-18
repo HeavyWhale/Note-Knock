@@ -6,8 +6,8 @@ POST http://localhost:8080/notes
 Content-Type: application/json
 
 {
-  "title": "Note 1",
-  "body": "body",
+  "title": "Note 2",
+  "body": "body 2",
   "folderID": 1
 }
 

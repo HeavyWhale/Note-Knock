@@ -2,6 +2,7 @@ package com.example.note.database
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import com.example.note.database.entities.Folder
 import com.example.note.database.entities.Note
 import com.example.note.database.entities.Reminder
@@ -181,7 +182,8 @@ object Model {
     fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> {
         if (folderID == 1) {  // All Notes folder
             // TODO: getAllNotes now returns list<note>, need livedata instead
-            return LiveData<getAllNotes()>
+            val url = URL("$baseURL/notes")
+            return getListDataFromHttpServer(url)
         }
         val url = URL("$baseURL/notes/$folderID")
         return getListDataFromHttpServer(url)
