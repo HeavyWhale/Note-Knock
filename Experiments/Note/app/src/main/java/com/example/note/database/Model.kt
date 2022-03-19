@@ -10,8 +10,11 @@ import java.net.URL
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.client.response.*
+import io.ktor.client.response.HttpResponse
+import io.ktor.http.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 
 
 object Model {
@@ -54,7 +57,8 @@ object Model {
      ****************************************************************************/
 
 
-    /**************** Notes ****************/    /*****************************************************************************
+    /**************** Notes ****************/
+    /*****************************************************************************
      * Notes
      ****************************************************************************/
     fun insertNote(title: String, body: String, createTime: Long, folderID: Int) {
@@ -176,46 +180,28 @@ object Model {
         return true
     }
 
-    private suspend inline fun <reified T> get(url: String): T? {
-
+    private suspend fun request(url: String, mymethod: String, body: String) : Boolean {
         try {
-            val decodeFromString = Json.decodeFromString<T?>(client.get(url))
-            println(decodeFromString)
-            return decodeFromString
+            val response: HttpStatement = client.request(url) {
+                method = HttpMethod.Post
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return false
+    }
+
+    private suspend inline fun <reified T> get(url: String): T? {
+        try {
+            val decoded = Json.decodeFromString<T>(client.get(url))
+            println(decoded)
+            return decoded
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
         return null
-
-//        with(url.openConnection() as HttpURLConnection) {
-//            requestMethod = "GET"
-//            doInput = true
-//            doOutput = true
-//            setRequestProperty("Accept", "application/json")
-//            setRequestProperty("Content-Type", "application/json")
-//            println("HERE!!!!!!!")
-//
-//            try {
-//                println("HERE getListDataFromHttpServer with responseCode=$responseCode")
-//            } catch (e: java.lang.Exception) {
-//                println("HERE!!!!!!!!!!!!!")
-//                e.printStackTrace()
-//            } finally {
-//                disconnect()
-//            }
-//
-//            if (responseCode == HttpURLConnection.HTTP_OK) {
-//                val response = inputStream.bufferedReader().use {
-//                    it.readText()
-//                }  // defaults to UTF-8
-//
-//                return Json.decodeFromString(response)
-//            } else {
-//                Log.e("Model", "Getting all notes failed")
-//                return emptyList()
-//            }
-//        }
     }
 
     /*****************************************************************************
