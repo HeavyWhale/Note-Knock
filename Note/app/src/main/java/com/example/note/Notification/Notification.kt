@@ -32,7 +32,7 @@ class Notification : AppCompatActivity() {
         }
         
         binding.imageBack.setOnClickListener {
-            onBackPressed()
+            finish()
         }
     }
 
@@ -58,7 +58,6 @@ class Notification : AppCompatActivity() {
             pendingIntent
         )
         showAlert(time, title, message)
-        println("send notification")
     }
 
     private fun showAlert(time: Long, title: String, message: String) {
@@ -81,7 +80,7 @@ class Notification : AppCompatActivity() {
         val day = binding.datePicker.dayOfMonth
         val month = binding.datePicker.month
         val year = binding.datePicker.year
-        return year.toString() + "." + month.toString() + "." + day.toString() + " " + hour.toString() + ":" + minute.toString()
+        return "$year.$month.$day $hour:$minute"
     }
 
     private fun getTime(): Long {
@@ -102,7 +101,7 @@ class Notification : AppCompatActivity() {
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel = NotificationChannel(channelID, name, importance)
         channel.description = desc
-        val NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        NotificationManager.createNotificationChannel(channel)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 }
