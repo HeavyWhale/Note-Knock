@@ -36,7 +36,6 @@
                         android:layout_gravity="center"
                         android:fontFamily="@font/ubuntu_bold"
                         android:includeFontPadding="false"
-                        android:text="All Notes"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_18ssp"
                         android:layout_centerInParent="true"/>
@@ -97,11 +96,11 @@
                         android:inputType="text"
                         android:textColor="@color/white"
                         android:textColorHint="@color/colorTextHint"
-                        android:textSize="@dimen/_13ssp" />
+                        android:textSize="@dimen/_13ssp" tools:ignore="TouchTargetSizeCheck"/>
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/noteListRecyclerView"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginStart="@dimen/_2sdp"
@@ -111,7 +110,14 @@
                 android:paddingEnd="@dimen/_12sdp"
                 android:paddingBottom="@dimen/_12sdp"
                 app:layout_constraintBottom_toTopOf="@id/layoutQuickActions"
-                app:layout_constraintTop_toBottomOf="@id/layoutSearch" />
+                app:layout_constraintTop_toBottomOf="@id/layoutSearch">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/noteListRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <LinearLayout
                 android:id="@+id/layoutQuickActions"

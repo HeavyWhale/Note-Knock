@@ -1,7 +1,5 @@
 package com.example.note
 
-import android.app.Activity
-import android.view.inputmethod.InputMethodManager
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -11,5 +9,8 @@ const val EXTRA_NOTE_ID = "noteID"
 const val EXTRA_FOLDER_ID = "folderID"
 const val EXTRA_REMINDER_ID = "reminderID"
 
-fun getCurrentTime() =
-    SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
+fun Any.toPrettyString(): String =
+    toString().replace("), ", "),\n ")
+
+fun Long.toPrettyTime(): String =
+    SimpleDateFormat("EEEE, yyyy-MM-dd HH:mm a", Locale.getDefault()).format(Date(this))

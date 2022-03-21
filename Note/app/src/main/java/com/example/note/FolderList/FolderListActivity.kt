@@ -8,7 +8,6 @@ import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
-import android.util.Log
 import android.view.MenuItem
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
@@ -31,9 +30,11 @@ class FolderListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         AppDatabase.destroyInstance()
         AppDatabase.initInstance(applicationContext) // initialize database
-        setContentView(R.layout.activity_folder_structure)
+
+        setContentView(R.layout.activity_folder_list)
 
         // Generate folderAdapter for recycler view to apply to each note
         folderAdapter = FolderAdapter { folder -> selectFolderOnClick(folder) }
@@ -68,7 +69,7 @@ class FolderListActivity : AppCompatActivity() {
         val position = item.order
         return when (item.itemId) {
             1 -> {
-                if (position < 4) {
+                if (position < Model.DF_LENGTH) {
                     Toast.makeText(baseContext, "Default folders cannot be deleted!", Toast.LENGTH_SHORT).show()
                     return true
                 }
@@ -77,7 +78,7 @@ class FolderListActivity : AppCompatActivity() {
                 true
             }
             2 -> {
-                if (position < 4) {
+                if (position < Model.DF_LENGTH) {
                     Toast.makeText(baseContext, "Default folders cannot be renamed!", Toast.LENGTH_SHORT).show()
                     return true
                 }
@@ -104,7 +105,7 @@ class FolderListActivity : AppCompatActivity() {
                 Toast.makeText(baseContext, "Do not leave folder name blank", Toast.LENGTH_SHORT).show()
             } else {
                 // Add the new folder
-                Model.addFolder(folderName)
+                Model.insertFolder(folderName)
                 dialog.dismiss()
                 hideKeyboard()
             }

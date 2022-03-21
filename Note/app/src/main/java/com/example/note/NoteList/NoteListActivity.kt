@@ -5,13 +5,14 @@ package com.example.note.NoteList
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.note.EXTRA_FOLDER_ID
 import com.example.note.EXTRA_IS_UPDATE
 import com.example.note.EXTRA_NOTE_ID
@@ -30,16 +31,17 @@ class NoteListActivity : AppCompatActivity() {
     private val noteAdapter = NoteAdapter { note -> updateNoteOnClick(note) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        currentFolderID = intent.getIntExtra(EXTRA_FOLDER_ID, 0)
+        currentFolderID = intent.getIntExtra(EXTRA_FOLDER_ID, Model.DF.ALL_NOTES.id)
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_note_list)
 
         // Find all views
         val insertNoteButton = findViewById<ImageView>(R.id.imageAddNoteMain)
         val viewFoldersButton = findViewById<ImageView>(R.id.imageViewFolders)
         val textFolderName = findViewById<TextView>(R.id.currentFolder)
         val noteListRecyclerView = findViewById<RecyclerView>(R.id.noteListRecyclerView)
+        val swipeRefreshLayout = findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
 
         // Set all views
         // let notesAdapter subscribe to any modification on notes
@@ -47,32 +49,30 @@ class NoteListActivity : AppCompatActivity() {
             noteAdapter.submitList(notes)
         }
 
-        insertNoteButton.setOnClickListener {
-            insertNoteOnClick()
-        }
-        viewFoldersButton.setOnClickListener {
-            finish()
-        }
+        insertNoteButton.setOnClickListener { insertNoteOnClick() }
+        viewFoldersButton.setOnClickListener { finish() }
         textFolderName.text = Model.getFolderNameByID(currentFolderID)
-        noteListRecyclerView.layoutManager =
-            StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        noteListRecyclerView.adapter = noteAdapter
 
-        registerForContextMenu(noteListRecyclerView)
+        with (noteListRecyclerView) {
+            layoutManager =
+                StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+            adapter = noteAdapter
+            setNoteTouchListener(this)
+            registerForContextMenu(this)
+        }
 
-//        noteListRecyclerView.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-
-//        if (intent.getBooleanExtra("switchFolder", false)) {
-//            val folderClickedPosition = intent.getIntExtra("folderClickedPosition", 0)
-//            switchFolder(folderClickedPosition)
-//        }
+        swipeRefreshLayout.setOnRefreshListener {
+            reloadFromServer()
+            swipeRefreshLayout.isRefreshing = false
+        }
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val position = item.order
         return when (item.itemId) {
             1 -> {
-                deleteNote(Model.getNoteIDByPosition(position, currentFolderID))
+//                deleteNote(Model.getNoteIDByPosition(position, currentFolderID))
+                deleteNote(noteAdapter.getNoteAtPosition(position).id) // This is easy
                 true
             }
             else -> super.onContextItemSelected(item)
@@ -96,6 +96,33 @@ class NoteListActivity : AppCompatActivity() {
             putExtra(EXTRA_FOLDER_ID, currentFolderID)
         }
         startActivity(intent)
+    }
+
+
+    // From: https://www.raywenderlich.com/1560485-android-recyclerview-tutorial-with-kotlin#:~:text=the%20stars%20shift%3A-,using%20itemtouchhelper,-Sometimes%20you%E2%80%99ll
+    // Set item swipe left delete options
+    private fun setNoteTouchListener(noteListRecyclerView: RecyclerView) {
+        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                deleteNote(noteAdapter.getNoteAtPosition(position).id)
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(noteListRecyclerView)
+    }
+
+    private fun reloadFromServer() {
+        Model.pullDataFromServer()
     }
 
     // Returned from EditNoteActivity
