@@ -12,7 +12,7 @@ import java.util.*
 import kotlin.properties.Delegates
 
 class Notification : AppCompatActivity() {
-    private  lateinit var binding : SetNotificationBinding
+    private lateinit var binding : SetNotificationBinding
     private var currentReminderID by Delegates.notNull<Int>()
     var notificationTime:String = ""
 

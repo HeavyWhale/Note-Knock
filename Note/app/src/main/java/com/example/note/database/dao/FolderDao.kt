@@ -55,6 +55,9 @@ interface FolderDao : BaseDao {
     @Query("DELETE FROM folders")
     override fun clear()
 
+    @Query("SELECT * FROM folders ORDER BY id ASC")
+    fun getFD(): List<Folder>
+
     // Descending order
     @Query("SELECT * FROM folders ORDER BY id ASC")
     fun getAllFolders(): LiveData<List<Folder>>
@@ -104,6 +107,8 @@ fun FolderDao.pushToServer(item: BaseEntity, operation: BaseDao.OPERATION, baseU
     val ENDPOINT = baseURL + when (operation) {
         BaseDao.OPERATION.INSERT -> "/folders"
         else -> "/folders/${item.id}"
+    }.also {
+        Log.d("FolderDao", "Pushing to endpoint \"$it\"")
     }
 
     CoroutineScope(Dispatchers.IO).launch {
@@ -113,7 +118,7 @@ fun FolderDao.pushToServer(item: BaseEntity, operation: BaseDao.OPERATION, baseU
                     BaseDao.OPERATION.INSERT -> HttpMethod.Post
                     BaseDao.OPERATION.UPDATE -> HttpMethod.Put
                     BaseDao.OPERATION.DELETE,
-                    BaseDao.OPERATION.DELETE_BY_FOLDER -> HttpMethod.Delete
+                    BaseDao.OPERATION.MULTIPLE_DELETE -> HttpMethod.Delete
                 }
                 contentType(ContentType.Application.Json)
                 body = Json.encodeToString(item)
@@ -127,5 +132,5 @@ fun FolderDao.pushToServer(item: BaseEntity, operation: BaseDao.OPERATION, baseU
         }
     }
 
-    Log.d("FolderDao", "Successfully pushed folder to server")
+    Log.d("FolderDao", "Successfully pushed operation \"${operation.name}\" to server")
 }

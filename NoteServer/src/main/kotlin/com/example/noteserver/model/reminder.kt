@@ -5,9 +5,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "REMINDERS")
 data class Reminder(
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Int?,
+    @Id var id: Int?,
     var body : String = "",
     var time : String = "",
     var noteID: Int = -1,

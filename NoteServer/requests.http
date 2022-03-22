@@ -1,18 +1,51 @@
 ###
-GET http://localhost:8080/notes
+GET http://localhost:8080/reminders
+
+###
+POST http://localhost:8080/reminders
+Content-Type: application/json
+
+{
+  "id": 3,
+  "body": "Reminder 3",
+  "time": 0,
+  "noteID": 2,
+  "reminderOff": false
+}
+
+###
+PUT http://localhost:8080/reminders?oldNoteID=2&newNoteID=3
+
 
 ###
 POST http://localhost:8080/notes
 Content-Type: application/json
 
 {
-  "title": "Note 2",
-  "body": "body 2",
-  "folderID": 1
+  "id": 2,
+  "title": "Gen Note 2",
+  "body": "Gen Note 2",
+  "folderID": 1,
+  "modifyTime": 5678
 }
 
 ###
-DELETE http://localhost:8080/notes/3
+POST http://localhost:8080/notes
+Content-Type: application/json
+
+{
+  "id": 3,
+  "title": "Gen Note 3",
+  "body": "Gen Note 3",
+  "folderID": 2,
+  "modifyTime": 5678
+}
+
+###
+DELETE http://localhost:8080/notes?folderID=1
+
+###
+DELETE http://localhost:8080/reminders
 
 ###
 PUT http://localhost:8080/notes/3

@@ -14,9 +14,7 @@ class FolderService(val db: FolderRepository) {
 
     fun getAllFolders(): List<Folder> = db.findByOrderByIdAsc()
 
-    fun insertFolder(folder: Folder) {
-        db.save(folder)
-    }
+    fun insertFolder(folder: Folder) = db.save(folder)
 
     fun removeFolderByID(folderID: Int) {
         val folder = db.findById(folderID)
@@ -25,12 +23,8 @@ class FolderService(val db: FolderRepository) {
         }
     }
 
-    fun updateFolderById(folderID: Int, folder: Folder) {
-        db.findById(folderID).map { folderDetails ->
-            val updatedFolder: Folder = folderDetails.copy(
-                name = folder.name
-            )
-            db.save(updatedFolder)
-        }
+    fun updateFolderByID(folderID: Int, folder: Folder) {
+        removeFolderByID(folderID)
+        db.save(folder)
     }
 }

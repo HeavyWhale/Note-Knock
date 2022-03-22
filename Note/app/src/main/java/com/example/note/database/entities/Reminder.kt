@@ -9,7 +9,6 @@ import kotlinx.serialization.Serializable
 data class Reminder(
 
     @PrimaryKey(autoGenerate = true) var id: Int,
-
     var body : String = "",
     var time : String = "",
     var noteID: Int = -1,

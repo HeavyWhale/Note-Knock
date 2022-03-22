@@ -3,6 +3,7 @@ package com.example.note.EditNote
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.Display.Mode
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -13,6 +14,7 @@ import com.example.note.database.Model
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.Notification.Notification
+import com.example.note.database.entities.Reminder
 import kotlin.properties.Delegates
 
 class EditNoteActivity : AppCompatActivity() {
@@ -33,11 +35,14 @@ class EditNoteActivity : AppCompatActivity() {
 
     private val isEdited: Boolean
         get() = inputNoteBody.text.toString() != previousBody ||
-            inputNoteTitle.text.toString() != previousTitle
+            inputNoteTitle.text.toString() != previousTitle ||
+            Model.editedReminder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
+
+        Model.editedReminder = false
 
         // Set from received intent
         isUpdate = intent.getBooleanExtra(EXTRA_IS_UPDATE, false)
@@ -45,7 +50,7 @@ class EditNoteActivity : AppCompatActivity() {
         currentFolderID = intent.getIntExtra(EXTRA_FOLDER_ID, Model.DF.ALL_NOTES.id)
 
         // Generate checklistAdapter
-        checklistAdapter = ChecklistAdapter {}
+        checklistAdapter = ChecklistAdapter()
 
         // Find all views
         val backButton = findViewById<ImageView>(R.id.imageBack)
@@ -63,7 +68,7 @@ class EditNoteActivity : AppCompatActivity() {
         saveNoteButton.setOnClickListener { saveNote() }
         deleteNoteButton.setOnClickListener { deleteNote() }
         addReminderButton.setOnClickListener { addReminder() }
-        redoButton.setOnClickListener{ addNotification() }
+        redoButton.setOnClickListener { addNotification() }
         textDateTime.text = createTime.toPrettyTime()
         Model.getRemindersByNoteID(currentNoteID).observe(this) { reminders ->
             checklistAdapter.submitList(reminders)
@@ -99,6 +104,8 @@ class EditNoteActivity : AppCompatActivity() {
                         title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
                         body = inputNoteBody.text.toString()
                     )
+                    // May added new reminders
+                    updateReminderNoteID(currentNoteID)
                 }
             } else {
                 // Insert new note
@@ -130,6 +137,9 @@ class EditNoteActivity : AppCompatActivity() {
     private fun deleteNote() {
         if (isUpdate) {
             Model.deleteNote(currentNoteID)
+        } else {
+            // Delete possibly created reminders
+            Model.deleteRemindersByNoteID(currentNoteID)
         }
         hideKeyboard()
         finish()
@@ -143,7 +153,8 @@ class EditNoteActivity : AppCompatActivity() {
 
     private fun addReminder() {
         Model.insertReminder("", "", currentNoteID)
-        checklistAdapter.notifyDataSetChanged()
+        Model.editedReminder = true
+//        checklistAdapter.notifyDataSetChanged()
     }
 
     private fun addNotification() {
@@ -152,6 +163,6 @@ class EditNoteActivity : AppCompatActivity() {
     }
 
     private fun updateReminderNoteID(noteID: Int) {
-        Model.updateNoteIDForReminders(noteID)
+        Model.updateRemindersNoteIDByNoteID(currentNoteID, noteID)
     }
 }

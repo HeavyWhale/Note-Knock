@@ -2,39 +2,45 @@ package com.example.noteserver.controller
 
 import com.example.noteserver.model.Note
 import com.example.noteserver.repository.NoteService
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
 @RequestMapping("/notes")
 class NoteResource(val service: NoteService) {
+    // From: https://www.baeldung.com/spring-requestmapping#request-param
     @GetMapping
-    fun index(): List<Note> = service.getAllNotes()
+    fun findByFolderID(
+        @RequestParam("folderID", defaultValue = "1") folderID: Int
+    ): List<Note> =
+        if (folderID == 1) {
+            service.getAllNotes()
+        } else {
+            service.findNotesByFolderID(folderID)
+        }
 
     @PostMapping
-    fun post(@RequestBody note: Note) {
-        service.insertNote(note)
+    fun insert(@RequestBody note: Note) = service.insertNote(note)
+
+    @DeleteMapping
+    fun removeByFolderID(
+        @RequestParam("folderID", defaultValue = "0") folderID: Int
+    ) = when (folderID) {
+        0 -> { /* no operation */ }
+        1 -> service.removeAllNotes()
+        else -> service.removeNotesByFolderID(folderID)
     }
+
 
     @DeleteMapping("/{id}")
-    fun removeNoteById(@PathVariable("id") noteID: Int) {
+    fun removeById(@PathVariable("id") noteID: Int) =
         service.removeNoteByID(noteID)
-    }
 
     @PutMapping("/{id}")
-    fun updateNoteById(@PathVariable("id") noteID: Int, @RequestBody note: Note) {
-        service.updateNoteById(noteID, note)
-    }
+    fun updateById(@PathVariable("id") noteID: Int, @RequestBody note: Note) =
+        service.updateNoteByID(noteID, note)
 
     @GetMapping("/{id}")
-    fun findNoteById(@PathVariable("id") noteID: Int): Optional<Note> {
-        return service.findNoteById(noteID)
-    }
-
-    @GetMapping("/folder/{folderID}")
-    fun findNotesByFolderId(@PathVariable("folderID") folderID: Int): List<Note> {
-        return service.findNotesByFolderId(folderID)
-    }
+    fun findByID(@PathVariable("id") noteID: Int): Optional<Note> =
+        service.findNoteByID(noteID)
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.note.R
 import com.example.note.database.Model
 import com.example.note.database.entities.Folder
+import com.example.note.database.entities.Note
 
 class FolderAdapter(private val onClick: (Folder) -> Unit) :
     ListAdapter<Folder, FolderAdapter.FolderViewHolder>(FoldersDiffCallback) {
@@ -49,6 +50,10 @@ class FolderAdapter(private val onClick: (Folder) -> Unit) :
 
     override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    fun getFolderAtPosition(position: Int): Folder {
+        return super.getItem(position)
     }
 }
 

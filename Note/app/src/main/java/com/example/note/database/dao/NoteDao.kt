@@ -77,6 +77,9 @@ interface NoteDao : BaseDao {
     @Query("SELECT * FROM notes ORDER BY modifyTime DESC")
     fun getAllNotes(): LiveData<List<Note>>
 
+    @Query("SELECT * FROM notes WHERE folderID = :folderID ORDER BY modifyTime DESC")
+    fun getNotesListByFolderID(folderID: Int): List<Note>
+
     // Descending order from newest to oldest timestamp
     @Query("SELECT * FROM notes WHERE folderID = :folderID ORDER BY modifyTime DESC")
     fun getNotesByFolderID(folderID: Int): LiveData<List<Note>>
@@ -131,8 +134,10 @@ fun NoteDao.pushToServer(item: BaseEntity, operation: BaseDao.OPERATION, baseURL
     }
     val ENDPOINT = baseURL + when (operation) {
         BaseDao.OPERATION.INSERT -> "/notes"
-        BaseDao.OPERATION.DELETE_BY_FOLDER -> "?folderID=${item.folderID}"
+        BaseDao.OPERATION.MULTIPLE_DELETE -> "/notes?folderID=${item.folderID}"
         else -> "/notes/${item.id}"
+    }.also {
+        Log.d("NoteDao", "Pushing to endpoint \"$it\"")
     }
 
     CoroutineScope(Dispatchers.IO).launch {
@@ -142,7 +147,7 @@ fun NoteDao.pushToServer(item: BaseEntity, operation: BaseDao.OPERATION, baseURL
                     BaseDao.OPERATION.INSERT -> HttpMethod.Post
                     BaseDao.OPERATION.UPDATE -> HttpMethod.Put
                     BaseDao.OPERATION.DELETE,
-                    BaseDao.OPERATION.DELETE_BY_FOLDER -> HttpMethod.Delete
+                    BaseDao.OPERATION.MULTIPLE_DELETE -> HttpMethod.Delete
                 }
                 contentType(ContentType.Application.Json)
                 body = Json.encodeToString(item)
@@ -156,5 +161,5 @@ fun NoteDao.pushToServer(item: BaseEntity, operation: BaseDao.OPERATION, baseURL
         }
     }
 
-    Log.d("NoteDao", "Successfully pushed note to server")
+    Log.d("NoteDao", "Successfully pushed operation \"${operation.name}\" to server")
 }

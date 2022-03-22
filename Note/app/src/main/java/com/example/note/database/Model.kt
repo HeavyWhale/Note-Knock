@@ -2,11 +2,20 @@ package com.example.note.database
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import com.example.note.database.Model.noteDao
 import com.example.note.database.dao.*
 import com.example.note.database.entities.Folder
 import com.example.note.database.entities.Note
 import com.example.note.database.entities.Reminder
+import com.example.note.toPrettyString
 import com.example.note.toPrettyTime
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object Model {
 
@@ -45,14 +54,6 @@ object Model {
     private val reminderDao get() = daos[2] as ReminderDao
 
     /*****************************************************************************
-     * Initialization
-     ****************************************************************************/
-
-    init {
-        updateDaosFromServer()
-    }
-
-    /*****************************************************************************
      * Private Functions
      ****************************************************************************/
 
@@ -69,6 +70,20 @@ object Model {
             dao.pullFromServer(BASE_URL)
         }
     }
+
+    /*****************************************************************************
+     * Initialization
+     ****************************************************************************/
+
+    init {
+        updateDaosFromServer()
+    }
+
+    /*****************************************************************************
+     * Public Properties
+     ****************************************************************************/
+
+    var editedReminder = false
 
     /*****************************************************************************
      * Public Functions
@@ -105,6 +120,8 @@ object Model {
     fun deleteNote(noteID: Int) {
         Log.d("Model", "Deleting note with id \"$noteID\"")
 
+        deleteRemindersByNoteID(noteID)
+
         val note = Note(id = noteID)
         noteDao.delete(note)
         noteDao.pushToServer(
@@ -125,7 +142,7 @@ object Model {
 
         noteDao.pushToServer(
             item = Note(id = 0, folderID = folderID),
-            operation = BaseDao.OPERATION.DELETE_BY_FOLDER,
+            operation = BaseDao.OPERATION.MULTIPLE_DELETE,
             baseURL = BASE_URL
         )
     }
@@ -152,17 +169,19 @@ object Model {
         )
     }
 
-//    fun getNoteIDByPosition(position: Int, currentFolderID: Int) =
-//        getNotesByFolderID(currentFolderID).value!![position].id
-
     fun getNoteByID(noteID: Int): Note = noteDao.getNoteByID(noteID)
 
     fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> =
         if (folderID == DF.ALL_NOTES.id) {
+            Log.e("Model", "WTF")
             noteDao.getAllNotes()
         } else {
             noteDao.getNotesByFolderID(folderID)
         }
+
+    fun getNotesListByFolderID(folderID: Int): List<Note> =
+        noteDao.getNotesListByFolderID(folderID)
+
 
     fun getNotesCountByFolderID(folderID: Int): Int =
         if (folderID == DF.ALL_NOTES.id) {
@@ -175,18 +194,21 @@ object Model {
     fun insertFolder(name: String): Int {
         Log.d("Model", "Inserting new folder with name \"$name\"")
         val folder = Folder(id = 0, name = name)
+
         val assignedID = folderDao.insert(folder).toInt()
         folderDao.pushToServer(
             item = folder.copy(id = assignedID),
             operation = BaseDao.OPERATION.INSERT,
             baseURL = BASE_URL
         )
-
         return assignedID
     }
 
     fun deleteFolder(folderID: Int) {
         Log.d("Model", "Deleting folder with id \"$folderID\"")
+
+        deleteRemindersByFolderID(folderID)
+        deleteNotesByFolderID(folderID)
 
         val folder = Folder(id = folderID)
         folderDao.delete(folder)
@@ -195,8 +217,6 @@ object Model {
             operation = BaseDao.OPERATION.DELETE,
             baseURL = BASE_URL
         )
-
-        deleteNotesByFolderID(folderID)
     }
 
     fun updateFolder(folderID: Int, name: String) {
@@ -251,18 +271,47 @@ object Model {
     fun deleteRemindersByNoteID(noteID: Int) {
         Log.d("Model", "Deleting reminders with noteID \"$noteID\". " +
             "Now there are ${reminderDao.getAllRemindersCount()} reminders in its DAO.")
+
         reminderDao.deleteRemindersByNoteID(noteID)
+
         Log.d("Model", "Deleted reminders. " +
             "Now there are ${reminderDao.getAllRemindersCount()} reminders in its DAO.")
+
+        reminderDao.pushToServer(
+            item = Reminder(id = 0, noteID = noteID),
+            operation = BaseDao.OPERATION.MULTIPLE_DELETE,
+            baseURL = BASE_URL
+        )
     }
 
-    fun updateReminder(reminderID: Int, body: String, time: String, noteID: Int, reminderOff: Boolean) {
+    fun deleteRemindersByFolderID(folderID: Int) {
+        Log.d("Model", "Deleting reminders with folderID \"$folderID\". " +
+            "Now there are ${reminderDao.getAllRemindersCount()} reminders in its DAO.")
+        
+        getNotesListByFolderID(folderID).map { note ->
+            deleteRemindersByNoteID(note.id)
+        }
+
+        Log.d("Model", "Deleted reminders. " +
+            "Now there are ${reminderDao.getAllRemindersCount()} reminders in its DAO.")
+
+        // No need to push to server, deleteRemindersByNoteID does that for us
+    }
+
+    fun updateReminder(
+        reminderID: Int,
+        body: String,
+        time: String,
+        noteID: Int,
+        reminderOff: Boolean
+    ) {
         val previousReminder = reminderDao.getReminderByID(reminderID)
         val newReminder = Reminder(reminderID, body, time, noteID, reminderOff)
 
         Log.d("Model", "Updating reminder:\n" +
             "\tThe original reminder: $previousReminder\n" +
-            "\tWith new body \"$body\", new time \"$time\", new noteID \"$noteID\", new reminderOff \"$reminderOff\"")
+            "\tWith new body \"$body\", new time \"$time\", " +
+            "new noteID \"$noteID\", new reminderOff \"$reminderOff\"")
         reminderDao.update(newReminder)
         Log.d("Model", "Updated reminder:\n" +
             "\tThe new reminder: ${reminderDao.getReminderByID(reminderID)}")
@@ -276,7 +325,8 @@ object Model {
 
     fun updateReminderTimeByID(reminderID: Int, time: String) {
         val prev = reminderDao.getReminderByID(reminderID)
-        updateReminder(reminderID,
+        updateReminder(
+            reminderID = reminderID,
             body = prev.body,
             time = time,
             noteID = prev.noteID,
@@ -290,6 +340,20 @@ object Model {
         for (reminderID in reminderIDs) {
             reminderDao.updateNoteIDByReminderID(noteID, reminderID)
         }
+    }
+
+    fun updateRemindersNoteIDByNoteID(oldNoteID: Int, newNoteID: Int) {
+        Log.d("Model", "Updating reminders with old noteID = \"$oldNoteID\" to " +
+            "new noteID = \"$newNoteID\"")
+
+        reminderDao.updateRemindersNoteIDByNoteID(oldNoteID, newNoteID)
+        val ENDPOINT = "$BASE_URL/reminders?oldNoteID=$oldNoteID&newNoteID=$newNoteID".also {
+            Log.d("Model", "Pushing to endpoint \"$it\"")
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            HttpClient().put(ENDPOINT)
+        }
+        Log.d("Model", "Successfully pushed updateRemindersNoteIDByNoteID to server")
     }
 
     fun getReminderByID(reminderID: Int) = reminderDao.getReminderByID(reminderID)

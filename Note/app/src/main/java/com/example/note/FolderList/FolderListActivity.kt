@@ -73,7 +73,7 @@ class FolderListActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, "Default folders cannot be deleted!", Toast.LENGTH_SHORT).show()
                     return true
                 }
-                Model.deleteFolder(Model.getFolderIDByPosition(position))
+                Model.deleteFolder(folderAdapter.getFolderAtPosition(position).id)
                 folderAdapter.notifyDataSetChanged()
                 true
             }
@@ -82,7 +82,8 @@ class FolderListActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, "Default folders cannot be renamed!", Toast.LENGTH_SHORT).show()
                     return true
                 }
-                val folderID = Model.getFolderIDByPosition(position)
+//                val folderID = Model.getFolderIDByPosition(position)
+                val folderID = folderAdapter.getFolderAtPosition(position).id
                 val folderName = Model.getFolderNameByID(folderID)
                 showUpdateFolderDialog(folderID, folderName)
                 true

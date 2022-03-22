@@ -58,6 +58,9 @@ interface ReminderDao : BaseDao {
     @Query("DELETE FROM reminders WHERE noteID = :noteID")
     fun deleteRemindersByNoteID(noteID: Int)
 
+    @Query("UPDATE reminders SET noteID = :newID WHERE noteID = :oldID")
+    fun updateRemindersNoteIDByNoteID(oldID: Int, newID: Int)
+
     // Ascending order
     @Query("SELECT * FROM reminders ORDER BY id ASC")
     fun getAllReminders(): LiveData<List<Reminder>>
@@ -121,7 +124,10 @@ fun ReminderDao.pushToServer(item: BaseEntity, operation: BaseDao.OPERATION, bas
     }
     val ENDPOINT = baseURL + when (operation) {
         BaseDao.OPERATION.INSERT -> "/reminders"
+        BaseDao.OPERATION.MULTIPLE_DELETE -> "/reminders?noteID=${item.noteID}"
         else -> "/reminders/${item.id}"
+    }.also {
+        Log.d("ReminderDao", "Pushing to endpoint \"$it\"")
     }
 
     CoroutineScope(Dispatchers.IO).launch {
@@ -131,7 +137,7 @@ fun ReminderDao.pushToServer(item: BaseEntity, operation: BaseDao.OPERATION, bas
                     BaseDao.OPERATION.INSERT -> HttpMethod.Post
                     BaseDao.OPERATION.UPDATE -> HttpMethod.Put
                     BaseDao.OPERATION.DELETE,
-                    BaseDao.OPERATION.DELETE_BY_FOLDER -> HttpMethod.Delete
+                    BaseDao.OPERATION.MULTIPLE_DELETE -> HttpMethod.Delete
                 }
                 contentType(ContentType.Application.Json)
                 body = Json.encodeToString(item)
@@ -145,5 +151,5 @@ fun ReminderDao.pushToServer(item: BaseEntity, operation: BaseDao.OPERATION, bas
         }
     }
 
-    Log.d("ReminderDao", "Successfully pushed reminder to server")
+    Log.d("ReminderDao", "Successfully pushed operation \"${operation.name}\" to server")
 }

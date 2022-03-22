@@ -71,8 +71,7 @@ class NoteListActivity : AppCompatActivity() {
         val position = item.order
         return when (item.itemId) {
             1 -> {
-//                deleteNote(Model.getNoteIDByPosition(position, currentFolderID))
-                deleteNote(noteAdapter.getNoteAtPosition(position).id) // This is easy
+                deleteNote(noteAdapter.getNoteAtPosition(position).id)
                 true
             }
             else -> super.onContextItemSelected(item)
