@@ -2,25 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.example.note">
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/Theme.Note">
+            android:theme="@style/Theme.Note"
+            android:networkSecurityConfig="@xml/network_security_config">
+            <receiver android:name=".Notification.SendNotification"
+                      android:enabled="true"/>
         <activity
-                android:name=".activities.FolderStructure"
-                android:exported="true"
-                android:screenOrientation="portrait"
-                android:windowSoftInputMode="stateHidden"/>
-        <activity
-                android:name=".activities.CreateNoteActivity"
-                android:exported="true"
-                android:screenOrientation="portrait"
-                android:windowSoftInputMode="stateHidden"/>
-        <activity
-                android:name=".activities.MainActivity"
+                android:name=".FolderList.FolderListActivity"
                 android:exported="true"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="stateHidden">
@@ -30,6 +26,22 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+                android:name=".EditNote.EditNoteActivity"
+                android:exported="true"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden"/>
+        <activity
+                android:name=".NoteList.NoteListActivity"
+                android:exported="true"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity
+                android:name=".Notification.Notification"
+                android:exported="true"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden"/>
     </application>
 
 </manifest>

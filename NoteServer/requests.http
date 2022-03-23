@@ -1,0 +1,99 @@
+###
+GET http://localhost:8080/reminders
+
+###
+POST http://localhost:8080/reminders
+Content-Type: application/json
+
+{
+  "id": 3,
+  "body": "Reminder 3",
+  "time": 0,
+  "noteID": 2,
+  "reminderOff": false
+}
+
+###
+PUT http://localhost:8080/reminders?oldNoteID=2&newNoteID=3
+
+
+###
+POST http://localhost:8080/notes
+Content-Type: application/json
+
+{
+  "id": 2,
+  "title": "Gen Note 2",
+  "body": "Gen Note 2",
+  "folderID": 1,
+  "modifyTime": 5678
+}
+
+###
+POST http://localhost:8080/notes
+Content-Type: application/json
+
+{
+  "id": 3,
+  "title": "Gen Note 3",
+  "body": "Gen Note 3",
+  "folderID": 2,
+  "modifyTime": 5678
+}
+
+###
+DELETE http://localhost:8080/notes?folderID=1
+
+###
+DELETE http://localhost:8080/reminders
+
+###
+PUT http://localhost:8080/notes/3
+Content-Type: application/json
+
+{
+  "title": "new note",
+  "body": "new body",
+  "modifyTime": 1,
+  "folderID": 1
+}
+
+###
+GET http://localhost:8080/notes/1
+
+###
+GET http://localhost:8080/notes/folder/1
+
+###
+GET http://localhost:8080/folders
+
+###
+POST http://localhost:8080/folders
+Content-Type: application/json
+
+{
+  "name": "Folder 1"
+}
+
+###
+DELETE http://localhost:8080/folders/1
+
+###
+PUT http://localhost:8080/folders/2
+Content-Type: application/json
+
+{
+  "name": "new folder name"
+}
+
+###
+GET http://localhost:8080/reminders
+
+###
+POST http://localhost:8080/reminders
+Content-Type: application/json
+
+{
+  "body": "Reminder 1",
+  "noteID": 1
+}
