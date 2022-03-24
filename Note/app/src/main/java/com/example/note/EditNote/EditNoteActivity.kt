@@ -3,7 +3,8 @@ package com.example.note.EditNote
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.Display.Mode
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -58,10 +59,31 @@ class EditNoteActivity : AppCompatActivity() {
         val deleteNoteButton = findViewById<ImageView>(R.id.imageDelete)
         val addReminderButton = findViewById<ImageView>(R.id.imageAddReminder)
         val redoButton = findViewById<ImageView>(R.id.redo)
+        val wordCount = findViewById<TextView>(R.id.wordCount)
         inputNoteTitle = findViewById(R.id.inputNoteTitle)
         inputNoteBody = findViewById(R.id.inputNote)
         textDateTime = findViewById(R.id.TextDateTime)
         checklistRecyclerView = findViewById(R.id.checklistRecyclerView)
+
+
+        inputNoteBody.addTextChangedListener(object : TextWatcher {
+
+            //override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int,
+                                           count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int,
+                                       before: Int, count: Int) {
+                var text = inputNoteBody.text.toString()
+                text = text.replace("\n", " ")
+                val textArray = text.split(" ")
+                wordCount.text = "Words: " + textArray.size
+            }
+
+            override fun afterTextChanged(p0: Editable?) {}
+        })
 
         // Set all views
         backButton.setOnClickListener { saveNote() }
