@@ -173,14 +173,17 @@ object Model {
 
     fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> =
         if (folderID == DF.ALL_NOTES.id) {
-            Log.e("Model", "WTF")
             noteDao.getAllNotes()
         } else {
             noteDao.getNotesByFolderID(folderID)
         }
 
     fun getNotesListByFolderID(folderID: Int): List<Note> =
-        noteDao.getNotesListByFolderID(folderID)
+        if (folderID == DF.ALL_NOTES.id) {
+            noteDao.getAllNotesList()
+        } else {
+            noteDao.getNotesListByFolderID(folderID)
+        }
 
 
     fun getNotesCountByFolderID(folderID: Int): Int =
