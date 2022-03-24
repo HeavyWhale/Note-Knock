@@ -9,21 +9,19 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.note.EXTRA_IS_UPDATE
 import com.example.note.EXTRA_REMINDER_ID
 import com.example.note.Notification.Notification
 import com.example.note.R
 import com.example.note.database.Model
 import com.example.note.database.entities.Reminder
 
-class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
-    ListAdapter<Reminder, ChecklistAdapter.ChecklistViewHolder>(RemindersDiffCallback) {
+class ChecklistAdapter
+    : ListAdapter<Reminder, ChecklistAdapter.ChecklistViewHolder>(RemindersDiffCallback) {
 
-    class ChecklistViewHolder(itemView: View, val onClick: (Reminder) -> Unit):
+    class ChecklistViewHolder(itemView: View):
         RecyclerView.ViewHolder(itemView) {
 
         private val checkbox: CheckBox = itemView.findViewById(R.id.checkbox)
@@ -34,17 +32,20 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
         private var currentReminder: Reminder? = null
 
         init {
-            itemView.setOnClickListener{ currentReminder?.let { onClick(it) } }
-
             val context: Context = notificationButton.context
             notificationButton.setOnClickListener{
                 val intent = Intent(context, Notification::class.java).apply {
-                    currentReminder?.let { it1 -> putExtra(EXTRA_REMINDER_ID, it1.id) }
+                    currentReminder?.let { reminder -> putExtra(EXTRA_REMINDER_ID, reminder.id) }
                 }
                 context.startActivity(intent)
             }
             saveChangeButton.setOnClickListener{
                 updateReminder()
+                Model.editedReminder = true
+            }
+            checkboxBody.setOnClickListener {
+                updateReminder()
+                Model.editedReminder = true
             }
             /*
             itemView.setOnFocusChangeListener{ _, hasFocus ->
@@ -67,7 +68,7 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
             }
         }
 
-        private fun updateReminder(){
+        private fun updateReminder() {
             Log.d("Reminder", "Update reminder.")
             currentReminder?.let {
                 Model.updateReminder(
@@ -84,11 +85,15 @@ class ChecklistAdapter(private val onClick: (Reminder) -> Unit):
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChecklistViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.checkbox_item_container, parent, false)
-        return ChecklistViewHolder(view, onClick)
+        return ChecklistViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ChecklistViewHolder, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    fun getItemsCount(): Int {
+        return this.itemCount
     }
 }
 

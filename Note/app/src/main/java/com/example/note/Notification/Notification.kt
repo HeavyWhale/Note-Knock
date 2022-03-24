@@ -6,18 +6,16 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.note.EXTRA_IS_UPDATE
 import com.example.note.EXTRA_REMINDER_ID
 import com.example.note.database.Model
 import com.example.note.databinding.SetNotificationBinding
-import java.text.DateFormat
 import java.util.*
 import kotlin.properties.Delegates
 
 class Notification : AppCompatActivity() {
-    private  lateinit var binding : SetNotificationBinding
+    private lateinit var binding : SetNotificationBinding
     private var currentReminderID by Delegates.notNull<Int>()
-    public var notificationTime:String = ""
+    var notificationTime:String = ""
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
@@ -31,11 +29,11 @@ class Notification : AppCompatActivity() {
         binding.submitBottom.setOnClickListener {
             scheduleNotification()
             notificationTime = getTimeInString()
-            Model.updateTimeByID(currentReminderID, notificationTime)
+            Model.updateReminderTimeByID(currentReminderID, notificationTime)
         }
         
         binding.imageBack.setOnClickListener {
-            onBackPressed()
+            finish()
         }
     }
 
@@ -61,7 +59,6 @@ class Notification : AppCompatActivity() {
             pendingIntent
         )
         showAlert(time, title, message)
-        println("send notification")
     }
 
     private fun showAlert(time: Long, title: String, message: String) {
@@ -74,11 +71,10 @@ class Notification : AppCompatActivity() {
             .setMessage(
                 "Title : " + title + "\nMessage : " + message + "\nAt: " + dateFormat.format(date) + " " + timeFormat.format(date)
             )
-            //.setPositiveButton("OK"){_,_ ->}
-            .setPositiveButton("OK", { dialog, i ->
+            .setPositiveButton("OK") { dialog, i ->
                 //set what would happen when positive button is clicked
                 finish()
-            })
+            }
             .show()
     }
 
@@ -88,7 +84,7 @@ class Notification : AppCompatActivity() {
         val day = binding.datePicker.dayOfMonth
         val month = binding.datePicker.month
         val year = binding.datePicker.year
-        return year.toString() + "." + month.toString() + "." + day.toString() + " " + hour.toString() + ":" + minute.toString()
+        return "$year.$month.$day $hour:$minute"
     }
 
     private fun getTime(): Long {
@@ -109,7 +105,7 @@ class Notification : AppCompatActivity() {
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel = NotificationChannel(channelID, name, importance)
         channel.description = desc
-        val NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        NotificationManager.createNotificationChannel(channel)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 }

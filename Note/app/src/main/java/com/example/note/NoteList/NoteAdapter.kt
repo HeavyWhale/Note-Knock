@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.note.R
 import com.example.note.database.entities.Note
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.properties.Delegates
+import com.example.note.toPrettyTime
 
 
 class NoteAdapter(private val onClick: (Note) -> Unit) :
@@ -31,17 +29,20 @@ class NoteAdapter(private val onClick: (Note) -> Unit) :
         }
 
         fun bind(note: Note) {
-            val format = SimpleDateFormat("EEEE, yyyy-MM-dd HH:mm", Locale.US)
             with (note) {
                 currentNote = this
                 textTitle.text = title
-                textDatetime.text = format.format(Date(modifyTime))
+                textDatetime.text = modifyTime.toPrettyTime()
             }
         }
 
         override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
             menu.add(0, 1, bindingAdapterPosition, R.string.delete)   // 0=?, 1=id
         }
+    }
+
+    fun getNoteAtPosition(position: Int): Note {
+        return super.getItem(position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {

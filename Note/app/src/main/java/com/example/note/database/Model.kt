@@ -2,10 +2,20 @@ package com.example.note.database
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import com.example.note.database.Model.noteDao
+import com.example.note.database.dao.*
 import com.example.note.database.entities.Folder
 import com.example.note.database.entities.Note
 import com.example.note.database.entities.Reminder
-import com.example.note.getCurrentTime
+import com.example.note.toPrettyString
+import com.example.note.toPrettyTime
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object Model {
 
@@ -23,87 +33,308 @@ object Model {
         SHOPPING_LIST   ("Shopping List"),
         REMINDERS       ("Reminders");
 
-        val id: Int = ordinal
+        val id: Int = ordinal + 1 // + 1 since auto-generated ID by Room starts with 1
     }
+    val DF_LENGTH = DF.values().size
 
-    init {
-        addDefaultFolders()
+    /*****************************************************************************
+     * Private Properties
+     ****************************************************************************/
+
+    private const val BASE_URL = "http://10.0.2.2:8080"
+    private val daos: List<BaseDao> = listOf(
+        AppDatabase.INSTANCE!!.getNoteDao(),
+        AppDatabase.INSTANCE!!.getFolderDao(),
+        AppDatabase.INSTANCE!!.getReminderDao()
+    )
+
+    /**************** Aliases ****************/
+    private val noteDao   get() = daos[0] as NoteDao
+    private val folderDao get() = daos[1] as FolderDao
+    private val reminderDao get() = daos[2] as ReminderDao
+
+    /*****************************************************************************
+     * Private Functions
+     ****************************************************************************/
+
+//    private fun addDefaultFolders() {
+//        val defaultFolders = DF
+//            .values()
+//            .map { Folder( 0, it.printableName ) }
+//            .toTypedArray()
+//        folderDao.insertAll(*defaultFolders)
+//    }
+
+    private fun updateDaosFromServer() {
+        for (dao in daos) {
+            dao.pullFromServer(BASE_URL)
+        }
     }
 
     /*****************************************************************************
-     * Properties
+     * Initialization
      ****************************************************************************/
 
-    // Container for all folders
-//    val folders: MutableList<Folder> = DF
-//        .values()
-//        .map { Folder( it.id, it.printableName ) }
-//        .toMutableList()
-//
-//    // pointer to current folder
-//    var curFolderID = 0
-//        set(value) {
-//            field = value
-//            Log.d("INFO", "Model::curFolderID - Switched to folder $curFolder at position $value")
-//        }
+    init {
+        updateDaosFromServer()
+    }
 
-    /**************** Aliases ****************/
-    private val noteDao   get() = AppDatabase.INSTANCE?.getNoteDao()!!
-    private val folderDao get() = AppDatabase.INSTANCE?.getFolderDao()!!
-    private val reminderDao get() = AppDatabase.INSTANCE?.getReminderDao()!!
+    /*****************************************************************************
+     * Public Properties
+     ****************************************************************************/
 
-
-//    val curFolder get() = folderDao.getFolderNameByID(curFolderID)
-//    val folders   get() = folderDao.getAll()
-//    val notes     get() = noteDao.getNotesByFolderID(curFolderID)
-
-//    var curNotePosition : Int = -1
-
+    var editedReminder = false
 
     /*****************************************************************************
      * Public Functions
      ****************************************************************************/
 
-    /**************** Reminders ****************/
-    fun insertReminder(reminderID: Int = 0, body: String, time: String, noteID: Int) {
-        Reminder(reminderID, body, time, noteID).let {
-            reminderDao.insert(it)
+    fun pullDataFromServer() {
+        updateDaosFromServer()
+    }
+
+    /************************** Notes **************************/
+    fun insertNote(
+        title: String,
+        body: String,
+        createTime: Long,
+        folderID: Int
+    ): Int {
+        val currentTime = System.currentTimeMillis()
+        Log.d("Model", "Inserting new note with title \"$title\", " +
+            "body \"$body\" to folder \"$folderID\" " +
+            "at createTime \"${currentTime.toPrettyTime()}\"")
+
+        val note = Note(0, title, body, createTime, currentTime, folderID)
+        val assignedID = noteDao.insert(note).toInt()
+        noteDao.pushToServer(
+            item = note.copy(id = assignedID),
+            operation = BaseDao.OPERATION.INSERT,
+            baseURL = BASE_URL
+        )
+
+        return assignedID
+    }
+
+    // If the id does not exist, do nothing
+    fun deleteNote(noteID: Int) {
+        Log.d("Model", "Deleting note with id \"$noteID\"")
+
+        deleteRemindersByNoteID(noteID)
+
+        val note = Note(id = noteID)
+        noteDao.delete(note)
+        noteDao.pushToServer(
+            item = note,
+            operation = BaseDao.OPERATION.DELETE,
+            baseURL = BASE_URL
+        )
+    }
+
+    fun deleteNotesByFolderID(folderID: Int) {
+        Log.d("Model", "Deleting notes with folderID \"$folderID\". " +
+            "Now there are ${noteDao.getAllNotesCount()} notes in its DAO.")
+
+        noteDao.deleteNotesByFolderID(folderID)
+
+        Log.d("Model", "Deleted notes. " +
+            "Now there are ${noteDao.getAllNotesCount()} notes in its DAO.")
+
+        noteDao.pushToServer(
+            item = Note(id = 0, folderID = folderID),
+            operation = BaseDao.OPERATION.MULTIPLE_DELETE,
+            baseURL = BASE_URL
+        )
+    }
+
+    fun updateNote(noteID: Int, title: String, body: String, folderID: Int = 0) {
+        val previousNote = noteDao.getNoteByID(noteID)
+        val newNote = Note(noteID, title, body,
+            createTime = previousNote.createTime,
+            modifyTime = System.currentTimeMillis(),
+            folderID = if (folderID == 0) previousNote.folderID else folderID
+        )
+        Log.d("Model", "Updating note:\n" +
+            "\tThe original note: $previousNote\n" +
+            "\tWith new title \"$title\", new body \"$body\", new folderID \"$folderID\"")
+
+        noteDao.update(newNote)
+        Log.d("Model", "Updated note:\n" +
+            "\tThe new note: ${noteDao.getNoteByID(noteID)}")
+
+        noteDao.pushToServer(
+            item = newNote,
+            operation = BaseDao.OPERATION.UPDATE,
+            baseURL = BASE_URL
+        )
+    }
+
+    fun getNoteByID(noteID: Int): Note = noteDao.getNoteByID(noteID)
+
+    fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> =
+        if (folderID == DF.ALL_NOTES.id) {
+            Log.e("Model", "WTF")
+            noteDao.getAllNotes()
+        } else {
+            noteDao.getNotesByFolderID(folderID)
         }
+
+    fun getNotesListByFolderID(folderID: Int): List<Note> =
+        noteDao.getNotesListByFolderID(folderID)
+
+
+    fun getNotesCountByFolderID(folderID: Int): Int =
+        if (folderID == DF.ALL_NOTES.id) {
+            noteDao.getAllNotesCount()
+        } else {
+            noteDao.getNotesCountByFolderID(folderID)
+        }
+
+    /**************** Folders ****************/
+    fun insertFolder(name: String): Int {
+        Log.d("Model", "Inserting new folder with name \"$name\"")
+        val folder = Folder(id = 0, name = name)
+
+        val assignedID = folderDao.insert(folder).toInt()
+        folderDao.pushToServer(
+            item = folder.copy(id = assignedID),
+            operation = BaseDao.OPERATION.INSERT,
+            baseURL = BASE_URL
+        )
+        return assignedID
+    }
+
+    fun deleteFolder(folderID: Int) {
+        Log.d("Model", "Deleting folder with id \"$folderID\"")
+
+        deleteRemindersByFolderID(folderID)
+        deleteNotesByFolderID(folderID)
+
+        val folder = Folder(id = folderID)
+        folderDao.delete(folder)
+        folderDao.pushToServer(
+            item = folder,
+            operation = BaseDao.OPERATION.DELETE,
+            baseURL = BASE_URL
+        )
+    }
+
+    fun updateFolder(folderID: Int, name: String) {
+        val folder = Folder(folderID, name)
+
+        Log.d("Model", "Updating folder:\n" +
+            "\tThe original folder: ${folderDao.getFolderByID(folderID)}\n" +
+            "\tWith new name \"$name\"")
+        folderDao.update(folder)
+        Log.d("Model", "Updated folder:\n" +
+            "\tThe new note: ${folderDao.getFolderByID(folderID)}")
+
+        folderDao.pushToServer(
+            item = folder,
+            operation = BaseDao.OPERATION.UPDATE,
+            baseURL = BASE_URL
+        )
+    }
+
+    fun getAllFolders(): LiveData<List<Folder>> = folderDao.getAllFolders()
+
+    fun getFolderNameByID(folderID: Int): String = folderDao.getFolderNameByID(folderID)
+
+    fun getFolderIDByPosition(position: Int): Int = getAllFolders().value!![position].id
+
+    /**************** Reminders ****************/
+    fun insertReminder(body: String, time: String, noteID: Int): Int {
+        val reminder = Reminder(0, body, time, noteID)
+        Log.d("Model", "Inserting new reminder $reminder")
+
+        val assignedID = reminderDao.insert(reminder).toInt()
+        reminderDao.pushToServer(
+            item = reminder.copy(id = assignedID),
+            operation = BaseDao.OPERATION.INSERT,
+            baseURL = BASE_URL
+        )
+        return assignedID
     }
 
     fun deleteReminder(reminderID: Int) {
-        reminderDao.delete(Reminder(id = reminderID))
+        Log.d("Model", "Deleting reminder with id \"$reminderID\"")
+
+        val reminder = Reminder(id = reminderID)
+        reminderDao.delete(reminder)
+        reminderDao.pushToServer(
+            item = reminder,
+            operation = BaseDao.OPERATION.DELETE,
+            baseURL = BASE_URL
+        )
     }
 
-    fun updateReminder(reminderID: Int, body: String, time: String, noteID: Int, reminderOff: Boolean) {
-        val previousReminder = reminderDao.getReminderByID(reminderID)
-        Reminder(reminderID, body, time,
-            noteID = if (noteID != -1) previousReminder.noteID else noteID,
-            reminderOff
-        ).let {
-            reminderDao.update(it)
+    fun deleteRemindersByNoteID(noteID: Int) {
+        Log.d("Model", "Deleting reminders with noteID \"$noteID\". " +
+            "Now there are ${reminderDao.getAllRemindersCount()} reminders in its DAO.")
+
+        reminderDao.deleteRemindersByNoteID(noteID)
+
+        Log.d("Model", "Deleted reminders. " +
+            "Now there are ${reminderDao.getAllRemindersCount()} reminders in its DAO.")
+
+        reminderDao.pushToServer(
+            item = Reminder(id = 0, noteID = noteID),
+            operation = BaseDao.OPERATION.MULTIPLE_DELETE,
+            baseURL = BASE_URL
+        )
+    }
+
+    fun deleteRemindersByFolderID(folderID: Int) {
+        Log.d("Model", "Deleting reminders with folderID \"$folderID\". " +
+            "Now there are ${reminderDao.getAllRemindersCount()} reminders in its DAO.")
+        
+        getNotesListByFolderID(folderID).map { note ->
+            deleteRemindersByNoteID(note.id)
         }
+
+        Log.d("Model", "Deleted reminders. " +
+            "Now there are ${reminderDao.getAllRemindersCount()} reminders in its DAO.")
+
+        // No need to push to server, deleteRemindersByNoteID does that for us
     }
 
-    fun getReminderByID(reminderID: Int): Reminder {
-        return reminderDao.getReminderByID(reminderID)
-    }
-
-    fun getRemindersByNoteID(noteID: Int): LiveData<List<Reminder>> {
-        return reminderDao.getRemindersByNoteID(noteID)
-    }
-
-    fun updateTimeByID(reminderID: Int, time: String) {
+    fun updateReminder(
+        reminderID: Int,
+        body: String,
+        time: String,
+        noteID: Int,
+        reminderOff: Boolean
+    ) {
         val previousReminder = reminderDao.getReminderByID(reminderID)
-        Reminder(reminderID,
-            previousReminder.body, time,
-            previousReminder.noteID,
-            previousReminder.reminderOff
-        ).let {
-            reminderDao.update(it)
-        }
+        val newReminder = Reminder(reminderID, body, time, noteID, reminderOff)
+
+        Log.d("Model", "Updating reminder:\n" +
+            "\tThe original reminder: $previousReminder\n" +
+            "\tWith new body \"$body\", new time \"$time\", " +
+            "new noteID \"$noteID\", new reminderOff \"$reminderOff\"")
+        reminderDao.update(newReminder)
+        Log.d("Model", "Updated reminder:\n" +
+            "\tThe new reminder: ${reminderDao.getReminderByID(reminderID)}")
+
+        reminderDao.pushToServer(
+            item = newReminder,
+            operation = BaseDao.OPERATION.UPDATE,
+            baseURL = BASE_URL
+        )
     }
 
+    fun updateReminderTimeByID(reminderID: Int, time: String) {
+        val prev = reminderDao.getReminderByID(reminderID)
+        updateReminder(
+            reminderID = reminderID,
+            body = prev.body,
+            time = time,
+            noteID = prev.noteID,
+            reminderOff = prev.reminderOff
+        )
+    }
+
+    // FIXME: ??? No idea what this function wants to achieve
     fun updateNoteIDForReminders(noteID: Int) {
         val reminderIDs = reminderDao.getReminderIDsByNoteID(0)
         for (reminderID in reminderIDs) {
@@ -111,116 +342,39 @@ object Model {
         }
     }
 
-    fun deleteRemindersByNoteID(noteID: Int) {
-        var reminderIDs = reminderDao.getReminderIDsByNoteID(noteID)
-        for (reminderID in reminderIDs) {
-            deleteReminder(reminderID)
+    fun updateRemindersNoteIDByNoteID(oldNoteID: Int, newNoteID: Int) {
+        Log.d("Model", "Updating reminders with old noteID = \"$oldNoteID\" to " +
+            "new noteID = \"$newNoteID\"")
+
+        reminderDao.updateRemindersNoteIDByNoteID(oldNoteID, newNoteID)
+        val ENDPOINT = "$BASE_URL/reminders?oldNoteID=$oldNoteID&newNoteID=$newNoteID".also {
+            Log.d("Model", "Pushing to endpoint \"$it\"")
         }
-    }
-
-    /**************** Notes ****************/
-    fun insertNote(noteID: Int = 0, title: String, body: String, createTime: Long, folderID: Int) {
-        val currentTime = System.currentTimeMillis()
-        Log.d("Model", "Insert note ID $noteID to folder $folderID at time $currentTime")
-        Note(noteID, title, body, createTime, currentTime, folderID).let {
-            noteDao.insert(it)
+        CoroutineScope(Dispatchers.IO).launch {
+            HttpClient().put(ENDPOINT)
         }
+        Log.d("Model", "Successfully pushed updateRemindersNoteIDByNoteID to server")
     }
 
-    // If the id does not exist, do nothing
-    fun deleteNote(noteID: Int) {
-        noteDao.delete(Note(id = noteID))
-    }
+    fun getReminderByID(reminderID: Int) = reminderDao.getReminderByID(reminderID)
 
-    fun updateNote(noteID: Int, title: String, body: String, folderID: Int = -1) {
-        val previousNote = noteDao.getNoteByID(noteID)
-        Log.d("Model", "Update note ID $noteID at time ${System.currentTimeMillis()}")
-
-        Note(noteID, title, body,
-            createTime = previousNote.createTime,
-            modifyTime = System.currentTimeMillis(),
-            folderID = if (folderID == -1) previousNote.folderID else folderID
-        ).let { noteDao.update(it) }
-    }
-
-    fun getNoteIDByPosition(position: Int, currentFolderID: Int): Int {
-        val notes = if (currentFolderID == 1) noteDao.getAllNoteList() else noteDao.getNoteListByFolderID(currentFolderID)
-        return notes[position].id
-    }
-
-    fun getNoteByID(noteID: Int): Note {
-        return noteDao.getNoteByID(noteID)
-    }
-
-    fun getNotesByFolderID(folderID: Int): LiveData<List<Note>> {
-        if (folderID == 1) {  // All Notes folder
-            return noteDao.getAllNotes()
-        }
-        return noteDao.getNotesByFolderID(folderID)
-    }
-
-    fun getNotesCountByFolderID(folderID: Int): Int {
-        if (folderID == 1) {  // All Notes folder
-            return noteDao.getAllNotesCount()
-        }
-        return noteDao.getNotesCountByFolderID(folderID)
-    }
-
-    /**************** Folders ****************/
-    fun addFolder(name: String) {
-        folderDao.insert(Folder(id = 0, name = name))
-    }
-
-    fun deleteFolder(folderID: Int) {
-        folderDao.delete(Folder(id = folderID))
-        noteDao.deleteAllNotesFromFolderID(folderID)
-    }
-
-    fun updateFolder(folderID: Int, name: String) {
-        folderDao.update(Folder(folderID, name))
-    }
-
-    fun getAllFolders(): LiveData<List<Folder>> {
-        return folderDao.getAll()
-    }
-
-    fun getFolderNameByID(folderID: Int): String {
-        return folderDao.getFolderNameByID(folderID)
-    }
-
-    fun getFolderIDByPosition(position: Int): Int {
-        val folders = folderDao.getFolderList()
-        return folders[position].id
-    }
-
-    // For testing purposes
-    fun getNoteTitleByID(noteID: Int): String {
-        return noteDao.getNoteTitleByID(noteID)
-    }
-
-    fun getNoteBodyTitleByID(noteID: Int): String {
-        return noteDao.getNoteBodyTitleByID(noteID)
-    }
-
-    fun getFolderCounts(): Int {
-        return folderDao.getFolderCounts()
-    }
-
-    /*****************************************************************************
-     * Private Functions
-     ****************************************************************************/
-
-    private fun addDefaultFolders() {
-        val defaultFolders = DF
-            .values()
-            .map { Folder( 0, it.printableName ) }
-            .toTypedArray()
-        folderDao.insertAll(*defaultFolders)
-    }
+    fun getRemindersByNoteID(noteID: Int): LiveData<List<Reminder>> =
+        reminderDao.getRemindersByNoteID(noteID)
 
     /*****************************************************************************
      * FUNCTIONS FOR DEBUGGING PURPOSE ONLY
      ****************************************************************************/
+    fun debugGetNoteTitleByID(noteID: Int): String {
+        return noteDao.getNoteTitleByID(noteID)
+    }
+
+    fun debugGetNoteBodyTitleByID(noteID: Int): String {
+        return noteDao.getNoteBodyTitleByID(noteID)
+    }
+
+    fun debugGetFolderCounts(): Int {
+        return folderDao.getFolderCounts()
+    }
 //    fun printNotes(firstN: Int = curFolder.notes.size) {
 //        curFolder.printNotes(firstN)
 //    }

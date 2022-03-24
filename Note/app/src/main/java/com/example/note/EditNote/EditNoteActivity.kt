@@ -3,6 +3,7 @@ package com.example.note.EditNote
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.Display.Mode
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -10,11 +11,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.note.*
 import com.example.note.database.Model
-import java.text.SimpleDateFormat
-import java.util.*
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.Notification.Notification
+import com.example.note.database.entities.Reminder
 import kotlin.properties.Delegates
 
 class EditNoteActivity : AppCompatActivity() {
@@ -30,9 +30,19 @@ class EditNoteActivity : AppCompatActivity() {
     private var currentFolderID by Delegates.notNull<Int>()
     private var createTime = System.currentTimeMillis()
 
+    private lateinit var previousTitle: String
+    private lateinit var previousBody: String
+
+    private val isEdited: Boolean
+        get() = inputNoteBody.text.toString() != previousBody ||
+            inputNoteTitle.text.toString() != previousTitle ||
+            Model.editedReminder
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_note)
+        setContentView(R.layout.activity_edit_note)
+
+        Model.editedReminder = false
 
         // Set from received intent
         isUpdate = intent.getBooleanExtra(EXTRA_IS_UPDATE, false)
@@ -40,7 +50,7 @@ class EditNoteActivity : AppCompatActivity() {
         currentFolderID = intent.getIntExtra(EXTRA_FOLDER_ID, Model.DF.ALL_NOTES.id)
 
         // Generate checklistAdapter
-        checklistAdapter = ChecklistAdapter {}
+        checklistAdapter = ChecklistAdapter()
 
         // Find all views
         val backButton = findViewById<ImageView>(R.id.imageBack)
@@ -58,8 +68,8 @@ class EditNoteActivity : AppCompatActivity() {
         saveNoteButton.setOnClickListener { saveNote() }
         deleteNoteButton.setOnClickListener { deleteNote() }
         addReminderButton.setOnClickListener { addReminder() }
-        redoButton.setOnClickListener{ addNotification() }
-        textDateTime.text = getCurrentTime()
+        redoButton.setOnClickListener { addNotification() }
+        textDateTime.text = createTime.toPrettyTime()
         Model.getRemindersByNoteID(currentNoteID).observe(this) { reminders ->
             checklistAdapter.submitList(reminders)
         }
@@ -67,52 +77,49 @@ class EditNoteActivity : AppCompatActivity() {
                 StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         checklistRecyclerView.adapter = checklistAdapter
 
-//        with(backButton) {
-//            hideKeyboard()
-//            onBackPressed()
-//        }
-
-
-        val format = SimpleDateFormat("EEEE, yyyy-MM-dd HH:mm a", Locale.US)
         // Set content of title, body and timestamp according to received intent
         when (isUpdate) {
             false -> {
-                textDateTime.text = format.format(Date(createTime))
+                textDateTime.text = createTime.toPrettyTime()
             }
             true -> {
                 Model.getNoteByID(currentNoteID).also {
-                    inputNoteTitle.setText(it.title)
-                    inputNoteBody.setText(it.body)
-                    textDateTime.text = format.format(Date(it.modifyTime))
+                    inputNoteTitle.setText(it.title); previousTitle = it.title
+                    inputNoteBody.setText(it.body); previousBody = it.body
+                    textDateTime.text = it.modifyTime.toPrettyTime()
                 }
             }
         }
     }
+
 
     private fun saveNote() {
         // Save to model only if title or body has text
         if (inputNoteBody.text.isNotEmpty() || inputNoteTitle.text.isNotEmpty()) {
             if (isUpdate) {
                 // Update current note
-                Model.updateNote(
-                    noteID = currentNoteID,
-                    title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
-                    body = inputNoteBody.text.toString()
-                )
+                if (isEdited) {
+                    Model.updateNote(
+                        noteID = currentNoteID,
+                        title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
+                        body = inputNoteBody.text.toString()
+                    )
+                    // May added new reminders
+                    updateReminderNoteID(currentNoteID)
+                }
             } else {
                 // Insert new note
 
                 // Change folderID to Snippets if we are in All Notes folder
                 val folderID = if (currentFolderID == 1) 2 else currentFolderID
-                Model.insertNote(
-                    noteID = currentNoteID,
+                val newID = Model.insertNote(
                     title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
                     body = inputNoteBody.text.toString(),
                     createTime = createTime,
                     folderID = folderID
                 )
                 // Update reminders' note ID
-                updateReminderNoteID(Model.getNotesCountByFolderID(currentFolderID))
+                updateReminderNoteID(newID)
             }
 
         } else {
@@ -130,6 +137,9 @@ class EditNoteActivity : AppCompatActivity() {
     private fun deleteNote() {
         if (isUpdate) {
             Model.deleteNote(currentNoteID)
+        } else {
+            // Delete possibly created reminders
+            Model.deleteRemindersByNoteID(currentNoteID)
         }
         hideKeyboard()
         finish()
@@ -142,8 +152,9 @@ class EditNoteActivity : AppCompatActivity() {
     }
 
     private fun addReminder() {
-        Model.insertReminder(0, "", "", currentNoteID)
-        checklistAdapter.notifyDataSetChanged()
+        Model.insertReminder("", "", currentNoteID)
+        Model.editedReminder = true
+//        checklistAdapter.notifyDataSetChanged()
     }
 
     private fun addNotification() {
@@ -152,6 +163,6 @@ class EditNoteActivity : AppCompatActivity() {
     }
 
     private fun updateReminderNoteID(noteID: Int) {
-        Model.updateNoteIDForReminders(noteID)
+        Model.updateRemindersNoteIDByNoteID(currentNoteID, noteID)
     }
 }
