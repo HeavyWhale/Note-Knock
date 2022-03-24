@@ -3,12 +3,18 @@
 package com.example.note.NoteList
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.MenuItem
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -47,6 +53,7 @@ class NoteListActivity : AppCompatActivity() {
         // let notesAdapter subscribe to any modification on notes
         Model.getNotesByFolderID(currentFolderID).observe(this) { notes ->
             noteAdapter.submitList(notes)
+            if (noteAdapter.noteList.isEmpty()) noteAdapter.noteList = notes
         }
 
         insertNoteButton.setOnClickListener { insertNoteOnClick() }
@@ -65,6 +72,27 @@ class NoteListActivity : AppCompatActivity() {
             reloadFromServer()
             swipeRefreshLayout.isRefreshing = false
         }
+
+        val inputSearch = findViewById<EditText>(R.id.inputSearch)
+        inputSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                noteAdapter.cancelTimer()
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                noteAdapter.searchNotes(s.toString(), currentFolderID)
+            }
+        })
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onResume() {
+        super.onResume()
+        Log.d("NoteList", "onresume --- notify")
+        noteAdapter.notifyDataSetChanged()
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

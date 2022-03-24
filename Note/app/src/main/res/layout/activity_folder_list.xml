@@ -40,56 +40,23 @@
                 app:tint="@color/colorSearchIcons"/>
     </RelativeLayout>
 
+    <View
+            android:id="@+id/separatorLine"
+            android:layout_width="match_parent"
+            android:layout_height="1.5dp"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@color/light_grey"
+            app:layout_constraintBottom_toTopOf="@id/folderListRecyclerView"
+            app:layout_constraintTop_toBottomOf="@id/topTitle"/>
+
     <!--
              android:gravity:
                     https://stackoverflow.com/questions/3482742/what-is-the-difference-between-gravity-and-layout-gravity-in-android
                     https://thinkandroid.wordpress.com/2010/01/14/how-to-position-views-properly-in-layouts/
                     https://www.tutorialride.com/android/android-gravity.htm
     -->
-
-
-    <LinearLayout
-            android:id="@+id/layoutSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_12sdp"
-            android:background="@drawable/background_search"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="@dimen/_10sdp"
-            android:paddingEnd="@dimen/_10sdp"
-            app:layout_constraintTop_toBottomOf="@+id/topTitle">
-
-        <ImageView
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:contentDescription="@string/search_icon_description"
-                android:src="@drawable/ic_search"
-                app:tint="@color/colorSearchIcons"/>
-
-        <!--
-                android:background="@null": toggle underline off when inputting text
-                android:importantForAutofill="no": no history input shown
-        -->
-
-        <EditText
-                android:id="@+id/inputSearch"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:background="@null"
-                android:fontFamily="@font/ubuntu_regular"
-                android:hint="@string/searchHint"
-                android:imeOptions="actionDone"
-                android:importantForAutofill="no"
-                android:includeFontPadding="false"
-                android:inputType="text"
-                android:textColor="@color/white"
-                android:textColorHint="@color/colorTextHint"
-                android:textSize="@dimen/_13ssp" tools:ignore="TouchTargetSizeCheck"/>
-    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/folderListRecyclerView"
@@ -102,7 +69,7 @@
             android:paddingEnd="@dimen/_12sdp"
             android:paddingBottom="@dimen/_12sdp"
             app:layout_constraintBottom_toTopOf="@id/layoutQuickActions"
-            app:layout_constraintTop_toBottomOf="@id/layoutSearch" />
+            app:layout_constraintTop_toBottomOf="@id/separatorLine" />
 
     <LinearLayout
             android:id="@+id/layoutQuickActions"
