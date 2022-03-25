@@ -98,7 +98,8 @@ object Model {
         title: String,
         body: String,
         createTime: Long,
-        folderID: Int
+        folderID: Int,
+        test: Boolean = false
     ): Int {
         val currentTime = System.currentTimeMillis()
         Log.d("Model", "Inserting new note with title \"$title\", " +
@@ -107,23 +108,27 @@ object Model {
 
         val note = Note(0, title, body, createTime, currentTime, folderID)
         val assignedID = noteDao.insert(note).toInt()
+
+        if (test) return assignedID
+
         noteDao.pushToServer(
             item = note.copy(id = assignedID),
             operation = BaseDao.OPERATION.INSERT,
             baseURL = BASE_URL
         )
-
         return assignedID
     }
 
     // If the id does not exist, do nothing
-    fun deleteNote(noteID: Int) {
+    fun deleteNote(noteID: Int, test: Boolean = false) {
         Log.d("Model", "Deleting note with id \"$noteID\"")
 
         deleteRemindersByNoteID(noteID)
 
         val note = Note(id = noteID)
         noteDao.delete(note)
+        if (test) return
+
         noteDao.pushToServer(
             item = note,
             operation = BaseDao.OPERATION.DELETE,
@@ -131,7 +136,7 @@ object Model {
         )
     }
 
-    fun deleteNotesByFolderID(folderID: Int) {
+    fun deleteNotesByFolderID(folderID: Int, test: Boolean = false) {
         Log.d("Model", "Deleting notes with folderID \"$folderID\". " +
             "Now there are ${noteDao.getAllNotesCount()} notes in its DAO.")
 
@@ -140,6 +145,8 @@ object Model {
         Log.d("Model", "Deleted notes. " +
             "Now there are ${noteDao.getAllNotesCount()} notes in its DAO.")
 
+        if (test) return
+
         noteDao.pushToServer(
             item = Note(id = 0, folderID = folderID),
             operation = BaseDao.OPERATION.MULTIPLE_DELETE,
@@ -147,7 +154,7 @@ object Model {
         )
     }
 
-    fun updateNote(noteID: Int, title: String, body: String, folderID: Int = 0) {
+    fun updateNote(noteID: Int, title: String, body: String, folderID: Int = 0, test: Boolean = false) {
         val previousNote = noteDao.getNoteByID(noteID)
         val newNote = Note(noteID, title, body,
             createTime = previousNote.createTime,
@@ -161,6 +168,8 @@ object Model {
         noteDao.update(newNote)
         Log.d("Model", "Updated note:\n" +
             "\tThe new note: ${noteDao.getNoteByID(noteID)}")
+
+        if (test) return
 
         noteDao.pushToServer(
             item = newNote,
@@ -194,11 +203,13 @@ object Model {
         }
 
     /**************** Folders ****************/
-    fun insertFolder(name: String): Int {
+    fun insertFolder(name: String, test: Boolean = false): Int {
         Log.d("Model", "Inserting new folder with name \"$name\"")
         val folder = Folder(id = 0, name = name)
 
         val assignedID = folderDao.insert(folder).toInt()
+        if (test) return assignedID
+
         folderDao.pushToServer(
             item = folder.copy(id = assignedID),
             operation = BaseDao.OPERATION.INSERT,
@@ -207,7 +218,7 @@ object Model {
         return assignedID
     }
 
-    fun deleteFolder(folderID: Int) {
+    fun deleteFolder(folderID: Int, test: Boolean = false) {
         Log.d("Model", "Deleting folder with id \"$folderID\"")
 
         deleteRemindersByFolderID(folderID)
@@ -215,6 +226,8 @@ object Model {
 
         val folder = Folder(id = folderID)
         folderDao.delete(folder)
+        if (test) return
+
         folderDao.pushToServer(
             item = folder,
             operation = BaseDao.OPERATION.DELETE,
@@ -222,7 +235,7 @@ object Model {
         )
     }
 
-    fun updateFolder(folderID: Int, name: String) {
+    fun updateFolder(folderID: Int, name: String, test: Boolean = false) {
         val folder = Folder(folderID, name)
 
         Log.d("Model", "Updating folder:\n" +
@@ -231,6 +244,8 @@ object Model {
         folderDao.update(folder)
         Log.d("Model", "Updated folder:\n" +
             "\tThe new note: ${folderDao.getFolderByID(folderID)}")
+
+        if (test) return
 
         folderDao.pushToServer(
             item = folder,
