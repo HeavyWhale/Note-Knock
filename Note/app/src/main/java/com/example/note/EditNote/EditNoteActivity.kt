@@ -47,10 +47,11 @@ class EditNoteActivity : AppCompatActivity() {
 
     private lateinit var previousTitle: String
     private lateinit var previousBody: String
+    private lateinit var previousImage: String
 
     private val isEdited: Boolean
         get() = inputNoteBody.text.toString() != previousBody ||
-            inputNoteTitle.text.toString() != previousTitle ||
+            inputNoteTitle.text.toString() != previousTitle || selectedImagePath != previousImage ||
             Model.editedReminder
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,6 +133,10 @@ class EditNoteActivity : AppCompatActivity() {
                     inputNoteTitle.setText(it.title); previousTitle = it.title
                     inputNoteBody.setText(it.body); previousBody = it.body
                     textDateTime.text = it.modifyTime.toPrettyTime()
+                    selectedImagePath = it.image; previousImage = it.image
+                    if(selectedImagePath != "") {
+                        noteImage.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath))
+                    }
                 }
             }
         }
@@ -147,7 +152,8 @@ class EditNoteActivity : AppCompatActivity() {
                     Model.updateNote(
                         noteID = currentNoteID,
                         title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
-                        body = inputNoteBody.text.toString()
+                        body = inputNoteBody.text.toString(),
+                        image = selectedImagePath
                     )
                     // May added new reminders
                     updateReminderNoteID(currentNoteID)
@@ -161,6 +167,7 @@ class EditNoteActivity : AppCompatActivity() {
                     title = inputNoteTitle.text.toString().ifEmpty { "No Title" },
                     body = inputNoteBody.text.toString(),
                     createTime = createTime,
+                    image = selectedImagePath,
                     folderID = folderID
                 )
                 // Update reminders' note ID
