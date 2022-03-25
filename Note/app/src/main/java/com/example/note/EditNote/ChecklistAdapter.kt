@@ -2,6 +2,8 @@ package com.example.note.EditNote
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +30,6 @@ class ChecklistAdapter
         private val dateTime: TextView = itemView.findViewById(R.id.notificationDatetime)
         private val notificationButton: ImageView = itemView.findViewById(R.id.moreChecklistActions)
         private val checkboxBody: TextView = itemView.findViewById(R.id.checkboxBody)
-        private val saveChangeButton: ImageView = itemView.findViewById(R.id.saveChecklistChange)
         private var currentReminder: Reminder? = null
 
         init {
@@ -39,11 +40,6 @@ class ChecklistAdapter
                 }
                 context.startActivity(intent)
             }
-            // To be removed
-            saveChangeButton.setOnClickListener{
-                updateReminder()
-                Model.editedReminder = true
-            }
             checkboxBody.setOnClickListener {
                 updateReminder()
                 Model.editedReminder = true
@@ -53,7 +49,13 @@ class ChecklistAdapter
                     Log.d("Reminder", "Get focus.")
                 } else {
                     updateReminder()
+                    Model.editedReminder = true
                 }
+            }
+            checkbox.setOnClickListener{
+                Handler(Looper.getMainLooper()).postDelayed({
+                    currentReminder?.let { it1 -> Model.deleteReminder(it1.id) }
+                }, 1000)
             }
         }
 

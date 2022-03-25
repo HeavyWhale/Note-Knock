@@ -45,6 +45,7 @@
         <entry key="app/src/main/res/layout/activity_edit_note.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_folder_structure.xml" value="0.22644927536231885" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.22871376811594202" />
+        <entry key="app/src/main/res/layout/checkbox_item_container.xml" value="0.15625" />
         <entry key="app/src/main/res/layout/create_folder_dialog.xml" value="0.22644927536231885" />
         <entry key="app/src/main/res/layout/list_item_container.xml" value="0.2105978260869565" />
       </map>

@@ -229,7 +229,7 @@ class EditNoteActivity : AppCompatActivity() {
     }
 
     private fun getPathFromUri(contentUri: Uri): String {
-        var filePath: String = ""
+        var filePath: String
         var cursor = contentResolver.query(contentUri, null, null, null, null)
         if (cursor == null) {
             filePath = contentUri.path.toString()
