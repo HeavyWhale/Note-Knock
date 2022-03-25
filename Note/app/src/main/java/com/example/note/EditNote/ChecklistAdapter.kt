@@ -39,6 +39,7 @@ class ChecklistAdapter
                 }
                 context.startActivity(intent)
             }
+            // To be removed
             saveChangeButton.setOnClickListener{
                 updateReminder()
                 Model.editedReminder = true
@@ -47,16 +48,13 @@ class ChecklistAdapter
                 updateReminder()
                 Model.editedReminder = true
             }
-            /*
-            itemView.setOnFocusChangeListener{ _, hasFocus ->
-                if(hasFocus) {
+            checkboxBody.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
                     Log.d("Reminder", "Get focus.")
-                }
-                else{
+                } else {
                     updateReminder()
                 }
             }
-            */
         }
 
         fun bind(reminder: Reminder) {

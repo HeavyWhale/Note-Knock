@@ -124,7 +124,19 @@
                                 android:textColor="@color/white"
                                 android:textColorHint="@color/colorTextHint"
                                 android:textSize="@dimen/_13ssp"
+                                app:layout_constraintBottom_toTopOf="@+id/noteImage"
                                 app:layout_constraintTop_toBottomOf="@id/checklistRecyclerView" />
+
+                        <ImageView
+                                android:id="@+id/noteImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:layout_marginEnd="@dimen/_12sdp"
+                                android:adjustViewBounds="true"
+                                android:contentDescription="@string/app_name"
+                                app:layout_constraintTop_toBottomOf="@id/inputNote"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -161,7 +173,7 @@
                 />
 
                 <ImageView
-                        android:id="@+id/image"
+                        android:id="@+id/addImage"
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:layout_margin="@dimen/_14sdp"
