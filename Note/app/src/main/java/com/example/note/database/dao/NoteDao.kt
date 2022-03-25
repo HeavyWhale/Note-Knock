@@ -77,6 +77,9 @@ interface NoteDao : BaseDao {
     @Query("SELECT * FROM notes ORDER BY modifyTime DESC")
     fun getAllNotes(): LiveData<List<Note>>
 
+    @Query("SELECT * FROM notes ORDER BY modifyTime DESC")
+    fun getAllNotesList(): List<Note>
+
     @Query("SELECT * FROM notes WHERE folderID = :folderID ORDER BY modifyTime DESC")
     fun getNotesListByFolderID(folderID: Int): List<Note>
 
