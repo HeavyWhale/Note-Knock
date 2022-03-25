@@ -76,10 +76,14 @@ class EditNoteActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence, start: Int,
                                        before: Int, count: Int) {
-                var text = inputNoteBody.text.toString()
-                text = text.replace("\n", " ")
-                val textArray = text.split(" ")
-                wordCount.text = "Words: " + textArray.size
+                val text = inputNoteBody.text.toString().trim()
+                //text = text.replace("\n", " ")
+                var textSize = 0
+                if (text.isNotEmpty()){
+                    textSize = text.split("\\s+".toRegex()).size
+                }
+                //val textArray = text.split("\\s")
+                wordCount.text = "Words: " + textSize
             }
 
             override fun afterTextChanged(p0: Editable?) {}
