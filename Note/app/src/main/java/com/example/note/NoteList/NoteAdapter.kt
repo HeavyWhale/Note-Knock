@@ -1,5 +1,6 @@
 package com.example.note.NoteList
 
+import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.*
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import com.example.note.database.Model
 import com.example.note.database.entities.Note
 import com.example.note.toPrettyString
 import com.example.note.toPrettyTime
+import com.makeramen.roundedimageview.RoundedImageView
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -29,6 +31,7 @@ class NoteAdapter(private val onClick: (Note) -> Unit) :
 
         private val textTitle: TextView = itemView.findViewById(R.id.textTitle)
         private val textDatetime: TextView = itemView.findViewById(R.id.textDatetime)
+        private val imageNote: RoundedImageView = itemView.findViewById(R.id.imageNote)
         private var currentNote: Note? = null
 
         init {
@@ -41,6 +44,9 @@ class NoteAdapter(private val onClick: (Note) -> Unit) :
                 currentNote = this
                 textTitle.text = title
                 textDatetime.text = modifyTime.toPrettyTime()
+                if(image != "") {
+                    imageNote.setImageBitmap(BitmapFactory.decodeFile(image))
+                }
             }
         }
 
@@ -102,6 +108,7 @@ object NotesDiffCallback : DiffUtil.ItemCallback<Note>() {
     override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
         return oldItem.title == newItem.title &&
             oldItem.body == newItem.body &&
+            oldItem.image == newItem.image &&
             oldItem.folderID == newItem.folderID
     }
 }

@@ -62,7 +62,7 @@ class NoteListActivity : AppCompatActivity() {
 
         with (noteListRecyclerView) {
             layoutManager =
-                StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             adapter = noteAdapter
             setNoteTouchListener(this)
             registerForContextMenu(this)
