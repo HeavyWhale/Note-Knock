@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="..\:/Users/HeavyWhale/Nutstore_Files/+Winter2022/CS398/cs398-project/Note/app/src/main/res/drawable/background_add_button.xml" value="0.3212962962962963" />
         <entry key="..\:/Users/HeavyWhale/Nutstore_Files/+Winter2022/CS398/cs398-project/Note/app/src/main/res/drawable/ic_delete.xml" value="0.3212962962962963" />
         <entry key="..\:/Users/HeavyWhale/Nutstore_Files/+Winter2022/CS398/cs398-project/Note/app/src/main/res/layout/activity_EditNote.xml" value="0.19579533941236069" />
@@ -41,6 +42,7 @@
         <entry key="app/src/main/res/drawable/ic_folders.xml" value="0.1527777777777778" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1527777777777778" />
         <entry key="app/src/main/res/layout/activity_create_note.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_edit_note.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_folder_structure.xml" value="0.22644927536231885" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.22871376811594202" />
         <entry key="app/src/main/res/layout/create_folder_dialog.xml" value="0.22644927536231885" />

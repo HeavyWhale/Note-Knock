@@ -6,6 +6,8 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -15,16 +17,20 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.example.note.*
 import com.example.note.database.Model
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.Notification.Notification
 import com.example.note.database.entities.Reminder
+import io.ktor.http.*
+import java.io.InputStream
 import java.util.jar.Manifest
 import kotlin.properties.Delegates
 
@@ -41,6 +47,8 @@ class EditNoteActivity : AppCompatActivity() {
     private var currentNoteID by Delegates.notNull<Int>()
     private var currentFolderID by Delegates.notNull<Int>()
     private var createTime = System.currentTimeMillis()
+
+    private lateinit var selectedImagePath: String
 
     private lateinit var previousTitle: String
     private lateinit var previousBody: String
@@ -63,6 +71,8 @@ class EditNoteActivity : AppCompatActivity() {
 
         // Generate checklistAdapter
         checklistAdapter = ChecklistAdapter()
+
+        selectedImagePath = ""
 
         // Find all views
         val backButton = findViewById<ImageView>(R.id.imageBack)
@@ -197,12 +207,39 @@ class EditNoteActivity : AppCompatActivity() {
     https://stackoverflow.com/questions/62671106/onactivityresult-method-is-deprecated-what-is-the-alternative
     */
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             // There are no request codes
             val data: Intent? = result.data
-            noteImage.setImageURI(data?.data)
+            val selectedImageURI = data?.data
+            if(selectedImageURI != null) {
+                try {
+                    // InputStream
+                    var inputStream = contentResolver.openInputStream(selectedImageURI)
+                    // Bitmap
+                    var bitmap = BitmapFactory.decodeStream(inputStream)
+                    noteImage.setImageBitmap(bitmap)
+                    selectedImagePath = getPathFromUri(selectedImageURI)
+                } catch (e: Exception) {
+                    Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+            // noteImage.setImageURI(data?.data)
             Log.d("Note", "Get image ${data?.data}.")
         }
+    }
+
+    private fun getPathFromUri(contentUri: Uri): String {
+        var filePath: String = ""
+        var cursor = contentResolver.query(contentUri, null, null, null, null)
+        if (cursor == null) {
+            filePath = contentUri.path.toString()
+        } else{
+            cursor.moveToFirst()
+            var index = cursor.getColumnIndex("_data")
+            filePath = cursor.getString(index)
+            cursor.close()
+        }
+        return filePath
     }
 
     /*
