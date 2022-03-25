@@ -1,20 +1,37 @@
 package com.example.note.EditNote
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.database.Cursor
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.Display.Mode
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.example.note.*
 import com.example.note.database.Model
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.Notification.Notification
 import com.example.note.database.entities.Reminder
+import io.ktor.http.*
+import java.io.InputStream
+import java.util.jar.Manifest
 import kotlin.properties.Delegates
 
 class EditNoteActivity : AppCompatActivity() {
@@ -22,6 +39,7 @@ class EditNoteActivity : AppCompatActivity() {
     private lateinit var inputNoteTitle: EditText
     private lateinit var inputNoteBody: EditText
     private lateinit var textDateTime: TextView
+    private lateinit var noteImage: ImageView
     private lateinit var checklistRecyclerView : RecyclerView
     private lateinit var checklistAdapter: ChecklistAdapter
 
@@ -29,6 +47,8 @@ class EditNoteActivity : AppCompatActivity() {
     private var currentNoteID by Delegates.notNull<Int>()
     private var currentFolderID by Delegates.notNull<Int>()
     private var createTime = System.currentTimeMillis()
+
+    private lateinit var selectedImagePath: String
 
     private lateinit var previousTitle: String
     private lateinit var previousBody: String
@@ -52,15 +72,19 @@ class EditNoteActivity : AppCompatActivity() {
         // Generate checklistAdapter
         checklistAdapter = ChecklistAdapter()
 
+        selectedImagePath = ""
+
         // Find all views
         val backButton = findViewById<ImageView>(R.id.imageBack)
         val saveNoteButton = findViewById<ImageView>(R.id.imageSave)
         val deleteNoteButton = findViewById<ImageView>(R.id.imageDelete)
         val addReminderButton = findViewById<ImageView>(R.id.imageAddReminder)
+        val addImageButton = findViewById<ImageView>(R.id.addImage)
         val redoButton = findViewById<ImageView>(R.id.redo)
         inputNoteTitle = findViewById(R.id.inputNoteTitle)
         inputNoteBody = findViewById(R.id.inputNote)
         textDateTime = findViewById(R.id.TextDateTime)
+        noteImage = findViewById(R.id.noteImage)
         checklistRecyclerView = findViewById(R.id.checklistRecyclerView)
 
         // Set all views
@@ -68,6 +92,7 @@ class EditNoteActivity : AppCompatActivity() {
         saveNoteButton.setOnClickListener { saveNote() }
         deleteNoteButton.setOnClickListener { deleteNote() }
         addReminderButton.setOnClickListener { addReminder() }
+        addImageButton.setOnClickListener { addImage() }
         redoButton.setOnClickListener { addNotification() }
         textDateTime.text = createTime.toPrettyTime()
         Model.getRemindersByNoteID(currentNoteID).observe(this) { reminders ->
@@ -164,5 +189,110 @@ class EditNoteActivity : AppCompatActivity() {
 
     private fun updateReminderNoteID(noteID: Int) {
         Model.updateRemindersNoteIDByNoteID(currentNoteID, noteID)
+    }
+
+    private fun addImage() {
+        if (askForPermissions()) {
+            Log.d("Note", "Add image Button clicked.")
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            resultLauncher.launch(intent)
+        }
+    }
+
+    /*
+    1) Pick Image From Gallery in Kotlin – Android
+    https://handyopinion.com/pick-image-from-gallery-in-kotlin-android/
+    2) OnActivityResult deprecated
+    https://stackoverflow.com/questions/62671106/onactivityresult-method-is-deprecated-what-is-the-alternative
+    */
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // There are no request codes
+            val data: Intent? = result.data
+            val selectedImageURI = data?.data
+            if(selectedImageURI != null) {
+                try {
+                    // InputStream
+                    var inputStream = contentResolver.openInputStream(selectedImageURI)
+                    // Bitmap
+                    var bitmap = BitmapFactory.decodeStream(inputStream)
+                    noteImage.setImageBitmap(bitmap)
+                    selectedImagePath = getPathFromUri(selectedImageURI)
+                } catch (e: Exception) {
+                    Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+            // noteImage.setImageURI(data?.data)
+            Log.d("Note", "Get image ${data?.data}.")
+        }
+    }
+
+    private fun getPathFromUri(contentUri: Uri): String {
+        var filePath: String
+        var cursor = contentResolver.query(contentUri, null, null, null, null)
+        if (cursor == null) {
+            filePath = contentUri.path.toString()
+        } else{
+            cursor.moveToFirst()
+            var index = cursor.getColumnIndex("_data")
+            filePath = cursor.getString(index)
+            cursor.close()
+        }
+        return filePath
+    }
+
+    /*
+     Ask runtime permission to access system image,
+     according to https://handyopinion.com/ask-runtime-permission-in-kotlin-android/
+     REQUEST_CODE = 1
+    */
+    private fun isPermissionsAllowed(): Boolean {
+        return ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun askForPermissions(): Boolean {
+        if (!isPermissionsAllowed()) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this as Activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                showPermissionDeniedDialog()
+            } else {
+                ActivityCompat.requestPermissions(this as Activity, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+            }
+            return false
+        }
+        return true
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<String>,grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            // READ_EXTERNAL_STORAGE
+            1 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission is granted, you can perform your operation here
+                } else {
+                    // permission is denied, you can ask for permission again, if you want
+                    //  askForPermissions()
+                }
+                return
+            }
+        }
+    }
+
+    private fun showPermissionDeniedDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Permission Denied")
+            .setMessage("Permission is denied, Please allow permissions from App Settings.")
+            .setPositiveButton("App Settings",
+                DialogInterface.OnClickListener { _, _ ->
+                    // send to app settings if permission is denied permanently
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    val uri = Uri.fromParts("package", packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+                })
+            .setNegativeButton("Cancel",null)
+            .show()
     }
 }
