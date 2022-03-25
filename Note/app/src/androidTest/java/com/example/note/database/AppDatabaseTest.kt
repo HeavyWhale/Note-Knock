@@ -1,7 +1,6 @@
 package com.example.note.database
 
 import android.content.Context
-import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import com.example.note.database.dao.BaseDao
 import com.example.note.database.dao.FolderDao
@@ -74,19 +73,19 @@ internal class AppDatabaseTest {
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @addNoteTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         val folder2Count = noteDao.getNotesCountByFolderID(2)
         val note1 = genNote()
-        Model.insertNote(note1.title, note1.body, note1.createTime, 2, true)
+        Model.insertNote(note1.title, note1.body, note1.createTime, "", 2, true)
 
         assertEquals(folder2Count+1, Model.getNotesCountByFolderID(2))
 
         val note2 = genNote()
-        Model.insertNote(note2.title, note2.body, note2.createTime, 2)
+        Model.insertNote(note2.title, note2.body, note2.createTime, "", 2, true)
 
         assertEquals(folder2Count+2, Model.getNotesCountByFolderID(2))
 
         val folder3Count = noteDao.getNotesCountByFolderID(3)
         for (i in 1..100) {
             val testNote = genNote()
-            Model.insertNote(testNote.title, testNote.body, testNote.createTime, 3, true)
+            Model.insertNote(testNote.title, testNote.body, testNote.createTime, "", 3, true)
         }
         assertEquals(folder3Count+100, Model.getNotesCountByFolderID(3))
 
@@ -99,7 +98,7 @@ internal class AppDatabaseTest {
         val folder2Count = noteDao.getNotesCountByFolderID(2)
         // Add one test note
         val note1 = genNote()
-        val currID = Model.insertNote(note1.title, note1.body, note1.createTime, 2, true)
+        val currID = Model.insertNote(note1.title, note1.body, note1.createTime, "", 2, true)
 
         assertEquals(folder2Count+1, Model.getNotesCountByFolderID(2))
 
@@ -112,7 +111,7 @@ internal class AppDatabaseTest {
         val folder3Count = noteDao.getNotesCountByFolderID(3)
         for (i in 1..100) {
             val testNote = genNote()
-            Model.insertNote(testNote.title, testNote.body, testNote.createTime, 3, true)
+            Model.insertNote(testNote.title, testNote.body, testNote.createTime, "", 3, true)
         }
 
         assertEquals(folder3Count+100, Model.getNotesCountByFolderID(3))
@@ -127,11 +126,11 @@ internal class AppDatabaseTest {
     @Test
     fun updateNoteTest() {
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @updateNoteTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-        removeAllNotes()
+//        removeAllNotes()
         val note1 = genNote()
-        val currID = Model.insertNote(note1.title, note1.body, note1.createTime, 2, true)
+        val currID = Model.insertNote(note1.title, note1.body, note1.createTime, "", 2, true)
 
-        Model.updateNote(currID, "test title", "test body")
+        Model.updateNote(currID, "test title", "test body", "")
 
         // Check if note content has been updated
         assertEquals("test title", Model.debugGetNoteTitleByID(currID))
@@ -143,7 +142,7 @@ internal class AppDatabaseTest {
     @Test
     fun addFolderTest() {
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @addFolderTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-        removeAllNotes()
+//        removeAllNotes()
         val folderNum = Model.debugGetFolderCounts()
         val folder1 = genFolder()
         Model.insertFolder(folder1.name, true)
