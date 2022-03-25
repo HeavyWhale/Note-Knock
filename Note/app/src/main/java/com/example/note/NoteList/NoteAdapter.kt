@@ -69,7 +69,7 @@ class NoteAdapter(private val onClick: (Note) -> Unit) :
             override fun run() {
                 val notes = Model.getNotesListByFolderID(currentFolderID)
                 val result = if (keyword.trim().isEmpty()) {
-                    Log.d("NoteAdapter", "all notes: ${notes.toPrettyString()}")
+//                    Log.d("NoteAdapter", "all notes: ${notes.toPrettyString()}")
                     notes
                 } else {
                     val filteredNotes = ArrayList<Note>()
@@ -81,7 +81,7 @@ class NoteAdapter(private val onClick: (Note) -> Unit) :
                             filteredNotes.add(note)
                         }
                     }
-                    Log.d("NoteAdapter", "filteredNotes: ${filteredNotes.toPrettyString()}")
+//                    Log.d("NoteAdapter", "filteredNotes: ${filteredNotes.toPrettyString()}")
                     filteredNotes
                 }
                 this@NoteAdapter.submitList(result)

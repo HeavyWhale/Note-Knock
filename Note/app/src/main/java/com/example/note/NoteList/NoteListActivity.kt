@@ -88,13 +88,6 @@ class NoteListActivity : AppCompatActivity() {
         })
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onResume() {
-        super.onResume()
-        Log.d("NoteList", "onresume --- notify")
-        noteAdapter.notifyDataSetChanged()
-    }
-
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val position = item.order
         return when (item.itemId) {
