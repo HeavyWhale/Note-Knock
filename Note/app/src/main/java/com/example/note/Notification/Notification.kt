@@ -2,7 +2,6 @@ package com.example.note.Notification
 
 import android.app.*
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -71,7 +70,7 @@ class Notification : AppCompatActivity() {
             .setMessage(
                 "Title : " + title + "\nMessage : " + message + "\nAt: " + dateFormat.format(date) + " " + timeFormat.format(date)
             )
-            .setPositiveButton("OK") { dialog, i ->
+            .setPositiveButton("OK") { _, _ ->
                 //set what would happen when positive button is clicked
                 finish()
             }

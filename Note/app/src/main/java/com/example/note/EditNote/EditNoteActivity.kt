@@ -6,13 +6,11 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.Display.Mode
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
@@ -24,16 +22,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import com.example.note.*
 import com.example.note.database.Model
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.note.Notification.Notification
-import com.example.note.database.entities.Reminder
-import io.ktor.http.*
-import java.io.InputStream
-import java.util.jar.Manifest
 import kotlin.properties.Delegates
 
 class EditNoteActivity : AppCompatActivity() {
@@ -275,15 +268,15 @@ class EditNoteActivity : AppCompatActivity() {
      REQUEST_CODE = 1
     */
     private fun isPermissionsAllowed(): Boolean {
-        return ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun askForPermissions(): Boolean {
         if (!isPermissionsAllowed()) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this as Activity, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this as Activity, READ_EXTERNAL_STORAGE)) {
                 showPermissionDeniedDialog()
             } else {
-                ActivityCompat.requestPermissions(this as Activity, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+                ActivityCompat.requestPermissions(this as Activity, arrayOf(READ_EXTERNAL_STORAGE), 1)
             }
             return false
         }

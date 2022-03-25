@@ -40,10 +40,6 @@ class ChecklistAdapter
                 }
                 context.startActivity(intent)
             }
-            checkboxBody.setOnClickListener {
-                updateReminder()
-                Model.editedReminder = true
-            }
             checkboxBody.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
                     Log.d("Reminder", "Get focus.")
@@ -54,7 +50,7 @@ class ChecklistAdapter
             }
             checkbox.setOnClickListener{
                 Handler(Looper.getMainLooper()).postDelayed({
-                    currentReminder?.let { it1 -> Model.deleteReminder(it1.id) }
+                    currentReminder?.let { reminder -> Model.deleteReminder(reminder.id) }
                 }, 1000)
             }
         }
