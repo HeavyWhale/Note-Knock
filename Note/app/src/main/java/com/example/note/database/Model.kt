@@ -98,6 +98,7 @@ object Model {
         title: String,
         body: String,
         createTime: Long,
+        image: String,
         folderID: Int,
         test: Boolean = false
     ): Int {
@@ -106,7 +107,7 @@ object Model {
             "body \"$body\" to folder \"$folderID\" " +
             "at createTime \"${currentTime.toPrettyTime()}\"")
 
-        val note = Note(0, title, body, createTime, currentTime, folderID)
+        val note = Note(0, title, body, createTime, currentTime, image, folderID)
         val assignedID = noteDao.insert(note).toInt()
 
         if (test) return assignedID
@@ -154,11 +155,12 @@ object Model {
         )
     }
 
-    fun updateNote(noteID: Int, title: String, body: String, folderID: Int = 0, test: Boolean = false) {
+    fun updateNote(noteID: Int, title: String, body: String, image: String, folderID: Int = 0, test: Boolean = false) {
         val previousNote = noteDao.getNoteByID(noteID)
         val newNote = Note(noteID, title, body,
             createTime = previousNote.createTime,
             modifyTime = System.currentTimeMillis(),
+            image,
             folderID = if (folderID == 0) previousNote.folderID else folderID
         )
         Log.d("Model", "Updating note:\n" +

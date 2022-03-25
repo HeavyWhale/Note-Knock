@@ -15,6 +15,7 @@ data class Note(
     var body: String = "",
     var createTime: Long = 0,
     var modifyTime: Long = 0,
+    var image: String = "",
     var folderID: Int = -1
 ) : BaseEntity()
 

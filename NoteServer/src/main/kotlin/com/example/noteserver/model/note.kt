@@ -10,5 +10,6 @@ data class Note(
     var body: String = "",
     var createTime: Long,
     var modifyTime: Long,
+    var image: String,
     var folderID: Int = -1
 )
