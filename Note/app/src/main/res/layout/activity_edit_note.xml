@@ -35,22 +35,6 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:tint="@color/colorIcons"/>
 
-                        <TextView
-                                android:id="@+id/wordCount"
-                                android:hint="Words: 0"
-                                android:textColorHint="@color/white"
-                                android:textColor="@color/white"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="@dimen/_12sdp"
-                                android:fontFamily="@font/ubuntu_bold"
-                                android:textSize="@dimen/_13sdp"
-                                app:layout_constraintEnd_toStartOf="@+id/imageDelete"
-                                app:layout_constraintStart_toEndOf="@+id/imageBack"
-                                app:layout_constraintHorizontal_bias="0.715"
-                                app:layout_constraintTop_toTopOf="@+id/imageBack"
-                                app:layout_constraintBottom_toBottomOf="@+id/imageBack"
-                                app:layout_constraintVertical_bias="0.0"/>
                         <ImageView
                                 android:id="@+id/imageDelete"
                                 android:layout_width="@dimen/_23sdp"
@@ -158,36 +142,29 @@
 
         </ScrollView>
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutQuickActionsAddNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorQuickActionsBackground"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:layout_margin="@dimen/_12sdp"
                 app:layout_constraintBottom_toBottomOf="parent">
+
 
                 <ImageView
                         android:id="@+id/imageAddReminder"
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:layout_marginStart="@dimen/_14sdp"
-                        android:layout_marginEnd="@dimen/_14sdp"
+                        android:layout_marginEnd="@dimen/_50sdp"
                         android:contentDescription="@string/add_checkbox"
                         android:src="@drawable/ic_checklist"
                         android:tint="@color/colorIcons"
-                />
-
-                <ImageView
-                        android:id="@+id/bulletpoint"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:layout_margin="@dimen/_14sdp"
-                        android:contentDescription="@string/add_checkbox"
-                        android:src="@drawable/ic_bulletpoint"
-                        android:tint="@color/colorIcons"
-                />
-
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/addImage"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
                 <ImageView
                         android:id="@+id/addImage"
                         android:layout_width="@dimen/_20sdp"
@@ -196,39 +173,21 @@
                         android:contentDescription="@string/add_checkbox"
                         android:src="@drawable/ic_image"
                         android:tint="@color/colorIcons"
+                        app:layout_constraintStart_toEndOf="@id/imageAddReminder"
                 />
+                <TextView
+                        android:id="@+id/wordCount"
+                        android:hint="Words: 0"
+                        android:textColorHint="@color/colorIcons"
+                        android:textColor="@color/colorIcons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_12sdp"
+                        android:fontFamily="@font/ubuntu_regular"
+                        android:textSize="@dimen/_13sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="4dp"/>
 
-                <ImageView
-                        android:id="@+id/table"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:layout_margin="@dimen/_14sdp"
-                        android:contentDescription="@string/add_checkbox"
-                        android:src="@drawable/ic_table"
-                        android:tint="@color/colorIcons"
-                />
-
-                <ImageView
-                        android:id="@+id/undo"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:layout_margin="@dimen/_14sdp"
-                        android:contentDescription="@string/add_checkbox"
-                        android:src="@drawable/ic_undo"
-                        android:tint="@color/colorIcons"
-                />
-
-                <ImageView
-                        android:id="@+id/redo"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:layout_margin="@dimen/_14sdp"
-                        android:contentDescription="@string/add_checkbox"
-                        android:src="@drawable/ic_redo"
-                        android:tint="@color/colorIcons"
-                />
-
-
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

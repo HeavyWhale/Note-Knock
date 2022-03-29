@@ -76,7 +76,6 @@ class EditNoteActivity : AppCompatActivity() {
         val deleteNoteButton = findViewById<ImageView>(R.id.imageDelete)
         val addReminderButton = findViewById<ImageView>(R.id.imageAddReminder)
         val addImageButton = findViewById<ImageView>(R.id.addImage)
-        val redoButton = findViewById<ImageView>(R.id.redo)
         val wordCount = findViewById<TextView>(R.id.wordCount)
         inputNoteTitle = findViewById(R.id.inputNoteTitle)
         inputNoteBody = findViewById(R.id.inputNote)
@@ -114,7 +113,6 @@ class EditNoteActivity : AppCompatActivity() {
         deleteNoteButton.setOnClickListener { deleteNote() }
         addReminderButton.setOnClickListener { addReminder() }
         addImageButton.setOnClickListener { addImage() }
-        redoButton.setOnClickListener { addNotification() }
         textDateTime.text = createTime.toPrettyTime()
         Model.getRemindersByNoteID(currentNoteID).observe(this) { reminders ->
             checklistAdapter.submitList(reminders)
