@@ -18,23 +18,43 @@ PUT http://localhost:8080/reminders?oldNoteID=2&newNoteID=3
 
 
 ###
-POST http://localhost:8080/notes
+POST http://localhost:8080/folders
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "All Notes"
+}
+###
+POST http://localhost:8080/folders
 Content-Type: application/json
 
 {
   "id": 2,
-  "title": "Gen Note 2",
-  "body": "Gen Note 2",
-  "folderID": 1,
-  "modifyTime": 5678
+  "name": "Snippets"
 }
+###
+POST http://localhost:8080/folders
+Content-Type: application/json
 
+{
+  "id": 3,
+  "name": "Shopping List"
+}
+###
+POST http://localhost:8080/folders
+Content-Type: application/json
+
+{
+  "id": 4,
+  "name": "Reminders"
+}
 ###
 POST http://localhost:8080/notes
 Content-Type: application/json
 
 {
-  "id": 3,
+  "id": 10,
   "title": "Gen Note 3",
   "body": "Gen Note 3",
   "folderID": 2,
@@ -45,7 +65,7 @@ Content-Type: application/json
 DELETE http://localhost:8080/notes?folderID=1
 
 ###
-DELETE http://localhost:8080/reminders
+DELETE http://localhost:8080/notes/3
 
 ###
 PUT http://localhost:8080/notes/3

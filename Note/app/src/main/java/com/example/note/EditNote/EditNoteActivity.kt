@@ -168,7 +168,8 @@ class EditNoteActivity : AppCompatActivity() {
                     body = inputNoteBody.text.toString(),
                     createTime = createTime,
                     image = selectedImagePath,
-                    folderID = folderID
+                    folderID = folderID,
+                    color = Model.color
                 )
                 // Update reminders' note ID
                 updateReminderNoteID(newID)

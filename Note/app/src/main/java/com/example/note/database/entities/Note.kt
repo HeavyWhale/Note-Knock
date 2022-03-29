@@ -16,7 +16,8 @@ data class Note(
     var createTime: Long = 0,
     var modifyTime: Long = 0,
     var image: String = "",
-    var folderID: Int = -1
+    var folderID: Int = -1,
+    var color: String = "#000000"
 ) : BaseEntity()
 
 // OMG Room provides search functionality:

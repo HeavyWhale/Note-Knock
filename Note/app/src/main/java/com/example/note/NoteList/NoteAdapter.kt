@@ -1,6 +1,8 @@
 package com.example.note.NoteList
 
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import android.view.*
 import android.view.LayoutInflater
@@ -13,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.note.R
 import com.example.note.database.Model
 import com.example.note.database.entities.Note
-import com.example.note.toPrettyString
 import com.example.note.toPrettyTime
 import com.makeramen.roundedimageview.RoundedImageView
 import java.util.*
@@ -48,6 +49,9 @@ class NoteAdapter(private val onClick: (Note) -> Unit) :
                     imageNote.setImageBitmap(BitmapFactory.decodeFile(image))
                 }
             }
+
+            val background = itemView.background as GradientDrawable
+            background.setColor(Color.parseColor(note.color))
         }
 
         override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
@@ -109,6 +113,7 @@ object NotesDiffCallback : DiffUtil.ItemCallback<Note>() {
         return oldItem.title == newItem.title &&
             oldItem.body == newItem.body &&
             oldItem.image == newItem.image &&
-            oldItem.folderID == newItem.folderID
+            oldItem.folderID == newItem.folderID &&
+            oldItem.color == newItem.color
     }
 }

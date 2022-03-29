@@ -19,6 +19,12 @@ import kotlinx.coroutines.launch
 
 object Model {
 
+    private var colorCounter = 0;
+    private val colors = listOf<String>("#FDBE3B", "#FF4842", "#3A52FC", "#000000")
+    val color
+        get() = colors[colorCounter++ % 4]
+
+
     /*****************************************************************************
      * Enum subclass for setting up default folders
      ****************************************************************************/
@@ -100,6 +106,7 @@ object Model {
         createTime: Long,
         image: String,
         folderID: Int,
+        color: String,
         test: Boolean = false
     ): Int {
         val currentTime = System.currentTimeMillis()
@@ -107,7 +114,7 @@ object Model {
             "body \"$body\" to folder \"$folderID\" " +
             "at createTime \"${currentTime.toPrettyTime()}\"")
 
-        val note = Note(0, title, body, createTime, currentTime, image, folderID)
+        val note = Note(0, title, body, createTime, currentTime, image, folderID, color = color)
         val assignedID = noteDao.insert(note).toInt()
 
         if (test) return assignedID
