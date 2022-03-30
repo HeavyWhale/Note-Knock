@@ -15,3 +15,6 @@ Qianqian Wan, Jinyu Chen, Tianyi Tong, Qi Xuan Cui
 - Design Review Presentation uploaded under the main repo
 
 
+## Wiki
+
+Useful information on [Wiki](https://git.uwaterloo.ca/q22wan/cs398-project/-/wikis/home)
