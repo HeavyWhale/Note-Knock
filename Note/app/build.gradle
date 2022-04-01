@@ -8,9 +8,6 @@ plugins {
 
     // For serializing entities
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
-
-    // For JLink installer
-    id 'org.beryx.jlink' version '2.25.0'
 }
 
 android {
@@ -49,15 +46,6 @@ android {
         unitTests.includeAndroidResources = true
     }
 }
-
-// build.gradle file options for jpackage
-//jlink {
-//    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-//    launcher{
-//        name = 'note&knock'
-//        jvmArgs = ['-Dlog4j.configurationFile=./log4j2.xml']
-//    }
-//}
 
 dependencies {
 
