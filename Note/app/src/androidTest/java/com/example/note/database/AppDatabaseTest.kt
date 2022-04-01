@@ -73,19 +73,19 @@ internal class AppDatabaseTest {
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @addNoteTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         val folder2Count = noteDao.getNotesCountByFolderID(2)
         val note1 = genNote()
-        Model.insertNote(note1.title, note1.body, note1.createTime, "", 2, true)
+        Model.insertNote(note1.title, note1.body, note1.createTime, "", 2, "", true)
 
         assertEquals(folder2Count+1, Model.getNotesCountByFolderID(2))
 
         val note2 = genNote()
-        Model.insertNote(note2.title, note2.body, note2.createTime, "", 2, true)
+        Model.insertNote(note2.title, note2.body, note2.createTime, "", 2, "", true)
 
         assertEquals(folder2Count+2, Model.getNotesCountByFolderID(2))
 
         val folder3Count = noteDao.getNotesCountByFolderID(3)
         for (i in 1..100) {
             val testNote = genNote()
-            Model.insertNote(testNote.title, testNote.body, testNote.createTime, "", 3, true)
+            Model.insertNote(testNote.title, testNote.body, testNote.createTime, "", 3, "", true)
         }
         assertEquals(folder3Count+100, Model.getNotesCountByFolderID(3))
 
@@ -98,7 +98,7 @@ internal class AppDatabaseTest {
         val folder2Count = noteDao.getNotesCountByFolderID(2)
         // Add one test note
         val note1 = genNote()
-        val currID = Model.insertNote(note1.title, note1.body, note1.createTime, "", 2, true)
+        val currID = Model.insertNote(note1.title, note1.body, note1.createTime, "", 2, "", true)
 
         assertEquals(folder2Count+1, Model.getNotesCountByFolderID(2))
 
@@ -111,7 +111,7 @@ internal class AppDatabaseTest {
         val folder3Count = noteDao.getNotesCountByFolderID(3)
         for (i in 1..100) {
             val testNote = genNote()
-            Model.insertNote(testNote.title, testNote.body, testNote.createTime, "", 3, true)
+            Model.insertNote(testNote.title, testNote.body, testNote.createTime, "", 3, "", true)
         }
 
         assertEquals(folder3Count+100, Model.getNotesCountByFolderID(3))
@@ -128,7 +128,7 @@ internal class AppDatabaseTest {
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> @updateNoteTest: START <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 //        removeAllNotes()
         val note1 = genNote()
-        val currID = Model.insertNote(note1.title, note1.body, note1.createTime, "", 2, true)
+        val currID = Model.insertNote(note1.title, note1.body, note1.createTime, "", 2, "", true)
 
         Model.updateNote(currID, "test title", "test body", "")
 

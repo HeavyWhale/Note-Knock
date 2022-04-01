@@ -63,13 +63,16 @@ object Model {
      * Private Functions
      ****************************************************************************/
 
-//    private fun addDefaultFolders() {
-//        val defaultFolders = DF
-//            .values()
-//            .map { Folder( 0, it.printableName ) }
-//            .toTypedArray()
-//        folderDao.insertAll(*defaultFolders)
-//    }
+    private fun addDefaultFolders() {
+        val folderCount = folderDao.getFolderCounts()
+        if (folderCount == 0) {
+            val defaultFolders = DF
+                .values()
+                .map { Folder( 0, it.printableName ) }
+                .toTypedArray()
+            folderDao.insertAll(*defaultFolders)
+        }
+    }
 
     private fun updateDaosFromServer() {
         for (dao in daos) {
@@ -83,6 +86,7 @@ object Model {
 
     init {
         updateDaosFromServer()
+        addDefaultFolders()
     }
 
     /*****************************************************************************
